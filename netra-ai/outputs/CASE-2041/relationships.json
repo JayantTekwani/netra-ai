@@ -1,0 +1,270 @@
+[
+  {
+    "source_id": "PH-001",
+    "target_id": "PH-002",
+    "relationship_type": "COMMUNICATED_WITH",
+    "evidence_id": "CDR-001",
+    "evidence_hash": "090f1ffff9cf2982d67cdb5f783592373ca8ba29dede637aef0111cea80f42bc",
+    "duration": 240,
+    "timestamp": "2026-08-29T10:30:00"
+  },
+  {
+    "source_id": "PH-002",
+    "target_id": "PH-004",
+    "relationship_type": "COMMUNICATED_WITH",
+    "evidence_id": "CDR-002",
+    "evidence_hash": "c3613023a4936afb703c01392a98693bf22337eeccf3c1abfe037993cfb11e6e",
+    "duration": 120,
+    "timestamp": "2026-08-29T11:15:00"
+  },
+  {
+    "source_id": "PH-001",
+    "target_id": "PH-003",
+    "relationship_type": "COMMUNICATED_WITH",
+    "evidence_id": "CDR-003",
+    "evidence_hash": "cd9dc2bbc9bdd24253a869c017bf3d26cd2cf222b9f8f150aa7b4be80089bad8",
+    "duration": 450,
+    "timestamp": "2026-08-29T14:45:00"
+  },
+  {
+    "source_id": "PH-004",
+    "target_id": "PH-005",
+    "relationship_type": "COMMUNICATED_WITH",
+    "evidence_id": "CDR-004",
+    "evidence_hash": "63328e554e94b29ff300658128e34fd69f4e30595750f91ff2a57ea38cb55f90",
+    "duration": 60,
+    "timestamp": "2026-08-29T16:20:00"
+  },
+  {
+    "source_id": "PH-002",
+    "target_id": "PH-005",
+    "relationship_type": "COMMUNICATED_WITH",
+    "evidence_id": "CDR-005",
+    "evidence_hash": "900b201b9c7a66eec9b838dba7190b9ca85b196fbb157a63af23c92bf4bf64e0",
+    "duration": 300,
+    "timestamp": "2026-08-29T19:05:00"
+  },
+  {
+    "source_id": "ACC-001",
+    "target_id": "ACC-002",
+    "relationship_type": "TRANSFERRED_FUNDS_TO",
+    "evidence_id": "TXN-001",
+    "evidence_hash": "3dc56804804b3275b1c03ea11fcc47fc88f9cd8cd056d2d5be8b8d64566da5e7",
+    "amount": 850000.0,
+    "timestamp": "2026-08-29T13:40:00"
+  },
+  {
+    "source_id": "ACC-002",
+    "target_id": "ACC-004",
+    "relationship_type": "TRANSFERRED_FUNDS_TO",
+    "evidence_id": "TXN-002",
+    "evidence_hash": "0245162d46f28215eea7a02cfeb59b07a8f85e237f5a8142e6b9b34089a8b55e",
+    "amount": 200000.0,
+    "timestamp": "2026-08-29T14:10:00"
+  },
+  {
+    "source_id": "ACC-001",
+    "target_id": "ACC-003",
+    "relationship_type": "TRANSFERRED_FUNDS_TO",
+    "evidence_id": "TXN-003",
+    "evidence_hash": "301b12c504d0c543da922a9aa03313311ea9e487693ee4f7f2b6f089a01c123d",
+    "amount": 50000.0,
+    "timestamp": "2026-08-29T15:30:00"
+  },
+  {
+    "source_id": "ACC-004",
+    "target_id": "ACC-005",
+    "relationship_type": "TRANSFERRED_FUNDS_TO",
+    "evidence_id": "TXN-004",
+    "evidence_hash": "fede334b93eac46c97ca47b41a35c478c1bfc07a408951231fe28b5eab397d46",
+    "amount": 150000.0,
+    "timestamp": "2026-08-29T17:45:00"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "PER-002",
+    "relationship_type": "ASSOCIATED_WITH",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "46fbe9f8ceb7c02bdcba0db232479206dfcb2ef9ec3b1c0def7e2074626fc291"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "UNKNOWN-7776",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "a4108d097d6ee8ce7969bcdc0ecd8c68dd32d3f9b733fa3961115b5738a57623"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "UNKNOWN-2666",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "701e3da9e1956a3412c941937e65ee10429f232e6babad08e4da17e955604444"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "UNKNOWN-7776",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "c054ce7cdd205786f12ee65416dc1a1f9c63f75daa74bcef180f346be95481ef"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "UNKNOWN-2666",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "c03c22647cee8667b67fe9b4b43bac09d0e66ceb22a9231e0f2eb87de7daa22f"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-001",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "1b95da02b28370c62a795523bee98a904d91d379d3a7ebeb24473ae405392fb1"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "LOC-001",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-001",
+    "evidence_hash": "7030380055cca110eca4b3f23e02119be952550a42b52206f2ef0a9a7c65295c"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "PER-004",
+    "relationship_type": "ASSOCIATED_WITH",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "9e12902a4161d11221a335c955163b1bd79fd299a933d10d586150fda3014cbb"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "UNKNOWN-7776",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "f6742c7c49c50c28405d2e8a4fdb7d21f12a740425322e5ad935b30e8ee52846"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "UNKNOWN-7776",
+    "relationship_type": "ASSOCIATED_WITH_ORG",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "ec78149c64adf55f81f18943a22badfce94be6c79132b5a77c38ae1d49a951d1"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "LOC-002",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "934af3c60a97349db78ab4a8a473eede39f5674f1cfe572bb047163728c8cbc6"
+  },
+  {
+    "source_id": "PER-002",
+    "target_id": "LOC-003",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "944defbeca90724d0553f99e5ba8266621d80ed3ef004bc51169a65764f72383"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "LOC-002",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "ca10f9f56d2814a8af5f297ef7f9da582bc2816055ba07fc5b50aa368f66c50c"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "LOC-003",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "FIR-002",
+    "evidence_hash": "4ce6ad35e865d77520b53a1371590e3cb2a9d97f2cabdb5cb0aaed4eca05db4d"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-001",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "SURV-001",
+    "evidence_hash": "c1772d869c40d0c9a48b98835d18ad58041b8894b3faaef56330c6e5f7ca921a",
+    "confidence": 0.94,
+    "timestamp": "2026-08-29T18:31:22"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-VIS-CHAWRI-403",
+    "timestamp": "2026-08-29T21:00:03",
+    "evidence_hash": "ec2bfca81d00ed216df273d33dc11cc269f72ebdf73fa11038475625abda326d"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-VIS-CHAWRI-403",
+    "timestamp": "2026-08-29T21:00:03",
+    "evidence_hash": "c0a4950480d1033e93870d959946eb753e192c5bdaefbc553ea0702f658bb122"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "PER-004",
+    "relationship_type": "MET_WITH",
+    "evidence_id": "EVID-VIS-CHAWRI-403",
+    "timestamp": "2026-08-29T21:00:03",
+    "evidence_hash": "e5f96d92ede1731caee32f2638c45d0b9d5babf3cda24eef60434bdbb336b05e"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-VIS-CHAWRI-408",
+    "timestamp": "2026-08-29T21:00:08",
+    "evidence_hash": "a16e50c260420b8835adba029ff2f5d5a2932448acdadfa595c8e134a6c2e6f0"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-VIS-CHAWRI-408",
+    "timestamp": "2026-08-29T21:00:08",
+    "evidence_hash": "d51ec62388abdc4c318abbea18842f02542414c7ec5e9bb1a1516d6a1bfa7116"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "PER-004",
+    "relationship_type": "MET_WITH",
+    "evidence_id": "EVID-VIS-CHAWRI-408",
+    "timestamp": "2026-08-29T21:00:08",
+    "evidence_hash": "c74d1e41e1a341d5d87129f3b247c9799323712eecdc2c6cab12e794bafeadd2"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-CCTV-145",
+    "timestamp": "2026-08-29T21:12:25",
+    "evidence_hash": "17a18ba521866f63ab96d2130f3e13dc588621ed7ba47e6fd2305778291456a4"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-CCTV-247",
+    "timestamp": "2026-08-29T21:14:07",
+    "evidence_hash": "e88b2778ad65192c30bcb2b683bc66728ddc87f6f255bd0a4595edb188c7f56a"
+  },
+  {
+    "source_id": "PER-004",
+    "target_id": "LOC-DEL-04",
+    "relationship_type": "SEEN_AT",
+    "evidence_id": "EVID-CCTV-247",
+    "timestamp": "2026-08-29T21:14:07",
+    "evidence_hash": "63383477883aaa4035698fc465dad4fa3066127c282c2543859e85cd6bb93aed"
+  },
+  {
+    "source_id": "PER-001",
+    "target_id": "PER-004",
+    "relationship_type": "MET_WITH",
+    "evidence_id": "EVID-CCTV-247",
+    "timestamp": "2026-08-29T21:14:07",
+    "evidence_hash": "05415f623df73ca52c3859239b9a9b112715f61eb1a09eeab2c5507b4620d3b5"
+  }
+]

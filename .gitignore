@@ -1,0 +1,6 @@
+*.mp4
+*.part
+*.ytdl
+__pycache__/
+.pytest_cache/
+.DS_Store

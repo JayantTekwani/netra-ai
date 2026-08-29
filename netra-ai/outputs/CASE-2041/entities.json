@@ -1,0 +1,146 @@
+[
+  {
+    "entity_id": "PER-001",
+    "entity_type": "PERSON",
+    "canonical_name": "Rahul Sharma",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PER-002",
+    "entity_type": "PERSON",
+    "canonical_name": "Amit Kumar",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "UNKNOWN-7776",
+    "entity_type": "ORGANIZATION",
+    "canonical_name": "Meridian Traders",
+    "confidence": 0.5
+  },
+  {
+    "entity_id": "UNKNOWN-2666",
+    "entity_type": "ORGANIZATION",
+    "canonical_name": "Global Exports",
+    "confidence": 0.5
+  },
+  {
+    "entity_id": "LOC-001",
+    "entity_type": "LOCATION",
+    "canonical_name": "Mumbai Central",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PER-004",
+    "entity_type": "PERSON",
+    "canonical_name": "Vikram Patel",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "LOC-002",
+    "entity_type": "LOCATION",
+    "canonical_name": "Connaught Place",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "LOC-003",
+    "entity_type": "LOCATION",
+    "canonical_name": "Delhi",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PH-001",
+    "entity_type": "PHONE",
+    "canonical_name": "PH-001",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PH-002",
+    "entity_type": "PHONE",
+    "canonical_name": "PH-002",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PH-004",
+    "entity_type": "PHONE",
+    "canonical_name": "PH-004",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PH-003",
+    "entity_type": "PHONE",
+    "canonical_name": "PH-003",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PH-005",
+    "entity_type": "PHONE",
+    "canonical_name": "PH-005",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ACC-001",
+    "entity_type": "ACCOUNT",
+    "canonical_name": "ACC-001",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ACC-002",
+    "entity_type": "ACCOUNT",
+    "canonical_name": "ACC-002",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ACC-004",
+    "entity_type": "ACCOUNT",
+    "canonical_name": "ACC-004",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ACC-003",
+    "entity_type": "ACCOUNT",
+    "canonical_name": "ACC-003",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ACC-005",
+    "entity_type": "ACCOUNT",
+    "canonical_name": "ACC-005",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ORG-001",
+    "entity_type": "ORGANIZATION",
+    "canonical_name": "ORG-001",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ORG-002",
+    "entity_type": "ORGANIZATION",
+    "canonical_name": "ORG-002",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PER-003",
+    "entity_type": "PERSON",
+    "canonical_name": "Priya Singh",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "ORG-003",
+    "entity_type": "ORGANIZATION",
+    "canonical_name": "ORG-003",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "PER-005",
+    "entity_type": "PERSON",
+    "canonical_name": "Neha Gupta",
+    "confidence": 1.0
+  },
+  {
+    "entity_id": "LOC-DEL-04",
+    "entity_type": "LOCATION",
+    "canonical_name": "Chawri Bazar Junction",
+    "description": "High-density pedestrian zone"
+  }
+]

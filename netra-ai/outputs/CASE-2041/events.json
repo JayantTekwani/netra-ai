@@ -1,0 +1,106 @@
+[
+  {
+    "evidence_id": "CDR-001",
+    "source_phone": "PH-001",
+    "target_phone": "PH-002",
+    "timestamp": "2026-08-29T10:30:00",
+    "duration": 240,
+    "evidence_hash": "23653813c812a4c55e177f3bced5d25787b93bfaf82137c6d46ff371821f8239"
+  },
+  {
+    "evidence_id": "CDR-002",
+    "source_phone": "PH-002",
+    "target_phone": "PH-004",
+    "timestamp": "2026-08-29T11:15:00",
+    "duration": 120,
+    "evidence_hash": "e5d9214d4dc1d5766deea940b0a5566c96dd6303ed722542c44a26f423b38c73"
+  },
+  {
+    "evidence_id": "CDR-003",
+    "source_phone": "PH-001",
+    "target_phone": "PH-003",
+    "timestamp": "2026-08-29T14:45:00",
+    "duration": 450,
+    "evidence_hash": "1a722f76e87763c3f381532f60484a7694bf1154c3bf7a938c770e0c668d9638"
+  },
+  {
+    "evidence_id": "CDR-004",
+    "source_phone": "PH-004",
+    "target_phone": "PH-005",
+    "timestamp": "2026-08-29T16:20:00",
+    "duration": 60,
+    "evidence_hash": "237edee88d5b38c0196367d5dd9108cce9aad9115337e827e89533ce6e5aa639"
+  },
+  {
+    "evidence_id": "CDR-005",
+    "source_phone": "PH-002",
+    "target_phone": "PH-005",
+    "timestamp": "2026-08-29T19:05:00",
+    "duration": 300,
+    "evidence_hash": "24668be2d330e81c727ad7d17546d095f0cbf0e8b2962ebc88dff74dbb457430"
+  },
+  {
+    "evidence_id": "TXN-001",
+    "sender_account": "ACC-001",
+    "receiver_account": "ACC-002",
+    "timestamp": "2026-08-29T13:40:00",
+    "amount": 850000.0,
+    "evidence_hash": "79bdf9a9f26debc14c052f93fbbdb755fd1a1cf92005e2c9474291a2b6cd5b67"
+  },
+  {
+    "evidence_id": "TXN-002",
+    "sender_account": "ACC-002",
+    "receiver_account": "ACC-004",
+    "timestamp": "2026-08-29T14:10:00",
+    "amount": 200000.0,
+    "evidence_hash": "c040f67c6852502918580b5af2755c7ad7eef9c3606941e92a6b6d05a15748dc"
+  },
+  {
+    "evidence_id": "TXN-003",
+    "sender_account": "ACC-001",
+    "receiver_account": "ACC-003",
+    "timestamp": "2026-08-29T15:30:00",
+    "amount": 50000.0,
+    "evidence_hash": "16def8c3dcec7a0b883bba601ca1119dfcd55dee24b26f11d5b1c43db182d61c"
+  },
+  {
+    "evidence_id": "TXN-004",
+    "sender_account": "ACC-004",
+    "receiver_account": "ACC-005",
+    "timestamp": "2026-08-29T17:45:00",
+    "amount": 150000.0,
+    "evidence_hash": "924972e1121cd632d2cc8cde7c10ba744eadf7c0d047172f445138a31fbf4dac"
+  },
+  {
+    "event_id": "EVENT-FIR-001",
+    "event_type": "FIR_FILED",
+    "evidence_id": "FIR-001",
+    "fir_number": "2026/08/29-001",
+    "timestamp": "2026-08-29",
+    "evidence_hash": "4a538b53427eb5fb3fde2676b2cb120bc6c70aa2963d14b68bf64fb52b64181f"
+  },
+  {
+    "event_id": "EVENT-FIR-002",
+    "event_type": "FIR_FILED",
+    "evidence_id": "FIR-002",
+    "fir_number": "2026/08/29-002",
+    "timestamp": "2026-08-29",
+    "evidence_hash": "273e5cf8fb2b4eb558723fbceedbf30d75f943250df1341f4c2edea02d2ea74d"
+  },
+  {
+    "event_id": "SURV-SURV-001-0",
+    "evidence_id": "SURV-001",
+    "person_id": "PER-001",
+    "location_id": "LOC-001",
+    "camera_id": "CAM-01",
+    "timestamp": "2026-08-29T18:31:22",
+    "confidence": 0.94,
+    "bounding_box": [
+      50,
+      50,
+      100,
+      100
+    ],
+    "evidence_hash": "0e306a87a955130f29aee453657d16cc01c660b13eaf20a6ad1df1427fe3c8e3"
+  }
+]
