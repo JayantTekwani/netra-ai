@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Section 63 BSA 2023 Electronic Evidence Certificate</title>
+    <style>
+        @page { size: A4; margin: 15mm; }
+        body { font-family: 'Times New Roman', Times, serif; margin: 0; padding: 20px; color: #111; line-height: 1.4; }
+        .cert-border { border: 3px double #000; padding: 25px; margin: auto; max-width: 800px; }
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h2 { margin: 2px 0; font-size: 18px; text-transform: uppercase; }
+        .header h3 { margin: 2px 0; font-size: 14px; font-weight: normal; }
+        .meta-table, .proof-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 12px; }
+        .meta-table td, .meta-table th, .proof-table td, .proof-table th { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+        .meta-table th, .proof-table th { background-color: #f2f2f2; }
+        .hash-box { font-family: 'Courier New', Courier, monospace; word-break: break-all; background: #f9f9f9; padding: 6px; border: 1px dashed #666; font-size: 11px; }
+        .declaration { text-align: justify; font-size: 12px; margin: 20px 0; }
+        .sig-container { display: flex; justify-content: space-between; margin-top: 40px; text-align: center; font-size: 12px; }
+        .sig-block { width: 45%; border-top: 1px solid #000; padding-top: 5px; }
+        .btn-container { text-align: center; margin-bottom: 20px; }
+        @media print { .btn-container { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="btn-container">
+        <button onclick="window.print()" style="padding: 10px 20px; font-size: 14px; cursor: pointer;">Print / Export to PDF</button>
+    </div>
+
+    <div class="cert-border">
+        <div class="header">
+            <h2>SCHEDULE (SECTION 63)</h2>
+            <h3>BHARATIYA SAKSHYA ADHINIYAM, 2023</h3>
+            <h4>CERTIFICATE OF ELECTRONIC EVIDENCE INTEGRITY</h4>
+        </div>
+
+        <table class="meta-table">
+            <tr><th>FIR / Case Ref No:</th><td>FIR-2026-CY-0091</td><th>Police Station:</th><td>Cyber Crime HQ</td></tr>
+            <tr><th>Source Node / Device:</th><td>Netra Edge CCTV Node-04</td><th>IP / MAC Address:</th><td>192.168.1.104 / 00:1A:2B:3C:4D:5E</td></tr>
+            <tr><th>Timestamp (UTC):</th><td>2026-08-30T10:00:00Z</td><th>Timestamp (IST):</th><td>2026-08-30 15:30:00 IST</td></tr>
+        </table>
+
+        <p><strong>CRYPTOGRAPHIC EVIDENCE IDENTIFIER</strong></p>
+        <div class="hash-box">
+            <strong>Master SHA-256 Merkle Root ($R_0$):</strong><br>
+            cc191bca3fb31187639fe8219d15c44cb210b674665d432537815cea00be3232
+        </div>
+        <br>
+        <div class="hash-box">
+            <strong>Target Leaf Hash (CCTV Frame #1092):</strong><br>
+            8f4e2c8a91b3e7f45d1c2b0a98f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9
+        </div>
+
+        <p><strong>MERKLE CRYPTOGRAPHIC PROOF PATH</strong></p>
+        <table class="proof-table">
+            <thead>
+                <tr><th>Step</th><th>Direction</th><th>Sibling SHA-256 Hash</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>RIGHT</td><td class="hash-box">a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0</td></tr>
+                <tr><td>2</td><td>LEFT</td><td class="hash-box">f9e8d7c6b5a432109876543210abcdef0123456789abcdef0123456789abcdef</td></tr>
+            </tbody>
+        </table>
+
+        <div class="declaration">
+            <p><strong>STATUTORY DECLARATION UNDER SECTION 63 BSA, 2023:</strong></p>
+            <p>I hereby certify that the electronic record described above was produced by the Netra-AI system operating regularly in lawful custody. The cryptographic SHA-256 Merkle proof mathematically verifies that the underlying evidence has not been altered, tampered with, or corrupted since capture. Furthermore, non-pertinent bystander biometric data has been redacted in compliance with the DPDP Act, 2023 without altering the Master Root.</p>
+        </div>
+
+        <div class="sig-container">
+            <div class="sig-block">
+                <strong>(Signature of Cyber Technical Expert)</strong><br>
+                Netra-AI Forensics Specialist<br>
+                Key ID: 0x9F82C110
+            </div>
+            <div class="sig-block">
+                <strong>(Signature of Officer In-Charge)</strong><br>
+                Investigating Officer (I.O.)<br>
+                Badge No: PS-CY-4402
+            </div>
+        </div>
+    </div>
+</body>
+</html>
