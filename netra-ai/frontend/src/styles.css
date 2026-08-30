@@ -10,7 +10,7 @@
  */
 
 @theme inline {
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -63,7 +63,7 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0rem;
 
   --background: oklch(0.18 0.014 250);
   --foreground: oklch(0.94 0.006 250);
