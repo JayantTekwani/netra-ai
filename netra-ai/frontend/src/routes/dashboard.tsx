@@ -147,15 +147,15 @@ function DashboardPage() {
           </table>
         </section>
 
-        <section className="panel p-5 bg-primary/5 border-primary/20">
-          <div className="flex items-center gap-2 text-primary">
-            <Sparkles className="size-4" />
-            <h2 className="text-sm font-semibold tracking-tight">Active AI Insights</h2>
+        <section className="panel p-5">
+          <div className="flex items-center gap-2">
+            <Activity className="size-4 text-primary" />
+            <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
           </div>
           <ul className="mt-4 space-y-4">
             {insights.slice(0, 4).map((insight) => (
-              <li key={insight.id} className="border-l-2 border-primary/50 pl-3">
-                <div className="text-sm font-medium leading-tight text-primary/90">
+              <li key={insight.id} className="border-l-2 border-border pl-3">
+                <div className="text-sm font-medium leading-tight">
                   {insight.headline}
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground line-clamp-2">
