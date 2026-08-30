@@ -1,13 +1,20 @@
 """
 Netra-AI: Core REST API Server (FastAPI)
 Implements: Indic-Alias NLP Matching, Dynamic Timeline Scrubbing, and Sec 63 BSA Evidence Audits.
+Modular Architecture Refactor.
 """
 
+import os
+import datetime
 from fastapi import FastAPI, HTTPException, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-import datetime
+
+# Modular Imports
+from nlp.indic_soundex import IndicPhoneticMatcher
+from pipeline.data_loader import DatasetLoader
+from pipeline.graph_predictor import ConformalGraphPredictor
 
 # -----------------------------------------------------------------------------
 # App Initialization & CORS Middleware (Task 4)
@@ -26,6 +33,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# -----------------------------------------------------------------------------
+# Global State: Load the dataset once at startup
+# -----------------------------------------------------------------------------
+EXCEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sih26189_synthetic_criminal_intelligence_dataset_v2.xlsx")
+data_loader = DatasetLoader(EXCEL_PATH)
+graph_predictor = ConformalGraphPredictor(alpha=0.05)
+
 
 # -----------------------------------------------------------------------------
 # Schemas & Routes: Task 1 (Ingestion & Indic Alias API)
@@ -55,19 +70,25 @@ async def ingest_fir(payload: FIRIngestRequest):
     Ingest a raw vernacular FIR. Parses entities and utilizes Indic-Soundex 
     and Character-Level bi-LSTM phonetic encoders to map to IPA and deduplicate aliases ('urf').
     """
-    # Simulated Indic-Soundex / Bhashini NLP Hook
-    if "छोटा टकलू" in payload.raw_text or "Chhota Taklu" in payload.raw_text:
+    # Simulate extraction of entity from raw_text
+    extracted_entity = "छोटा टकलू" if "छोटा टकलू" in payload.raw_text else "Chhota Taklu"
+    
+    candidates = data_loader.get_candidates()
+    result = IndicPhoneticMatcher.find_best_match(extracted_entity, candidates)
+    
+    if result["match"] and result["confidence"] > 0.85:
+        match = result["match"]
         return FIRIngestResponse(
             status="success",
-            matched_entity_id="ORG-401_SUSPECT_02",
-            matched_name="Chhota Taklu",
-            confidence_score=0.964,
-            phonetic_ipa="t͡ʃʰoːʈaː ʈəkˈluː",
+            matched_entity_id=match["id"],
+            matched_name=match["Name"],
+            confidence_score=round(result["confidence"], 3),
+            phonetic_ipa=result["ipa"],
             merged_node=MergedNode(
-                id="PER-104",
-                canonical_name="Mohammed Shakeel @ Chhota Taklu",
-                aliases=["छोटा टकलू", "Chhota Taklu"],
-                jurisdiction="Meerut / Special Cell"
+                id=match["id"],
+                canonical_name=f"{match['Name']} @ {match.get('Alias_Regional', '')}",
+                aliases=[match.get('Alias_Regional', ''), match['Name']],
+                jurisdiction=match.get('City', 'Unknown')
             )
         )
     
@@ -95,31 +116,23 @@ async def get_timeline(
     Fetch the temporal graph state up to `date_end`.
     Integrates Conformal Prediction bounds on Ghost Edges generated via Graph Attention Networks.
     """
-    # Simulated TGN (Temporal Graph Network) retrieval
-    mock_nodes = [
-        {"id": "PER-104", "label": "Mohammed Shakeel @ Chhota Taklu", "type": "PERSON"},
-        {"id": "ORG-401", "label": "Meridian Traders (Front)", "type": "ORGANIZATION"}
-    ]
+    base_graph = data_loader.get_graph()
     
-    mock_edges = [
-        {
-            "source": "PER-104",
-            "target": "ORG-401",
-            "type": "PROBABLE_ASSOCIATE",
-            "is_ghost": True,
-            "conformal_confidence": 0.95,
-            "review_status": "UNVERIFIED_INTELLIGENCE",
-            "timestamp": "2026-08-15T00:00:00Z"
-        }
-    ]
+    # Generate Ghost Edges using the loaded nodes
+    ghost_edges = graph_predictor.generate_ghost_edges(base_graph["nodes"])
+    
+    all_edges = base_graph["edges"] + ghost_edges
+    
+    # In a full implementation, we would filter all_edges by timestamp <= date_end
+    # Here we simulate returning the combined graph
     
     return TimelineResponse(
         case_id=case_id,
         timeline_cutoff=date_end,
-        nodes_count=len(mock_nodes),
-        edges_count=len(mock_edges),
-        nodes=mock_nodes,
-        edges=mock_edges
+        nodes_count=len(base_graph["nodes"]),
+        edges_count=len(all_edges),
+        nodes=base_graph["nodes"],
+        edges=all_edges
     )
 
 
