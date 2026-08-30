@@ -65,12 +65,30 @@ function LoginPage() {
             Explore relationships between entities extracted from case documents, call records,
             financial records and location data — in a single analytical workspace.
           </p>
-          <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-            <li>· Entity & relationship graph exploration</li>
-            <li>· Chronological event reconstruction</li>
-            <li>· Every link traceable to a supporting record</li>
-          </ul>
-          <div className="mt-8 rounded-md border border-border bg-surface/70 px-4 py-3 text-xs text-muted-foreground">
+          
+          <div className="mt-8 grid grid-cols-2 gap-4 max-w-md relative">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center size-8 rounded-full bg-background border border-border z-10">
+              <ArrowRight className="size-4 text-muted-foreground" />
+            </div>
+            <div className="panel p-4 border-amber-500/20 bg-amber-500/5 relative overflow-hidden">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-amber-500 mb-2">Investigator Today</div>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> 5 disconnected systems</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> Manual cross-referencing</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> 3 days per suspect</li>
+              </ul>
+            </div>
+            <div className="panel p-4 border-emerald-500/30 bg-emerald-500/10 relative overflow-hidden">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-500 mb-2">With NEXUS</div>
+              <ul className="space-y-1.5 text-xs font-medium text-foreground">
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> 1 unified search</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Auto-linked evidence</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Answers in minutes</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-md border border-border bg-surface/70 px-4 py-3 text-xs text-muted-foreground max-w-md">
             Prototype (SIH26189). Fictional demo data only — no real records, no real persons.
           </div>
         </div>

@@ -13,6 +13,7 @@ import {
 import { AppLayout } from "@/components/layout/AppLayout";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
 import { Button } from "@/components/ui/button";
 import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
@@ -56,18 +57,22 @@ function DashboardPage() {
         <>
           <Button variant="outline" asChild>
             <Link to="/upload">
-              <UploadCloud className="size-4" /> Upload Data
+              <UploadCloud className="mr-2 size-4" /> Upload New Data
             </Link>
           </Button>
           <Button asChild>
             <Link to="/cases/new">
-              <PlusCircle className="size-4" /> Create New Case
+              <PlusCircle className="mr-2 size-4" /> New Case
             </Link>
           </Button>
         </>
       }
     >
-      <div className="grid grid-cols-4 gap-5">
+      <div className="mb-6 rounded-md border-l-4 border-primary bg-primary/10 px-4 py-3 text-sm text-foreground">
+        <strong className="font-semibold">NEXUS Platform</strong> — Turns messy police data (call records, FIRs, bank transfers) into one connected picture.
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
         <StatCard
           label="Active Cases"
           value={activeCases.length}
@@ -219,6 +224,10 @@ function DashboardPage() {
             </Button>
           </div>
         </section>
+        
+        <div className="col-span-3">
+          <EntityResolutionDemo />
+        </div>
       </div>
     </AppLayout>
   );

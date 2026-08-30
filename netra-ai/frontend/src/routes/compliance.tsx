@@ -20,6 +20,14 @@ const AUDIT_LOGS = [
 function AuditPage() {
   const user = getSession();
 
+  const sortedLogs = [...AUDIT_LOGS].sort((a, b) => {
+    if (a.status === "WARNING") return -1;
+    if (b.status === "WARNING") return 1;
+    return 0;
+  });
+  
+  const visibleLogs = sortedLogs.slice(0, 3);
+
   return (
     <AppLayout title="Chain of Custody & Audit" subtitle="Immutable ledger of all queries, ML operations, and data purges.">
       <div className="grid gap-6">
@@ -72,22 +80,31 @@ function AuditPage() {
               </tr>
             </thead>
             <tbody>
-              {AUDIT_LOGS.map((log) => (
-                <tr key={log.id} className="border-b border-border/60 hover:bg-surface-raised/60">
-                  <td className="p-3 font-mono text-xs text-muted-foreground">{log.time}</td>
-                  <td className="p-3 font-mono text-xs">{log.user}</td>
-                  <td className="p-3">
-                    <span className="bg-secondary px-2 py-1 rounded-sm text-xs font-mono">{log.action}</span>
-                  </td>
-                  <td className="p-3 font-mono text-xs text-muted-foreground">{log.target}</td>
-                  <td className="p-3 text-xs">
-                    <div className={log.status === "WARNING" ? "text-amber-500 font-bold" : "text-emerald-500 font-bold"}>{log.status}</div>
-                    <div className="text-muted-foreground mt-0.5">{log.detail}</div>
-                  </td>
-                </tr>
-              ))}
+              {visibleLogs.map((log) => {
+                const isWarning = log.status === "WARNING";
+                return (
+                  <tr key={log.id} className={`border-b border-border/60 hover:bg-surface-raised/60 ${isWarning ? "bg-amber-500/10 relative" : ""}`}>
+                    {isWarning && <td className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 animate-pulse" />}
+                    <td className="p-3 font-mono text-xs text-muted-foreground">{log.time}</td>
+                    <td className="p-3 font-mono text-xs">{log.user}</td>
+                    <td className="p-3">
+                      <span className={`${isWarning ? "bg-amber-500/20 text-amber-500" : "bg-secondary"} px-2 py-1 rounded-sm text-xs font-mono`}>{log.action}</span>
+                    </td>
+                    <td className="p-3 font-mono text-xs text-muted-foreground">{log.target}</td>
+                    <td className="p-3 text-xs">
+                      <div className={isWarning ? "text-amber-500 font-bold" : "text-emerald-500 font-bold"}>{log.status}</div>
+                      <div className="text-muted-foreground mt-0.5">{log.detail}</div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+          <div className="p-3 text-center border-t border-border bg-surface-raised/30">
+            <button className="text-xs text-muted-foreground hover:text-primary transition-colors">
+              View {AUDIT_LOGS.length - 3} older logs...
+            </button>
+          </div>
         </div>
 
       </div>

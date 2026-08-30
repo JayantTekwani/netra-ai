@@ -140,6 +140,21 @@ export function NetworkGraph({
           >
             <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--border-strong)" />
           </marker>
+          <marker
+            id="arrow-active"
+            viewBox="0 0 10 10"
+            refX="26"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)" />
+          </marker>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
         </defs>
 
         <g transform={`translate(${transform.x},${transform.y}) scale(${transform.k})`}>
@@ -151,16 +166,18 @@ export function NetworkGraph({
               selectedId !== null && (r.source === selectedId || r.target === selectedId);
             const faded = selectedId !== null && !active;
             return (
-              <g key={r.id} opacity={faded ? 0.12 : 1} className="transition-opacity duration-200">
+              <g key={r.id} opacity={faded ? 0.08 : 1} className="transition-opacity duration-300">
                 <line
                   x1={a.x}
                   y1={a.y}
                   x2={b.x}
                   y2={b.y}
                   stroke={r.is_ghost ? "#F59E0B" : (active ? "var(--primary)" : "var(--border-strong)")}
-                  strokeWidth={active ? 2 : 1.2}
+                  strokeWidth={active ? 2.5 : 1.2}
                   strokeDasharray={r.is_ghost ? "5,5" : undefined}
-                  markerEnd="url(#arrow)"
+                  markerEnd={active ? "url(#arrow-active)" : "url(#arrow)"}
+                  filter={active ? "url(#glow)" : undefined}
+                  className="transition-all duration-300"
                 />
                 {(active || transform.k > 1.15) && (
                   <text
@@ -183,14 +200,15 @@ export function NetworkGraph({
             if (!p) return null;
             const meta = ENTITY_TYPE_META[e.type];
             const selected = e.id === selectedId;
+            const isNeighbour = selectedId !== null && neighbours.has(e.id) && e.id !== selectedId;
             const faded = dim(e.id);
             const r = e.type === "person" ? 26 : 21;
             return (
               <g
                 key={e.id}
                 transform={`translate(${p.x},${p.y})`}
-                opacity={faded ? 0.18 : 1}
-                className="cursor-pointer transition-opacity duration-200"
+                opacity={faded ? 0.08 : 1}
+                className="cursor-pointer transition-opacity duration-300"
                 onClick={(ev) => {
                   ev.stopPropagation();
                   onSelect(e.id);
@@ -199,14 +217,15 @@ export function NetworkGraph({
                 onMouseLeave={() => setHovered(null)}
               >
                 {selected && (
-                  <circle r={r + 10} fill="none" stroke={meta.color} strokeWidth={1} opacity={0.5} />
+                  <circle r={r + 8} fill="none" stroke="var(--primary)" strokeWidth={2} opacity={0.5} className="animate-pulse" filter="url(#glow)" />
                 )}
                 <circle
                   r={hovered === e.id ? r + 3 : r}
                   fill={`color-mix(in oklab, ${meta.color} 22%, var(--surface))`}
-                  stroke={meta.color}
-                  strokeWidth={selected ? 3 : 1.6}
-                  className="transition-all duration-150"
+                  stroke={selected || isNeighbour ? "var(--primary)" : meta.color}
+                  strokeWidth={selected ? 3 : (isNeighbour ? 2 : 1.6)}
+                  className="transition-all duration-300"
+                  filter={selected || isNeighbour ? "url(#glow)" : undefined}
                 />
                 <text
                   textAnchor="middle"

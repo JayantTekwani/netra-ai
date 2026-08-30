@@ -11,6 +11,22 @@ const ICONS: Record<RelationshipType, typeof Phone> = {
   association: Link2,
 };
 
+const COLORS: Record<RelationshipType, string> = {
+  call: "border-sky-500 bg-sky-500/5 text-sky-500",
+  transaction: "border-amber-500 bg-amber-500/5 text-amber-500",
+  location: "border-rose-500 bg-rose-500/5 text-rose-500",
+  mention: "border-slate-500 bg-slate-500/5 text-slate-500",
+  association: "border-slate-500 bg-slate-500/5 text-slate-500",
+};
+
+const DOT_COLORS: Record<RelationshipType, string> = {
+  call: "bg-sky-500",
+  transaction: "bg-amber-500",
+  location: "bg-rose-500",
+  mention: "bg-slate-500",
+  association: "bg-slate-500",
+};
+
 export function TimelineList({
   events,
   onViewRecord,
@@ -24,16 +40,18 @@ export function TimelineList({
     <ol className="relative space-y-4 border-l border-border pl-6">
       {sorted.map((e) => {
         const Icon = ICONS[e.type];
+        const colorCls = COLORS[e.type];
+        const dotCls = DOT_COLORS[e.type];
         return (
           <li key={e.id} className="relative">
-            <span className="absolute -left-[33px] top-3 flex size-4 items-center justify-center rounded-full border border-primary/50 bg-background">
-              <span className="size-1.5 rounded-full bg-primary" />
+            <span className={`absolute -left-[33px] top-3 flex size-4 items-center justify-center rounded-full border border-background bg-background`}>
+              <span className={`size-2.5 rounded-full ${dotCls} shadow-[0_0_0_2px_var(--background)]`} />
             </span>
-            <div className="panel p-4 transition-colors hover:border-border-strong">
+            <div className={`panel p-4 transition-colors hover:border-border-strong border-l-4 ${colorCls.split(' ')[0]}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex size-8 items-center justify-center rounded-md bg-secondary">
-                    <Icon className="size-4 text-primary" />
+                  <div className={`mt-0.5 flex size-8 items-center justify-center rounded-md ${colorCls.split(' ')[1]}`}>
+                    <Icon className={`size-4 ${colorCls.split(' ')[2]}`} />
                   </div>
                   <div>
                     <div className="text-sm font-medium">{e.title}</div>
@@ -57,10 +75,10 @@ export function TimelineList({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="mt-2 px-2 text-primary"
+                    className={`mt-2 px-2 ${colorCls.split(' ')[2]}`}
                     onClick={() => onViewRecord([e.recordId], e.title)}
                   >
-                    <FileSearch className="size-4" /> {e.recordId}
+                    <FileSearch className="size-4 mr-1" /> {e.recordId}
                   </Button>
                 </div>
               </div>

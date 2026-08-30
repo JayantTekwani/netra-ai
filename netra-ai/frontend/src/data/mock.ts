@@ -225,12 +225,12 @@ export const supportingRecords: SupportingRecord[] = [
 ];
 
 export const cases: InvestigationCase[] = [
-  { id: "CASE-2041", name: "Operation Meridian", description: "Fictional multi-entity financial and communication network spanning three demo districts.", status: "active", priority: "critical", createdAt: "2026-06-04", entityCount: 18, relationshipCount: 28, lead: "Demo" },
-  { id: "CASE-2044", name: "Blue Harbour Review", description: "Fictional logistics firm review with overlapping directors and transit-hub activity.", status: "active", priority: "high", createdAt: "2026-06-22", entityCount: 11, relationshipCount: 16, lead: "Insp. M. Rao (demo)" },
-  { id: "CASE-2047", name: "Sector 14 Follow-up", description: "Fictional follow-up on co-location events recorded around a demo marketplace.", status: "under-review", priority: "medium", createdAt: "2026-07-09", entityCount: 7, relationshipCount: 9, lead: "SI. K. Iyer (demo)" },
-  { id: "CASE-2052", name: "Ledger Trace 09", description: "Fictional layered transfer pattern between three sample accounts.", status: "active", priority: "high", createdAt: "2026-07-28", entityCount: 9, relationshipCount: 14, lead: "Demo" },
-  { id: "CASE-2019", name: "Northline Archive", description: "Fictional archived case retained for pattern comparison only.", status: "closed", priority: "low", createdAt: "2026-02-17", entityCount: 6, relationshipCount: 7, lead: "SI. R. Menon (demo)" },
-  { id: "CASE-2055", name: "Transit Hub Cluster", description: "Fictional cluster analysis of devices observed at a demo transport hub.", status: "under-review", priority: "medium", createdAt: "2026-08-08", entityCount: 10, relationshipCount: 13, lead: "Insp. M. Rao (demo)" },
+  { id: "CASE-2041", name: "Operation Meridian", description: "Financial + comms network across 3 districts.", status: "active", priority: "critical", createdAt: "2026-06-04", entityCount: 18, relationshipCount: 28, lead: "Demo" },
+  { id: "CASE-2044", name: "Blue Harbour Review", description: "Logistics firm review linking transit-hub activity.", status: "active", priority: "high", createdAt: "2026-06-22", entityCount: 11, relationshipCount: 16, lead: "Insp. M. Rao (demo)" },
+  { id: "CASE-2047", name: "Sector 14 Follow-up", description: "Co-location follow-up around demo marketplace.", status: "under-review", priority: "medium", createdAt: "2026-07-09", entityCount: 7, relationshipCount: 9, lead: "SI. K. Iyer (demo)" },
+  { id: "CASE-2052", name: "Ledger Trace 09", description: "Layered transfer pattern across 3 accounts.", status: "active", priority: "high", createdAt: "2026-07-28", entityCount: 9, relationshipCount: 14, lead: "Demo" },
+  { id: "CASE-2019", name: "Northline Archive", description: "Archived case for pattern comparison.", status: "closed", priority: "low", createdAt: "2026-02-17", entityCount: 6, relationshipCount: 7, lead: "SI. R. Menon (demo)" },
+  { id: "CASE-2055", name: "Transit Hub Cluster", description: "Device cluster analysis at a transport hub.", status: "under-review", priority: "medium", createdAt: "2026-08-08", entityCount: 10, relationshipCount: 13, lead: "Insp. M. Rao (demo)" },
 ];
 
 export const timelineEvents: TimelineEvent[] = [
@@ -257,22 +257,22 @@ export const activity: ActivityItem[] = [
 export const insights: Insight[] = [
   {
     id: "INS-01",
-    headline: "High Eigenvector Centrality Detected",
-    detail: "Entity PER-001 bridges three distinct transaction clusters. Betweenness centrality score: 0.84. Suggests role as a primary intermediary rather than endpoint.",
+    headline: "This person connects 3 separate groups",
+    detail: "High eigenvector centrality · betweenness score 0.84. Suggests role as a primary intermediary bridging three distinct transaction clusters.",
     confidence: "pattern",
     recordIds: ["REC-002", "REC-003"],
   },
   {
     id: "INS-02",
-    headline: "Temporal Co-location Cluster",
-    detail: "Jaccard similarity of 0.92 between device pings for PER-004 and PER-006 over 72 hours. Probability of incidental overlap < 0.05%.",
+    headline: "Two suspects' phones were near each other 6 times in 3 days",
+    detail: "Temporal Co-location Cluster · Jaccard similarity 0.92. Probability of incidental overlap < 0.05%.",
     confidence: "cluster",
     recordIds: ["REC-005"],
   },
   {
     id: "INS-03",
-    headline: "Entity Resolution Merge Confirmed",
-    detail: "Fuzzy phonetic match + shared address hash merged 3 messy records ('Rahul S.', 'R. Sharma') into unified profile PER-001 (Confidence: 96%).",
+    headline: "Merged 3 messy records into one person",
+    detail: "Entity Resolution Merge Confirmed · Fuzzy phonetic match + shared address hash merged 'Rahul S.' and 'R. Sharma' (Confidence: 96%).",
     confidence: "observation",
     recordIds: ["REC-001"],
   },
