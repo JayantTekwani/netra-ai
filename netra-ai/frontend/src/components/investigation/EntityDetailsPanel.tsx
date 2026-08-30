@@ -45,8 +45,17 @@ export function EntityDetailsPanel({
           <span className="size-2.5 rounded-full" style={{ backgroundColor: meta.color }} />
           <span className="label-caps">{meta.label}</span>
         </div>
-        <h2 className="mt-2 text-lg font-semibold tracking-tight">{entity.name}</h2>
-        <div className="mt-1 font-mono text-xs text-muted-foreground">{entity.id}</div>
+        <div className="mt-4 flex gap-4">
+          {entity.image && (
+            <div className="size-16 shrink-0 overflow-hidden rounded-md border border-border">
+              <img src={entity.image} alt={entity.name} className="h-full w-full object-cover grayscale sepia-[0.3] contrast-125 hover:grayscale-0 hover:sepia-0 transition-all" />
+            </div>
+          )}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-lg font-semibold tracking-tight">{entity.name}</h2>
+            <div className="mt-1 font-mono text-xs text-muted-foreground">{entity.id}</div>
+          </div>
+        </div>
       </div>
 
       <div className="border-b border-border p-5">

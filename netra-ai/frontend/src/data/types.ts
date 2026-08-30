@@ -16,6 +16,7 @@ export interface Entity {
   name: string;
   /** Free-form fictional attributes rendered as a key/value list. */
   attributes: Record<string, string>;
+  image?: string;
   caseIds: string[];
 }
 

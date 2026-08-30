@@ -45,6 +45,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Rahul Sharma",
     attributes: { Alias: "R.S.", Age: "38", Role: "Subject of interest", City: "Fictionpur" },
+    image: "/person-1.png",
     caseIds: ["CASE-2041"],
   },
   {
@@ -52,6 +53,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Amit Kumar",
     attributes: { Alias: "AK", Age: "44", Role: "Associate", City: "Fictionpur" },
+    image: "/person-2.png",
     caseIds: ["CASE-2041", "CASE-2044"],
   },
   {
@@ -59,6 +61,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Priya Nair",
     attributes: { Alias: "—", Age: "31", Role: "Account holder", City: "Mockgaon" },
+    image: "/person-3.png",
     caseIds: ["CASE-2041"],
   },
   {
@@ -66,6 +69,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Vikram Sethi",
     attributes: { Alias: "V", Age: "51", Role: "Intermediary", City: "Samplepur" },
+    image: "/person-4.png",
     caseIds: ["CASE-2044"],
   },
   {
@@ -73,6 +77,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Farhan Qureshi",
     attributes: { Alias: "FQ", Age: "29", Role: "Courier (alleged)", City: "Mockgaon" },
+    image: "/person-5.png",
     caseIds: ["CASE-2041"],
   },
   {
@@ -80,6 +85,7 @@ export const entities: Entity[] = [
     type: "person",
     name: "Neha Bansal",
     attributes: { Alias: "—", Age: "35", Role: "Witness", City: "Samplepur" },
+    image: "/person-3.png",
     caseIds: ["CASE-2047"],
   },
   {
