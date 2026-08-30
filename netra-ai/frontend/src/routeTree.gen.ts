@@ -16,6 +16,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SurveillanceRouteImport } from './routes/surveillance'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as AuditRouteImport } from './routes/audit'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesNewRouteImport } from './routes/cases.new'
 
@@ -49,6 +50,11 @@ const TimelineRoute = TimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -73,6 +79,9 @@ export interface FileRoutesByFullPath {
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases/': typeof CasesIndexRoute
 }
@@ -84,6 +93,9 @@ export interface FileRoutesByTo {
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases': typeof CasesIndexRoute
 }
@@ -96,6 +108,9 @@ export interface FileRoutesById {
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
+  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases/': typeof CasesIndexRoute
 }
@@ -109,6 +124,9 @@ export interface FileRouteTypes {
     | '/surveillance'
     | '/timeline'
     | '/upload'
+    | '/audit'
+    | '/audit'
+    | '/audit'
     | '/cases/new'
     | '/cases/'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +138,9 @@ export interface FileRouteTypes {
     | '/surveillance'
     | '/timeline'
     | '/upload'
+    | '/audit'
+    | '/audit'
+    | '/audit'
     | '/cases/new'
     | '/cases'
   id:
@@ -131,6 +152,9 @@ export interface FileRouteTypes {
     | '/surveillance'
     | '/timeline'
     | '/upload'
+    | '/audit'
+    | '/audit'
+    | '/audit'
     | '/cases/new'
     | '/cases/'
   fileRoutesById: FileRoutesById
@@ -143,6 +167,7 @@ export interface RootRouteChildren {
   SurveillanceRoute: typeof SurveillanceRoute
   TimelineRoute: typeof TimelineRoute
   UploadRoute: typeof UploadRoute
+  AuditRoute: typeof AuditRoute
   CasesNewRoute: typeof CasesNewRoute
   CasesIndexRoute: typeof CasesIndexRoute
 }
@@ -191,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -223,6 +255,7 @@ const rootRouteChildren: RootRouteChildren = {
   SurveillanceRoute: SurveillanceRoute,
   TimelineRoute: TimelineRoute,
   UploadRoute: UploadRoute,
+  AuditRoute: AuditRoute,
   CasesNewRoute: CasesNewRoute,
   CasesIndexRoute: CasesIndexRoute,
 }
