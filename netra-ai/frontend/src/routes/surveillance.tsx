@@ -216,10 +216,10 @@ function SurveillancePage() {
 
   return (
     <AppLayout title="Live Surveillance" subtitle="Geospatial Tracking & Live Intercepts" fullBleed>
-      <div className="grid h-[calc(100vh-8.5rem)] grid-cols-2 gap-4 p-4">
+      <div className="grid h-[calc(100vh-8.5rem)] grid-cols-1 lg:grid-cols-2 gap-4 p-4 overflow-y-auto lg:overflow-hidden">
         
         {/* PANEL A: GEOSPATIAL MAP */}
-        <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg">
+        <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg min-h-[50vh] lg:min-h-0">
           <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 font-mono text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Radio className="size-4 text-emerald-500 animate-pulse" />
@@ -232,6 +232,16 @@ function SurveillancePage() {
             {/* Map Container */}
             <div ref={mapRef} className="flex-1 z-0 relative"></div>
             
+            {/* Active Target Floating Widget */}
+            <div className="absolute top-4 right-4 z-20 bg-black/90 border border-red-500/30 p-3 rounded-lg backdrop-blur-md flex items-center gap-3 shadow-2xl">
+              <img src="/person-1.png" alt="Target" className="size-12 rounded-md object-cover border border-red-500/50 grayscale" />
+              <div className="font-mono text-xs">
+                <div className="text-red-500 font-bold mb-0.5">ACTIVE TARGET</div>
+                <div className="text-muted-foreground">ID: PER-001 (R.S.)</div>
+                <div className="text-muted-foreground">VEH: DL-9C-XXXX</div>
+              </div>
+            </div>
+
             {/* Scrubber Control */}
             <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/80 border border-emerald-500/30 p-4 rounded-lg backdrop-blur-md">
               <div className="flex items-center gap-4 text-emerald-400 font-mono text-xs mb-2">
@@ -254,7 +264,7 @@ function SurveillancePage() {
         </div>
 
         {/* PANEL B: LIVE CCTV INTERCEPT */}
-        <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg group">
+        <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg group min-h-[50vh] lg:min-h-0">
           <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 font-mono text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Camera className="size-4 text-red-500" />
