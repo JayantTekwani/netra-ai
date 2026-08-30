@@ -62,8 +62,8 @@ const CAMERAS = [
     lat: DETAILED_PATH[15].lat, 
     lng: DETAILED_PATH[15].lng, 
     id: "CAM-ND-01", 
-    desc: "Target vehicle DL-9C-XXXX identified crossing India Gate circle. Facial match 89%.",
-    img: "https://images.unsplash.com/photo-1616421946890-55ceea4101e8?auto=format&fit=crop&w=300&q=80"
+    desc: "Target vehicle identified in Sector 14. Registration obscured.",
+    img: "/mock-cctv-1.png"
   },
   { 
     index: 45, 
@@ -71,15 +71,23 @@ const CAMERAS = [
     lng: DETAILED_PATH[45].lng, 
     id: "CAM-SD-44", 
     desc: "Subject seen interacting with unknown associate near Lodhi road.",
-    img: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=300&q=80"
+    img: "/mock-cctv-2.png"
+  },
+  { 
+    index: 65, 
+    lat: DETAILED_PATH[65].lat, 
+    lng: DETAILED_PATH[65].lng, 
+    id: "CAM-DK-12", 
+    desc: "Target vehicle tracked navigating intersection at high speed.",
+    img: "/mock-cctv-3.png"
   },
   { 
     index: 85, 
     lat: DETAILED_PATH[85].lat, 
     lng: DETAILED_PATH[85].lng, 
     id: "CAM-IG-99", 
-    desc: "Vehicle approaching Terminal 3. Elevated alert status triggered.",
-    img: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=300&q=80"
+    desc: "Vehicle approaching Toll Plaza. Elevated alert status triggered.",
+    img: "/mock-cctv-4.png"
   }
 ];
 
