@@ -10,19 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComplianceRouteImport } from './routes/compliance'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InvestigationRouteImport } from './routes/investigation'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SurveillanceRouteImport } from './routes/surveillance'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as UploadRouteImport } from './routes/upload'
-import { Route as AuditRouteImport } from './routes/audit'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
 import { Route as CasesNewRouteImport } from './routes/cases.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplianceRoute = ComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -50,11 +55,6 @@ const TimelineRoute = TimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuditRoute = AuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -73,44 +73,38 @@ const CasesNewRoute = CasesNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases/': typeof CasesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases': typeof CasesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
-  '/audit': typeof AuditRoute
   '/cases/new': typeof CasesNewRoute
   '/cases/': typeof CasesIndexRoute
 }
@@ -118,56 +112,50 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/compliance'
     | '/dashboard'
     | '/investigation'
     | '/settings'
     | '/surveillance'
     | '/timeline'
     | '/upload'
-    | '/audit'
-    | '/audit'
-    | '/audit'
     | '/cases/new'
     | '/cases/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/compliance'
     | '/dashboard'
     | '/investigation'
     | '/settings'
     | '/surveillance'
     | '/timeline'
     | '/upload'
-    | '/audit'
-    | '/audit'
-    | '/audit'
     | '/cases/new'
     | '/cases'
   id:
     | '__root__'
     | '/'
+    | '/compliance'
     | '/dashboard'
     | '/investigation'
     | '/settings'
     | '/surveillance'
     | '/timeline'
     | '/upload'
-    | '/audit'
-    | '/audit'
-    | '/audit'
     | '/cases/new'
     | '/cases/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComplianceRoute: typeof ComplianceRoute
   DashboardRoute: typeof DashboardRoute
   InvestigationRoute: typeof InvestigationRoute
   SettingsRoute: typeof SettingsRoute
   SurveillanceRoute: typeof SurveillanceRoute
   TimelineRoute: typeof TimelineRoute
   UploadRoute: typeof UploadRoute
-  AuditRoute: typeof AuditRoute
   CasesNewRoute: typeof CasesNewRoute
   CasesIndexRoute: typeof CasesIndexRoute
 }
@@ -179,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compliance': {
+      id: '/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -216,13 +211,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/audit': {
-      id: '/audit'
-      path: '/audit'
-      fullPath: '/audit'
-      preLoaderRoute: typeof AuditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -249,13 +237,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComplianceRoute: ComplianceRoute,
   DashboardRoute: DashboardRoute,
   InvestigationRoute: InvestigationRoute,
   SettingsRoute: SettingsRoute,
   SurveillanceRoute: SurveillanceRoute,
   TimelineRoute: TimelineRoute,
   UploadRoute: UploadRoute,
-  AuditRoute: AuditRoute,
   CasesNewRoute: CasesNewRoute,
   CasesIndexRoute: CasesIndexRoute,
 }
