@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useEffect, useState, useRef } from "react";
-import { Camera, Radio, Crosshair } from "lucide-react";
+import { Camera, Radio, FastForward } from "lucide-react";
 
 declare global {
   interface Window {
@@ -16,24 +16,81 @@ export const Route = createFileRoute("/surveillance")({
   component: SurveillancePage,
 });
 
-const MOCK_TOWERS = [
+// Detailed mock path from CP -> Lodhi -> IGI to simulate road driving
+const MOCK_PATH = [
+  { lat: 28.6139, lng: 77.2090 }, // CP
+  { lat: 28.6145, lng: 77.2150 },
+  { lat: 28.6129, lng: 77.2295 }, // India Gate
+  { lat: 28.6050, lng: 77.2300 },
+  { lat: 28.5921, lng: 77.2273 }, // Lodhi Gardens
+  { lat: 28.5850, lng: 77.2150 },
+  { lat: 28.5800, lng: 77.2000 }, // Safdarjung
+  { lat: 28.5830, lng: 77.1850 },
+  { lat: 28.5900, lng: 77.1600 }, // Dhaula Kuan
+  { lat: 28.5850, lng: 77.1450 },
+  { lat: 28.5750, lng: 77.1300 },
+  { lat: 28.5650, lng: 77.1150 },
+  { lat: 28.5562, lng: 77.1000 }, // IGI
+];
+
+// Interpolate to make it 100 points for smooth scrubbing
+const interpolatePath = (points: {lat: number, lng: number}[], targetCount: number) => {
+  const result = [];
+  const segments = points.length - 1;
+  const pointsPerSegment = Math.floor(targetCount / segments);
+  
+  for (let i = 0; i < segments; i++) {
+    const start = points[i];
+    const end = points[i + 1];
+    for (let j = 0; j < pointsPerSegment; j++) {
+      const t = j / pointsPerSegment;
+      result.push({
+        lat: start.lat + (end.lat - start.lat) * t,
+        lng: start.lng + (end.lng - start.lng) * t
+      });
+    }
+  }
+  result.push(points[points.length - 1]);
+  return result;
+};
+
+const DETAILED_PATH = interpolatePath(MOCK_PATH, 100);
+
+const CAMERAS = [
   { 
-    id: "T1", lat: 28.6139, lng: 77.2090, label: "TOWER ALPHA (Connaught Place)", time: "18:02:14",
-    cdr: { caller: "+91-98991-XXXXX", receiver: "+91-88264-XXXXX", duration: "00:45s", network: "Airtel India", imei: "359483084XXXXXX" }
+    index: 15, 
+    lat: DETAILED_PATH[15].lat, 
+    lng: DETAILED_PATH[15].lng, 
+    id: "CAM-ND-01", 
+    desc: "Target vehicle DL-9C-XXXX identified crossing India Gate circle. Facial match 89%.",
+    img: "https://images.unsplash.com/photo-1616421946890-55ceea4101e8?auto=format&fit=crop&w=300&q=80"
   },
   { 
-    id: "T2", lat: 28.5921, lng: 77.2273, label: "TOWER BETA (Lodhi Gardens)", time: "18:24:09",
-    cdr: { caller: "+91-98991-XXXXX", receiver: "+91-99100-XXXXX", duration: "02:12s", network: "Jio", imei: "359483084XXXXXX" }
+    index: 45, 
+    lat: DETAILED_PATH[45].lat, 
+    lng: DETAILED_PATH[45].lng, 
+    id: "CAM-SD-44", 
+    desc: "Subject seen interacting with unknown associate near Lodhi road.",
+    img: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=300&q=80"
   },
   { 
-    id: "T3", lat: 28.5562, lng: 77.1000, label: "TOWER GAMMA (IGI Airport)", time: "19:15:33",
-    cdr: { caller: "+91-98991-XXXXX", receiver: "+971-50-XXXXXXX (UAE)", duration: "05:40s", network: "Vodafone Idea", imei: "359483084XXXXXX" }
-  },
+    index: 85, 
+    lat: DETAILED_PATH[85].lat, 
+    lng: DETAILED_PATH[85].lng, 
+    id: "CAM-IG-99", 
+    desc: "Vehicle approaching Terminal 3. Elevated alert status triggered.",
+    img: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=300&q=80"
+  }
 ];
 
 function SurveillancePage() {
   const [time, setTime] = useState("");
+  const [progress, setProgress] = useState(0);
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<any>(null);
+  const polylineRef = useRef<any>(null);
+  const targetMarkerRef = useRef<any>(null);
+  const infoWindowsRef = useRef<any[]>([]);
   
   useEffect(() => {
     setTime(new Date().toLocaleTimeString());
@@ -42,10 +99,6 @@ function SurveillancePage() {
   }, []);
 
   useEffect(() => {
-    let mapInstance: any = null;
-    let polyline: any = null;
-    let animationInterval: any = null;
-
     const initMap = () => {
       if (!mapRef.current || !window.google) return;
       
@@ -54,75 +107,76 @@ function SurveillancePage() {
         { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
-        { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
         { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2c2c2c" }] },
         { featureType: "road.highway", elementType: "geometry.fill", stylers: [{ color: "#3c3c3c" }] },
-        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#181818" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
       ];
 
-      mapInstance = new window.google.maps.Map(mapRef.current, {
-        center: { lat: 28.58, lng: 77.15 },
-        zoom: 11,
+      mapInstance.current = new window.google.maps.Map(mapRef.current, {
+        center: { lat: 28.58, lng: 77.16 },
+        zoom: 12,
         styles: darkTheme,
         disableDefaultUI: true,
       });
 
-      MOCK_TOWERS.forEach(t => {
+      // Draw static full path (dimmed)
+      new window.google.maps.Polyline({
+        path: DETAILED_PATH,
+        map: mapInstance.current,
+        strokeColor: "#444444",
+        strokeOpacity: 0.5,
+        strokeWeight: 4,
+      });
+
+      // Draw dynamic active path
+      polylineRef.current = new window.google.maps.Polyline({
+        path: [DETAILED_PATH[0]],
+        map: mapInstance.current,
+        strokeColor: "#ef4444",
+        strokeOpacity: 1.0,
+        strokeWeight: 4,
+      });
+
+      // Target Marker
+      targetMarkerRef.current = new window.google.maps.Marker({
+        position: DETAILED_PATH[0],
+        map: mapInstance.current,
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          scale: 6,
+          fillColor: "#ef4444",
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: "#ffffff",
+        }
+      });
+
+      // Camera Markers
+      CAMERAS.forEach(cam => {
         const marker = new window.google.maps.Marker({
-          position: { lat: t.lat, lng: t.lng },
-          map: mapInstance,
-          title: t.label,
+          position: { lat: cam.lat, lng: cam.lng },
+          map: mapInstance.current,
           icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            scale: 7,
-            fillColor: "#ef4444",
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: "#ffffff",
+            path: 'M -2,0 L 2,0 M 0,-2 L 0,2', // simple crosshair/camera icon
+            scale: 6,
+            strokeColor: "#10b981",
+            strokeWeight: 3
           }
         });
         
         const info = new window.google.maps.InfoWindow({
            content: `
-            <div style="font-family: monospace; font-size: 11px; color: #10b981; background: #000; padding: 12px; border: 1px solid #10b981; min-width: 200px;">
-              <strong style="color: #ef4444; font-size: 13px;">[INTERCEPT] ${t.label}</strong><br/>
+            <div style="font-family: monospace; font-size: 11px; color: #10b981; background: #000; padding: 10px; border: 1px solid #10b981; max-width: 220px;">
+              <strong style="color: #ef4444; font-size: 13px;">[CCTV HIT] ${cam.id}</strong><br/>
               <hr style="border-color: #10b98144; margin: 4px 0;" />
-              TIME: ${t.time}<br/>
-              NET:  ${t.cdr.network}<br/>
-              IMEI: ${t.cdr.imei}<br/>
-              <hr style="border-color: #10b98144; margin: 4px 0;" />
-              CALL_SRC: <span style="color: #fff;">${t.cdr.caller}</span><br/>
-              CALL_DST: <span style="color: #fff;">${t.cdr.receiver}</span><br/>
-              DUR:  ${t.cdr.duration}<br/>
+              <img src="${cam.img}" style="width: 100%; height: auto; border: 1px solid #333; margin-bottom: 4px;" />
+              ${cam.desc}
             </div>
            `
         });
-        marker.addListener("click", () => info.open(mapInstance, marker));
+        marker.addListener("click", () => info.open(mapInstance.current, marker));
+        infoWindowsRef.current.push({ index: cam.index, info, marker });
       });
-
-      const path = MOCK_TOWERS.map(t => ({ lat: t.lat, lng: t.lng }));
-      polyline = new window.google.maps.Polyline({
-        path,
-        geodesic: true,
-        strokeColor: "#ef4444",
-        strokeOpacity: 0,
-        strokeWeight: 3,
-        icons: [{
-          icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 4 },
-          offset: '0',
-          repeat: '20px'
-        }],
-      });
-      polyline.setMap(mapInstance);
-
-      let count = 0;
-      animationInterval = window.setInterval(() => {
-        count = (count + 1) % 200;
-        const icons = polyline.get('icons');
-        icons[0].offset = (count / 2) + 'px';
-        polyline.set('icons', icons);
-      }, 50);
     };
 
     if (!window.google) {
@@ -134,11 +188,23 @@ function SurveillancePage() {
     } else {
       initMap();
     }
-
-    return () => {
-      if (animationInterval) window.clearInterval(animationInterval);
-    };
   }, []);
+
+  // Update map when scrubber changes
+  useEffect(() => {
+    if (!polylineRef.current || !targetMarkerRef.current) return;
+    
+    const currentPath = DETAILED_PATH.slice(0, progress + 1);
+    polylineRef.current.setPath(currentPath);
+    targetMarkerRef.current.setPosition(DETAILED_PATH[progress]);
+
+    // Auto-open camera popups when scrubbing past them
+    infoWindowsRef.current.forEach(cam => {
+      if (progress === cam.index) {
+        cam.info.open(mapInstance.current, cam.marker);
+      }
+    });
+  }, [progress]);
 
   return (
     <AppLayout title="Live Surveillance" subtitle="Geospatial Tracking & Live Intercepts" fullBleed>
@@ -154,9 +220,26 @@ function SurveillancePage() {
             <span>LOC_LOCK: ACTIVE</span>
           </div>
           
-          <div className="relative flex-1 bg-muted/20">
+          <div className="relative flex-1 bg-muted/20 flex flex-col">
             {/* Map Container */}
-            <div ref={mapRef} className="absolute inset-0 z-0"></div>
+            <div ref={mapRef} className="flex-1 z-0 relative"></div>
+            
+            {/* Scrubber Control */}
+            <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/80 border border-emerald-500/30 p-4 rounded-lg backdrop-blur-md">
+              <div className="flex items-center gap-4 text-emerald-400 font-mono text-xs mb-2">
+                <FastForward className="size-4" />
+                <span>TIMELINE_SCRUBBER</span>
+                <span className="ml-auto">T+ {progress}m</span>
+              </div>
+              <input 
+                type="range" 
+                min="0" 
+                max={DETAILED_PATH.length - 1} 
+                value={progress}
+                onChange={(e) => setProgress(parseInt(e.target.value))}
+                className="w-full accent-red-500"
+              />
+            </div>
             
             <div className="pointer-events-none absolute inset-0 z-10 border-[4px] border-emerald-500/20 mix-blend-overlay"></div>
           </div>
@@ -176,7 +259,6 @@ function SurveillancePage() {
           </div>
           
           <div className="relative flex-1 bg-black overflow-hidden flex items-center justify-center">
-            {/* Spy CRT Overlay */}
             <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-20"></div>
             
             <video 
@@ -188,7 +270,6 @@ function SurveillancePage() {
               src="/cctv_delhi_processed.mp4"
             />
             
-            {/* Spy HUD Elements */}
             <div className="pointer-events-none absolute inset-0 z-30 p-6 flex flex-col justify-between font-mono text-emerald-400 text-sm shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
               <div className="flex justify-between w-full">
                 <div>
@@ -215,7 +296,6 @@ function SurveillancePage() {
 
           </div>
         </div>
-        
       </div>
     </AppLayout>
   );
