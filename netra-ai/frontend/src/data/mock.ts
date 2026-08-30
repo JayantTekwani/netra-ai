@@ -219,10 +219,10 @@ export const supportingRecords: SupportingRecord[] = [
 ];
 
 export const cases: InvestigationCase[] = [
-  { id: "CASE-2041", name: "Operation Meridian", description: "Fictional multi-entity financial and communication network spanning three demo districts.", status: "active", priority: "critical", createdAt: "2026-06-04", entityCount: 18, relationshipCount: 28, lead: "Insp. A. Deshmukh (demo)" },
+  { id: "CASE-2041", name: "Operation Meridian", description: "Fictional multi-entity financial and communication network spanning three demo districts.", status: "active", priority: "critical", createdAt: "2026-06-04", entityCount: 18, relationshipCount: 28, lead: "Demo" },
   { id: "CASE-2044", name: "Blue Harbour Review", description: "Fictional logistics firm review with overlapping directors and transit-hub activity.", status: "active", priority: "high", createdAt: "2026-06-22", entityCount: 11, relationshipCount: 16, lead: "Insp. M. Rao (demo)" },
   { id: "CASE-2047", name: "Sector 14 Follow-up", description: "Fictional follow-up on co-location events recorded around a demo marketplace.", status: "under-review", priority: "medium", createdAt: "2026-07-09", entityCount: 7, relationshipCount: 9, lead: "SI. K. Iyer (demo)" },
-  { id: "CASE-2052", name: "Ledger Trace 09", description: "Fictional layered transfer pattern between three sample accounts.", status: "active", priority: "high", createdAt: "2026-07-28", entityCount: 9, relationshipCount: 14, lead: "Insp. A. Deshmukh (demo)" },
+  { id: "CASE-2052", name: "Ledger Trace 09", description: "Fictional layered transfer pattern between three sample accounts.", status: "active", priority: "high", createdAt: "2026-07-28", entityCount: 9, relationshipCount: 14, lead: "Demo" },
   { id: "CASE-2019", name: "Northline Archive", description: "Fictional archived case retained for pattern comparison only.", status: "closed", priority: "low", createdAt: "2026-02-17", entityCount: 6, relationshipCount: 7, lead: "SI. R. Menon (demo)" },
   { id: "CASE-2055", name: "Transit Hub Cluster", description: "Fictional cluster analysis of devices observed at a demo transport hub.", status: "under-review", priority: "medium", createdAt: "2026-08-08", entityCount: 10, relationshipCount: 13, lead: "Insp. M. Rao (demo)" },
 ];

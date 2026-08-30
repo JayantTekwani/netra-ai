@@ -43,7 +43,7 @@ function SettingsPage() {
           <div className="mt-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="n">Name</Label>
-              <Input id="n" defaultValue={user?.name ?? "A. Deshmukh"} />
+              <Input id="n" defaultValue={user?.name ?? "Demo"} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="e">Email</Label>

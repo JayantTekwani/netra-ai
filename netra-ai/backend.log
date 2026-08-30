@@ -1,0 +1,12 @@
+/Users/jayanttekwani/antigravity/Ne netra/netra-ai/src/fastapi_endpoints.py:111: FastAPIDeprecationWarning: `example` has been deprecated, please use `examples` instead
+  case_id: str = Query(..., example="CASE-2041"),
+/Users/jayanttekwani/antigravity/Ne netra/netra-ai/src/fastapi_endpoints.py:112: FastAPIDeprecationWarning: `example` has been deprecated, please use `examples` instead
+  date_start: Optional[str] = Query(None, example="2026-01-01"),
+/Users/jayanttekwani/antigravity/Ne netra/netra-ai/src/fastapi_endpoints.py:113: FastAPIDeprecationWarning: `example` has been deprecated, please use `examples` instead
+  date_end: str = Query(..., example="2026-08-30")
+/Users/jayanttekwani/antigravity/Ne netra/netra-ai/src/fastapi_endpoints.py:158: FastAPIDeprecationWarning: `example` has been deprecated, please use `examples` instead
+  async def get_evidence_audit(record_id: str = Path(..., example="REC-CDR-889104")):
+INFO:     Started server process [3633]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)

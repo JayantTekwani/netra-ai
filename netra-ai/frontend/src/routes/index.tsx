@@ -35,7 +35,7 @@ function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
-      setSession({ name: "A. Deshmukh", email });
+      setSession({ name: "Demo", email });
       navigate({ to: "/dashboard" });
     }, 600);
   };

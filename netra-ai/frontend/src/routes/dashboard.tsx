@@ -8,12 +8,13 @@ import {
   PlusCircle,
   Activity,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { activity, cases, entities, relationships, supportingRecords } from "@/data/mock";
+import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
 import { getSession } from "@/lib/session";
 
@@ -146,20 +147,20 @@ function DashboardPage() {
           </table>
         </section>
 
-        <section className="panel p-5">
-          <div className="flex items-center gap-2">
-            <Activity className="size-4 text-primary" />
-            <h2 className="text-sm font-semibold tracking-tight">Recent Activity</h2>
+        <section className="panel p-5 bg-primary/5 border-primary/20">
+          <div className="flex items-center gap-2 text-primary">
+            <Sparkles className="size-4" />
+            <h2 className="text-sm font-semibold tracking-tight">Active AI Insights</h2>
           </div>
           <ul className="mt-4 space-y-4">
-            {activity.map((a) => (
-              <li key={a.id} className="border-l-2 border-border pl-3">
-                <div className="text-sm">
-                  <span className="font-medium">{a.actor}</span>{" "}
-                  <span className="text-muted-foreground">{a.action}</span>{" "}
-                  <span className="font-medium">{a.target}</span>
+            {insights.slice(0, 4).map((insight) => (
+              <li key={insight.id} className="border-l-2 border-primary/50 pl-3">
+                <div className="text-sm font-medium leading-tight text-primary/90">
+                  {insight.headline}
                 </div>
-                <div className="font-mono text-[11px] text-muted-foreground">{a.at}</div>
+                <div className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                  {insight.detail}
+                </div>
               </li>
             ))}
           </ul>
