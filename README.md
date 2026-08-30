@@ -67,4 +67,4 @@ python dpdp_purge_demo.py
 - [ ] Rehearse the 5-min pitch script.
 
 ---
-*Built by Team [Name]*
+*Built by Team Sleeper Cells*
