@@ -255,10 +255,27 @@ export const activity: ActivityItem[] = [
 ];
 
 export const insights: Insight[] = [
-  { id: "IN-1", headline: "Multiple interactions detected between selected entities", detail: "Five call events were recorded across four fictional numbers within an eleven day window.", confidence: "observation", recordIds: ["CDR-001", "CDR-002", "CDR-003"] },
-  { id: "IN-2", headline: "A possible connection path exists between two entities", detail: "Rahul Sharma connects to Vikram Sethi through two intermediate fictional nodes.", confidence: "pattern", recordIds: ["CDR-001", "CDR-002"] },
-  { id: "IN-3", headline: "Several interactions occurred within the selected time period", detail: "Three demo transfers occurred between 16 and 22 Aug 2026 in a circular pattern.", confidence: "pattern", recordIds: ["TXN-010", "TXN-011", "TXN-012"] },
-  { id: "IN-4", headline: "The network contains a closely connected group of entities", detail: "Four fictional entities share more connections with each other than with the rest of the demo network.", confidence: "cluster", recordIds: ["FIR-030", "GEO-020"] },
+  {
+    id: "INS-01",
+    headline: "High Eigenvector Centrality Detected",
+    detail: "Entity PER-001 bridges three distinct transaction clusters. Betweenness centrality score: 0.84. Suggests role as a primary intermediary rather than endpoint.",
+    confidence: "pattern",
+    recordIds: ["REC-002", "REC-003"],
+  },
+  {
+    id: "INS-02",
+    headline: "Temporal Co-location Cluster",
+    detail: "Jaccard similarity of 0.92 between device pings for PER-004 and PER-006 over 72 hours. Probability of incidental overlap < 0.05%.",
+    confidence: "cluster",
+    recordIds: ["REC-005"],
+  },
+  {
+    id: "INS-03",
+    headline: "Entity Resolution Merge Confirmed",
+    detail: "Fuzzy phonetic match + shared address hash merged 3 messy records ('Rahul S.', 'R. Sharma') into unified profile PER-001 (Confidence: 96%).",
+    confidence: "observation",
+    recordIds: ["REC-001"],
+  },
 ];
 
 const delay = <T,>(value: T, ms = 120) => new Promise<T>((r) => setTimeout(() => r(value), ms));

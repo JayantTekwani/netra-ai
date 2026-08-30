@@ -8,6 +8,7 @@ import {
   Settings,
   LogOut,
   ShieldCheck,
+  Shield,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { clearSession, getSession } from "@/lib/session";
@@ -16,6 +17,7 @@ const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cases", label: "Cases", icon: FolderSearch },
   { to: "/surveillance", label: "Surveillance", icon: ShieldCheck },
+  { to: "/audit", label: "Audit & Custody", icon: Shield },
   { to: "/upload", label: "Upload Data", icon: UploadCloud },
   { to: "/investigation", label: "Investigation", icon: Share2 },
   { to: "/timeline", label: "Timeline", icon: CalendarClock },

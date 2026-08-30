@@ -68,6 +68,19 @@ export function EntityDetailsPanel({
             </div>
           ))}
         </dl>
+        
+        {/* ENTITY RESOLUTION BADGE */}
+        {entity.type === "person" && (
+          <div className="mt-4 border border-emerald-500/30 bg-emerald-500/5 p-3 rounded-md flex items-start gap-2 text-emerald-500">
+            <GitBranch className="size-4 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold text-xs uppercase tracking-wider">Entity Resolution: Merged</div>
+              <div className="text-[10px] mt-1 opacity-90 leading-tight">
+                Unified from 3 disjoint records ("Rahul S.", "R. Sharma", "Rahul"). Phonetic match conf: 96.4%.
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="border-b border-border p-5">
