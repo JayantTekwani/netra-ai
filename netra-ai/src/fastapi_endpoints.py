@@ -12,9 +12,9 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
 # Modular Imports
-from nlp.indic_soundex import IndicPhoneticMatcher
-from pipeline.data_loader import DatasetLoader
-from pipeline.graph_predictor import ConformalGraphPredictor
+from src.nlp.indic_soundex import IndicPhoneticMatcher
+from src.pipeline.data_loader import DatasetLoader
+from src.pipeline.graph_predictor import ConformalGraphPredictor
 
 # -----------------------------------------------------------------------------
 # App Initialization & CORS Middleware (Task 4)

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InvestigationRouteImport } from './routes/investigation'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SurveillanceRouteImport } from './routes/surveillance'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as CasesIndexRouteImport } from './routes/cases.index'
@@ -36,6 +37,11 @@ const InvestigationRoute = InvestigationRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SurveillanceRoute = SurveillanceRouteImport.update({
+  id: '/surveillance',
+  path: '/surveillance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimelineRoute = TimelineRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
+  '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
   '/cases/new': typeof CasesNewRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
+  '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
   '/cases/new': typeof CasesNewRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/investigation': typeof InvestigationRoute
   '/settings': typeof SettingsRoute
+  '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
   '/upload': typeof UploadRoute
   '/cases/new': typeof CasesNewRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/investigation'
     | '/settings'
+    | '/surveillance'
     | '/timeline'
     | '/upload'
     | '/cases/new'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/investigation'
     | '/settings'
+    | '/surveillance'
     | '/timeline'
     | '/upload'
     | '/cases/new'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/investigation'
     | '/settings'
+    | '/surveillance'
     | '/timeline'
     | '/upload'
     | '/cases/new'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   InvestigationRoute: typeof InvestigationRoute
   SettingsRoute: typeof SettingsRoute
+  SurveillanceRoute: typeof SurveillanceRoute
   TimelineRoute: typeof TimelineRoute
   UploadRoute: typeof UploadRoute
   CasesNewRoute: typeof CasesNewRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/surveillance': {
+      id: '/surveillance'
+      path: '/surveillance'
+      fullPath: '/surveillance'
+      preLoaderRoute: typeof SurveillanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/timeline': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   InvestigationRoute: InvestigationRoute,
   SettingsRoute: SettingsRoute,
+  SurveillanceRoute: SurveillanceRoute,
   TimelineRoute: TimelineRoute,
   UploadRoute: UploadRoute,
   CasesNewRoute: CasesNewRoute,

@@ -1,0 +1,88 @@
+<html><head><style>
+body { font-family: Arial, sans-serif; }
+h1 { color: #2c3e50; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+h2 { color: #34495e; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px;}
+h3 { color: #2980b9; }
+ul { line-height: 1.6; }
+</style></head>
+<body>
+<h1>Netra-AI: Official SIH Idea Submission Template</h1>
+<p><i>CRITICAL INSTRUCTION FOR DESIGN TEAM: You MUST use the exact headers and layout mandated by the SIH Idea Submission Template. Do not deviate from these 6 slides.</i></p>
+
+<h2>Slide 1: TITLE PAGE</h2>
+<ul>
+<li><b>Problem Statement ID:</b> SIH26189</li>
+<li><b>Problem Statement Title:</b> AI-Powered Criminal Network Analysis System</li>
+<li><b>Theme:</b> Smart Automation / Security &amp; Surveillance</li>
+<li><b>PS Category:</b> Software</li>
+<li><b>Team ID:</b> [Insert Team ID]</li>
+<li><b>Team Name:</b> [Insert Team Name]</li>
+</ul>
+
+<h2>Slide 2: IDEA TITLE (Solution Overview)</h2>
+<p><b>Idea Title:</b> Netra-AI: A Cryptographically Secure, Multi-Modal Intelligence Graph</p>
+<p><b>Solution &amp; Explanation:</b><br>
+Netra-AI solves the fragmentation of Indian law enforcement data. We take unstructured, multi-modal data (low-res CCTV, audio wiretaps, mixed-script FIRs) and fuse it into a dynamic Knowledge Graph. It allows investigators to visually track criminal syndicates, trace financial flows, and uncover hidden connections without manual cross-referencing.</p>
+<p><b>Innovation &amp; Uniqueness:</b></p>
+<ul>
+<li><b>2-Tier Hardware Edge AI:</b> Runs 128-D Top-K facial tracking on local Edge TPUs (Jetson Nano) to prevent thermal throttling, while pushing raw crops to a 512-D Cloud Transformer for high-precision verification.</li>
+<li><b>Indic-Soundex &amp; IPA Mapping:</b> Translates regional FIRs (Devanagari/Urdu) into a universal phonetic tensor space to deduplicate aliases ('urf') without lossy English translation.</li>
+<li><b>Zero-Knowledge Proofs (ZKP):</b> Allows cross-state police departments (e.g., Delhi Police and Mumbai ATS) to find suspect overlaps without exposing raw FIR text.</li>
+</ul>
+
+<h2>Slide 3: TECHNICAL APPROACH</h2>
+<p><b>Methodology and Process (Flowchart Instructions for Design Team):</b><br>
+<i>Create a Flowchart showing 3 decoupled parallel pipelines before the database layer:</i><br>
+1. Video stream -&gt; Edge TPU -&gt; ViT -&gt; Merkle Hash Engine<br>
+2. Audio/Text -&gt; IndicNLP / Indic-Soundex -&gt; Cypher Batch Ingestion<br>
+3. Telecom (CDR) -&gt; Kafka Broker -&gt; Neo4j Graph Engine<br>
+<i>All three converge into the central Knowledge Graph, avoiding browser ingestion for heavy data.</i></p>
+<p><b>Technologies and Tools:</b></p>
+<ul>
+<li><b>Backend:</b> Python (FastAPI), Apache Kafka (Ingestion), Neo4j (Graph Database)</li>
+<li><b>Frontend:</b> React.js, vis-network.js (Graph Visualization)</li>
+<li><b>AI Models:</b> SCRFD &amp; MobileFaceNet (Edge Vision), ViT (Cloud Vision), IndicXlit &amp; bi-LSTM (NLP Phonetics), Graph Attention Networks / GAT (Link Prediction)</li>
+<li><b>Security:</b> TPM Hardware Hashing, e-Pramaan, zk-SNARKs (Zero-Knowledge Proofs)</li>
+</ul>
+
+<h2>Slide 4: FEASIBILITY AND VIABILITY</h2>
+<p><b>Feasibility of the Idea:</b></p>
+<ul>
+<li><b>Technical:</b> Highly feasible. Built on open-source frameworks (Python, React) and hardware-agnostic; deploys on existing ONVIF-compliant CCTV grids.</li>
+<li><b>Financial:</b> Edge processing drastically reduces cloud compute costs.</li>
+<li><b>Operational:</b> The automated pipeline slashes multi-state intelligence correlation time from weeks to seconds.</li>
+</ul>
+<p><b>Potential Challenges &amp; Risks:</b></p>
+<ol>
+<li><b>Risk 1 (Supernodes):</b> Massive cell-tower dumps crash standard graph queries.</li>
+<li><b>Risk 2 (AI Hallucinations):</b> Predictive algorithms can cause illegal detentions.</li>
+<li><b>Risk 3 (DPDP vs BSA):</b> Storing bystander biometrics violates the DPDP Act.</li>
+</ol>
+<p><b>Strategies to Overcome:</b></p>
+<ol>
+<li><b>Fix 1 (TGNs + PPR Sampling):</b> We use Temporal Graph Networks and Personalized PageRank to bypass supernodes.</li>
+<li><b>Fix 2 (Conformal Prediction + HITL):</b> AI Ghost Nodes are mathematically constrained and require Human-In-The-Loop cryptographic sign-off.</li>
+<li><b>Fix 3 (Salted Hash + zk-SNARK Purge Proofs):</b> Bystander data is deleted to comply with DPDP, but the salted hash remains in a Merkle Tree (proven via zk-SNARKs) to maintain legal chain-of-custody.</li>
+</ol>
+
+<h2>Slide 5: IMPACT AND BENEFITS</h2>
+<p><b>Potential Impact on the Target Audience:</b><br>
+Empowers Investigating Officers (IOs) and the Ministry of Home Affairs to dismantle interstate organized crime, terror financing, and human trafficking rings with unprecedented speed and legal precision.</p>
+<p><b>Benefits of the Solution:</b></p>
+<ol>
+<li><b>Interstate Synergy:</b> Federated ZKP allows states to collaborate while maintaining data sovereignty.</li>
+<li><b>Courtroom Admissibility:</b> Cryptographic Merkle Trees guarantee an unbroken hardware chain-of-custody under BSA Section 63.</li>
+<li><b>Eliminates False Arrests:</b> 2-Tier Edge-to-Cloud vision cascade completely mitigates open-set False Match Rates (FMR).</li>
+<li><b>Proactive Policing:</b> Graph Neural Networks predict hidden financial and communicative links *before* crimes escalate.</li>
+</ol>
+
+<h2>Slide 6: RESEARCH AND REFERENCES</h2>
+<ul>
+<li>IndicXlit (AI4Bharat, 2022)</li>
+<li>Temporal Graph Networks (Rossi et al., Twitter/Cornell, 2020)</li>
+<li>Conformal Prediction for Graph Neural Networks (Zargarbashi et al., NeurIPS)</li>
+<li>Private Set Intersection in the Internet of Things (PSI-CA applications)</li>
+<li>Bharatiya Sakshya Adhiniyam (BSA 2023) Section 63, Digital Personal Data Protection Act (DPDP 2023)</li>
+</ul>
+
+</body></html>

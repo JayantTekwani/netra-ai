@@ -1,0 +1,84 @@
+<html><head><style>
+body { font-family: Arial, sans-serif; }
+h1 { color: #2c3e50; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+h2 { color: #34495e; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px;}
+h3 { color: #2980b9; }
+.cheat-code { background-color: #f9f9f9; padding: 15px; border-left: 5px solid #e74c3c; font-style: italic; margin-bottom: 15px; }
+ul { line-height: 1.6; }
+</style></head>
+<body>
+<h1>The 'Explain It Like I am 5' Guide to Netra-AI</h1>
+<p>If you feel overwhelmed by all the heavy tech jargon (ZKP, Merkle Trees, Conformal Prediction), don't panic. This guide breaks down exactly what our project is, how the code works, and what you need to say to sound like an absolute genius to the judges.</p>
+
+<h2>1. The Big Picture (What is Netra-AI?)</h2>
+<p>Imagine if Facebook existed, but only for criminals. Right now, the police have a lot of data (CCTV videos, phone records, old FIR reports), but it's all messy and disconnected. It takes humans weeks to connect the dots.</p>
+<p><b>Netra-AI is a system that automatically connects those dots.</b><br>
+You feed it a CCTV video, a wiretap audio file, or a written police report. It uses AI to extract the names and faces, and then instantly draws a 'Knowledge Graph' (a giant web) showing exactly who is connected to whom, who sent money to whom, and who they will likely meet next.</p>
+
+<h2>2. The 4 Big Features We Built (Simply Explained)</h2>
+
+<h3>A. The 2-Tier Vision (The Eyes)</h3>
+<ul>
+<li><b>The Problem:</b> Running heavy facial recognition on cheap street cameras causes them to overheat and lag.</li>
+<li><b>Our Fix:</b> We built a '2-Tier' system.
+<ul>
+<li><i>Tier 1 (The Bouncer):</i> The cheap camera just checks if a face is present and takes a quick snapshot (low memory).</li>
+<li><i>Tier 2 (The Detective):</i> It sends that snapshot to the massive Cloud server which has the power to accurately match it against a database of 100,000 criminals.</li>
+</ul></li>
+<li><i>Why it's cool:</i> It stops the system from crashing and prevents innocent people from being falsely arrested.</li>
+</ul>
+
+<h3>B. Indic-Soundex (The Translator)</h3>
+<ul>
+<li><b>The Problem:</b> Criminals use aliases ('urf') and FIRs are written in Hindi, Marathi, Urdu, etc. If a computer translates 'Chhota Taklu' to English, it loses its meaning.</li>
+<li><b>Our Fix:</b> We don't translate to English. We translate regional languages into 'Math' based on how they <i>sound</i>. So, 'छोटा टकलू' and 'Chhota Taklu' equal the exact same math equation, allowing us to link the criminal regardless of the language the police typed it in.</li>
+</ul>
+
+<h3>C. Ghost Nodes (The Fortune Teller)</h3>
+<ul>
+<li><b>The Problem:</b> Police want to know what a criminal will do <i>next</i>.</li>
+<li><b>Our Fix:</b> We use an AI to guess hidden relationships based on past data (these are the dashed yellow lines on your graph).</li>
+<li><i>Why it's safe:</i> AI can hallucinate (lie). So we use a math trick called <b>Conformal Prediction</b> which ensures the AI is 95% confident before it shows a Ghost Edge, preventing the police from making illegal arrests based on bad AI guesses.</li>
+</ul>
+
+<h3>D. The Legal Vault (The Security Guard)</h3>
+<ul>
+<li><b>The Problem:</b> Privacy laws (DPDP Act) say you must delete innocent people's faces from CCTV after a few days. But Evidence laws (BSA Sec 63) say you can't delete police data, or it ruins the case in court.</li>
+<li><b>Our Fix:</b> We use <b>Merkle Trees</b> and <b>zk-SNARKs</b> (Blockchain tech). We hash (scramble) the innocent person's face. We delete their actual picture for privacy, but we keep the scrambled hash forever to prove to the judge we didn't tamper with the video!</li>
+</ul>
+
+<h2>3. What to tell the Judges (The Cheat Code)</h2>
+<p>When the judges come to your desk, follow this exact script:</p>
+
+<div class="cheat-code">
+<b>1. The Hook (10 Seconds)</b><br>
+"Good morning. We didn't just build a dashboard; we built an MHA-grade Intelligence Architecture. Netra-AI takes messy, low-res police data and turns it into a cryptographically secure Knowledge Graph."
+</div>
+
+<div class="cheat-code">
+<b>2. The Demo (Show, Don't Tell)</b><br>
+<ul>
+<li><b>Point at the Graph:</b> "This is our Knowledge Graph. It doesn't just store data; it visualizes the entire criminal syndicate."</li>
+<li><b>Click the Timeline Slider:</b> "Criminal networks evolve. Our Time-Scrub feature lets an officer rewind time to see exactly how and when a syndicate formed over the last 12 months."</li>
+<li><b>Click [ RUN PREDICTIVE AI ]:</b> "We don't just look at the past. Our AI predicts hidden links. But to prevent illegal arrests, we mathematically lock these predictions using Conformal Prediction bounds."</li>
+</ul>
+</div>
+
+<div class="cheat-code">
+<b>3. The Finishing Blow (If they ask tough questions)</b><br>
+<ul>
+<li><b>If they ask about Data Privacy:</b> Say, "We hash bystander data and use zk-SNARKs. We delete the raw face for privacy, but keep the hash in our Merkle Tree to maintain legal chain-of-custody for the court."</li>
+<li><b>If they ask about CCTV crashing:</b> Say, "We use a 2-Tier Cascade. The edge camera only does lightweight tracking, and asynchronously sends the heavy facial recognition task to the Cloud."</li>
+<li><b>If they ask about misspelled Hindi names:</b> Say, "We don't use lossy English translation. We use Indic-Soundex and IPA tensor spaces to match aliases purely on how they sound phonetically."</li>
+</ul>
+</div>
+
+<h3>Quick Glossary (Just memorize these buzzwords):</h3>
+<ul>
+<li><b>Knowledge Graph:</b> A web of dots (people) and lines (relationships).</li>
+<li><b>Merkle Tree:</b> A blockchain vault that proves data wasn't tampered with.</li>
+<li><b>ZKP (Zero-Knowledge Proof):</b> A way to prove you know a secret without actually showing the secret (used for privacy).</li>
+<li><b>FastAPI:</b> The super-fast Python engine we built to run the backend.</li>
+</ul>
+
+</body></html>
