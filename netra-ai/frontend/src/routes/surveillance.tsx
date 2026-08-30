@@ -206,10 +206,12 @@ function SurveillancePage() {
     polylineRef.current.setPath(currentPath);
     targetMarkerRef.current.setPosition(DETAILED_PATH[progress]);
 
-    // Auto-open camera popups when scrubbing past them
+    // Auto-open camera popups when in proximity, close when driving away
     infoWindowsRef.current.forEach(cam => {
-      if (progress === cam.index) {
+      if (Math.abs(progress - cam.index) <= 4) {
         cam.info.open(mapInstance.current, cam.marker);
+      } else {
+        cam.info.close();
       }
     });
   }, [progress]);
