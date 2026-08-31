@@ -15,6 +15,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
+import { LiveAnalysis } from "@/components/dashboard/LiveAnalysis";
 import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
 import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
@@ -233,6 +234,7 @@ function DashboardPage() {
           </div>
         </section>
         
+        <LiveAnalysis entities={denseEntities} relationships={denseRelationships} />
         <div className="col-span-1 lg:col-span-3">
           <EntityResolutionDemo />
         </div>
