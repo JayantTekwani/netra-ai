@@ -1,5 +1,5 @@
 /**
- * NEXUS data contracts.
+ * नेत्र-AI data contracts.
  *
  * These types describe the shape the UI consumes. The mock adapter in
  * `src/data/mock.ts` implements them today; a real backend (REST / Neo4j)

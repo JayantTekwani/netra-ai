@@ -9,16 +9,16 @@ import { setSession } from "@/lib/session";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NEXUS — Investigation Intelligence Platform" },
+      { title: "नेत्र-AI — Investigation Intelligence Platform" },
       {
         name: "description",
         content:
-          "NEXUS prototype sign-in: an investigation intelligence platform for exploring relationships across fictional demo case data.",
+          "नेत्र-AI prototype sign-in: an investigation intelligence platform for exploring relationships across fictional demo case data.",
       },
-      { property: "og:title", content: "NEXUS — Investigation Intelligence Platform" },
+      { property: "og:title", content: "नेत्र-AI — Investigation Intelligence Platform" },
       {
         property: "og:description",
-        content: "Prototype sign-in for the NEXUS criminal network analysis demo.",
+        content: "Prototype sign-in for the नेत्र-AI criminal network analysis demo.",
       },
     ],
   }),
@@ -53,7 +53,7 @@ function LoginPage() {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach(track => track.stop());
       }
-      setSession({ name: "Investigator", email: "biometric@nexus" });
+      setSession({ name: "Investigator", email: "biometric@netra" });
       navigate({ to: "/dashboard" });
     }, 3500);
   };
@@ -73,7 +73,7 @@ function LoginPage() {
               <ShieldCheck className="size-7 text-primary" />
             </div>
             <div>
-              <div className="font-mono text-4xl font-semibold tracking-[0.28em]">NEXUS</div>
+              <div className="font-mono text-4xl font-semibold tracking-[0.28em]">नेत्र-AI</div>
               <div className="mt-1 text-sm uppercase tracking-[0.22em] text-muted-foreground">
                 Investigation Intelligence Platform
               </div>
@@ -97,7 +97,7 @@ function LoginPage() {
               </ul>
             </div>
             <div className="panel p-4 border-border bg-accent/10 relative overflow-hidden">
-              <div className="text-[10px] uppercase font-bold tracking-wider text-accent mb-2">With NEXUS</div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-accent mb-2">With नेत्र-AI</div>
               <ul className="space-y-1.5 text-xs font-medium font-mono text-accent/80">
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> 1 unified search</li>
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> Auto-linked evidence</li>

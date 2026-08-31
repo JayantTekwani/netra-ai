@@ -5,7 +5,7 @@ import { getSession } from "@/lib/session";
 
 export const Route = createFileRoute("/compliance")({
   head: () => ({
-    meta: [{ title: "Audit & Access Log — NEXUS" }],
+    meta: [{ title: "Audit & Access Log — नेत्र-AI" }],
   }),
   component: AuditPage,
 });

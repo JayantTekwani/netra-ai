@@ -1,5 +1,5 @@
 /** Mock session store for the prototype. Replace with real auth later. */
-const KEY = "nexus.session";
+const KEY = "netra.session";
 
 export interface Session {
   name: string;

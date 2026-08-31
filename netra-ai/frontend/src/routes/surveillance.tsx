@@ -11,7 +11,7 @@ declare global {
 
 export const Route = createFileRoute("/surveillance")({
   head: () => ({
-    meta: [{ title: "Live Surveillance — NEXUS" }],
+    meta: [{ title: "Live Surveillance — नेत्र-AI" }],
   }),
   component: SurveillancePage,
 });

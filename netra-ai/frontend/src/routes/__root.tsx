@@ -89,13 +89,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "NEXUS — Investigation Intelligence Platform" },
+      { title: "नेत्र-AI — Investigation Intelligence Platform" },
       {
         name: "description",
         content:
-          "NEXUS prototype: explore relationships between entities across fictional demo investigation data.",
+          "नेत्र-AI prototype: explore relationships between entities across fictional demo investigation data.",
       },
-      { property: "og:title", content: "NEXUS — Investigation Intelligence Platform" },
+      { property: "og:title", content: "नेत्र-AI — Investigation Intelligence Platform" },
       {
         property: "og:description",
         content: "Prototype criminal network analysis workspace built on fictional demo data.",

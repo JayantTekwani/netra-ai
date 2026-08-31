@@ -11,16 +11,16 @@ import { getSession } from "@/lib/session";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — NEXUS Investigation Platform" },
+      { title: "Settings — नेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
-          "Manage demo profile details, workspace preferences and prototype data-source configuration in NEXUS.",
+          "Manage demo profile details, workspace preferences and prototype data-source configuration in नेत्र-AI.",
       },
-      { property: "og:title", content: "Settings — NEXUS Investigation Platform" },
+      { property: "og:title", content: "Settings — नेत्र-AI Investigation Platform" },
       {
         property: "og:description",
-        content: "Profile and workspace preferences for the NEXUS prototype.",
+        content: "Profile and workspace preferences for the नेत्र-AI prototype.",
       },
     ],
   }),
@@ -47,7 +47,7 @@ function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="e">Email</Label>
-              <Input id="e" defaultValue={user?.email ?? "investigator@nexus.demo"} />
+              <Input id="e" defaultValue={user?.email ?? "investigator@netra.ai"} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="u">Unit</Label>

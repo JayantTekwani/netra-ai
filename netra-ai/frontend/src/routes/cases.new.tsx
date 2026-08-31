@@ -18,16 +18,16 @@ import {
 export const Route = createFileRoute("/cases/new")({
   head: () => ({
     meta: [
-      { title: "Create Case — NEXUS Investigation Platform" },
+      { title: "Create Case — नेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
-          "Register a new fictional demo investigation case with priority, status and description in NEXUS.",
+          "Register a new fictional demo investigation case with priority, status and description in नेत्र-AI.",
       },
-      { property: "og:title", content: "Create Case — NEXUS Investigation Platform" },
+      { property: "og:title", content: "Create Case — नेत्र-AI Investigation Platform" },
       {
         property: "og:description",
-        content: "Register a new demo investigation case in the NEXUS prototype.",
+        content: "Register a new demo investigation case in the नेत्र-AI prototype.",
       },
     ],
   }),

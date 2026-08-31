@@ -50,7 +50,7 @@ export function AppLayout({
           </div>
           <div className="leading-tight">
             <div className="font-serif text-lg font-semibold tracking-wide text-foreground">
-              NEXUS
+              नेत्र-AI
             </div>
             <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-mono mt-0.5">
               Intelligence Platform
@@ -99,7 +99,7 @@ export function AppLayout({
             <div className="min-w-0 flex-1 leading-tight">
               <div className="truncate text-sm font-medium">{user?.name ?? "Investigator"}</div>
               <div className="truncate text-[10px] uppercase tracking-wider text-muted-foreground font-mono mt-0.5">
-                {user?.email ?? "demo@nexus.gov"}
+                {user?.email ?? "demo@netra.ai"}
               </div>
             </div>
             <button

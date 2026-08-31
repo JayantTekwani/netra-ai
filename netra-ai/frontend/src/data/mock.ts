@@ -1,5 +1,5 @@
 /**
- * Centralised mock data layer for the NEXUS prototype.
+ * Centralised mock data layer for the नेत्र-AI prototype.
  *
  * ALL data below is entirely fictional and exists only to demonstrate the
  * interface. Nothing here represents real people, records or investigations.

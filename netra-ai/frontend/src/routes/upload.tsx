@@ -11,13 +11,13 @@ import { entities, relationships, supportingRecords } from "@/data/mock";
 export const Route = createFileRoute("/upload")({
   head: () => ({
     meta: [
-      { title: "Upload Data — NEXUS Investigation Platform" },
+      { title: "Upload Data — नेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
-          "Upload demo case documents, call detail records and financial records, then simulate an extraction run in the NEXUS prototype.",
+          "Upload demo case documents, call detail records and financial records, then simulate an extraction run in the नेत्र-AI prototype.",
       },
-      { property: "og:title", content: "Upload Data — NEXUS Investigation Platform" },
+      { property: "og:title", content: "Upload Data — नेत्र-AI Investigation Platform" },
       {
         property: "og:description",
         content: "Simulated ingestion of FIR, CDR and transaction files for demo analysis.",

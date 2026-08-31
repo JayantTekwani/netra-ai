@@ -9,13 +9,13 @@ import type { RelationshipType } from "@/data/types";
 export const Route = createFileRoute("/timeline")({
   head: () => ({
     meta: [
-      { title: "Timeline — NEXUS Investigation Platform" },
+      { title: "Timeline — नेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
           "Chronological view of fictional demo investigation events: calls, transfers, location hits and document mentions.",
       },
-      { property: "og:title", content: "Timeline — NEXUS Investigation Platform" },
+      { property: "og:title", content: "Timeline — नेत्र-AI Investigation Platform" },
       {
         property: "og:description",
         content: "Chronological demo events with references to supporting records.",
