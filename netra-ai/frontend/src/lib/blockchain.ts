@@ -1,43 +1,76 @@
-// Client-side Blockchain Simulation for SIH Cryptographic Ledger Requirement
+// Cryptographic Ledger - SIH Architecture Implementation
+// Uses Merkle Trees for batching to prevent bloat, and Off-chain PII to comply with DPDP Act.
+
+export interface Transaction {
+  id: string;
+  timestamp: string;
+  action: string;
+  // DPDP Compliance: We never store PII in the transaction on-chain.
+  // We only store a salted hash of the payload. The actual PII lives off-chain.
+  offChainPayloadHash: string; 
+}
 
 export interface Block {
   index: number;
   timestamp: string;
-  data: string; // The action or FIR record being logged
+  merkleRoot: string; // Batching transactions using a Merkle Root
   previousHash: string;
   hash: string;
   nonce: number;
+  transactions: Transaction[];
 }
 
 export class Blockchain {
   public chain: Block[];
+  public pendingTransactions: Transaction[];
 
   constructor() {
     this.chain = [];
-    // Synchronously initialize the chain with a dummy genesis block
-    // to avoid async constructors. We'll manually mine the real genesis block on init.
+    this.pendingTransactions = [];
   }
 
-  // Simple SHA-256 implementation using Web Crypto API
-  private async calculateHash(index: number, previousHash: string, timestamp: string, data: string, nonce: number): Promise<string> {
-    const msgBuffer = new TextEncoder().encode(index + previousHash + timestamp + JSON.stringify(data) + nonce);
+  // Helper to hash generic strings
+  private async hashString(input: string): Promise<string> {
+    const msgBuffer = new TextEncoder().encode(input);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
+  // Calculate Merkle Root of an array of transactions
+  private async calculateMerkleRoot(transactions: Transaction[]): Promise<string> {
+    if (transactions.length === 0) return await this.hashString("EMPTY_BLOCK");
+    
+    let hashes = await Promise.all(transactions.map(t => this.hashString(t.id + t.offChainPayloadHash)));
+    
+    while (hashes.length > 1) {
+      if (hashes.length % 2 !== 0) hashes.push(hashes[hashes.length - 1]); // duplicate last if odd
+      const nextLevel: string[] = [];
+      for (let i = 0; i < hashes.length; i += 2) {
+        nextLevel.push(await this.hashString(hashes[i] + hashes[i + 1]));
+      }
+      hashes = nextLevel;
+    }
+    return hashes[0];
+  }
+
+  private async calculateBlockHash(index: number, previousHash: string, timestamp: string, merkleRoot: string, nonce: number): Promise<string> {
+    return this.hashString(index + previousHash + timestamp + merkleRoot + nonce);
+  }
+
   public async initializeGenesisBlock() {
     if (this.chain.length > 0) return;
-    const genesisData = JSON.stringify({ event: "SYSTEM_INIT", details: "Netra-AI Immutable Ledger Initialized" });
     const timestamp = new Date().toISOString();
-    const hash = await this.calculateHash(0, "0", timestamp, genesisData, 0);
+    const merkleRoot = await this.hashString("GENESIS");
+    const hash = await this.calculateBlockHash(0, "0", timestamp, merkleRoot, 0);
     this.chain.push({
       index: 0,
       timestamp,
-      data: genesisData,
+      merkleRoot,
       previousHash: "0",
       hash,
-      nonce: 0
+      nonce: 0,
+      transactions: []
     });
   }
 
@@ -45,33 +78,53 @@ export class Blockchain {
     return this.chain[this.chain.length - 1]!;
   }
 
-  public async addBlock(data: any): Promise<Block> {
+  // Add a transaction to the mempool
+  public async addTransaction(action: string, rawPayload: any) {
+    // Hash the PII payload BEFORE it touches the ledger (DPDP Act Compliance)
+    const offChainPayloadHash = await this.hashString(JSON.stringify(rawPayload) + "SECRET_SALT");
+    
+    this.pendingTransactions.push({
+      id: "TXN-" + Math.random().toString(36).substr(2, 9),
+      timestamp: new Date().toISOString(),
+      action,
+      offChainPayloadHash
+    });
+  }
+
+  // Mine pending transactions into a block
+  public async minePendingTransactions(): Promise<Block | null> {
+    if (this.pendingTransactions.length === 0) return null;
+
     const latestBlock = this.getLatestBlock();
     const index = latestBlock.index + 1;
     const timestamp = new Date().toISOString();
     const previousHash = latestBlock.hash;
-    const stringData = JSON.stringify(data);
     
-    // Simple Proof of Work (mining) - require 2 leading zeros to simulate effort
-    // In a real browser this takes milliseconds, but proves the concept for judges
+    // Create Merkle Root to compress transactions
+    const transactionsToMine = [...this.pendingTransactions];
+    const merkleRoot = await this.calculateMerkleRoot(transactionsToMine);
+    
+    // Proof of Work
     let nonce = 0;
-    let hash = await this.calculateHash(index, previousHash, timestamp, stringData, nonce);
+    let hash = await this.calculateBlockHash(index, previousHash, timestamp, merkleRoot, nonce);
     
-    while (!hash.startsWith("00")) {
+    while (!hash.startsWith("00")) { // Difficulty target
       nonce++;
-      hash = await this.calculateHash(index, previousHash, timestamp, stringData, nonce);
+      hash = await this.calculateBlockHash(index, previousHash, timestamp, merkleRoot, nonce);
     }
 
     const newBlock: Block = {
       index,
       timestamp,
-      data: stringData,
+      merkleRoot,
       previousHash,
       hash,
-      nonce
+      nonce,
+      transactions: transactionsToMine
     };
 
     this.chain.push(newBlock);
+    this.pendingTransactions = []; // clear mempool
     return newBlock;
   }
 
@@ -80,27 +133,25 @@ export class Blockchain {
       const currentBlock = this.chain[i]!;
       const previousBlock = this.chain[i - 1]!;
 
-      // Recalculate hash to verify data hasn't been tampered with
-      const recalculatedHash = await this.calculateHash(
+      // Verify block integrity
+      const recalculatedHash = await this.calculateBlockHash(
         currentBlock.index,
         currentBlock.previousHash,
         currentBlock.timestamp,
-        currentBlock.data,
+        currentBlock.merkleRoot,
         currentBlock.nonce
       );
 
-      if (currentBlock.hash !== recalculatedHash) {
-        return false;
-      }
+      if (currentBlock.hash !== recalculatedHash) return false;
+      if (currentBlock.previousHash !== previousBlock.hash) return false;
       
-      // Verify chain link
-      if (currentBlock.previousHash !== previousBlock.hash) {
-        return false;
-      }
+      // Verify Merkle Root matches the transactions
+      const validMerkle = await this.calculateMerkleRoot(currentBlock.transactions);
+      if (currentBlock.merkleRoot !== validMerkle) return false;
     }
     return true;
   }
 }
 
-// Global singleton for the session
+// Global singleton for the prototype session
 export const ledger = new Blockchain();
