@@ -51,8 +51,9 @@ function DashboardPage() {
     const timer = setInterval(() => {
       setLiveInsights(current => {
         const nextPool = LIVE_INSIGHTS_POOL.filter(i => !current.find(c => c.id === i.id));
+        if (nextPool.length === 0) return current; // avoid crash if pool empty
         const randomNext = nextPool[Math.floor(Math.random() * nextPool.length)]!;
-        return [randomNext, ...current.slice(0, 3)];
+        return [randomNext, ...current].slice(0, 50);
       });
     }, 4500);
     return () => clearInterval(timer);
@@ -160,18 +161,20 @@ function DashboardPage() {
             <Activity className="size-4 text-primary" />
             <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
           </div>
-          <ul className="mt-4 grid grid-cols-4 gap-6">
-            {liveInsights.map((insight) => (
-              <li key={insight.id} className="border-l-2 border-border pl-3 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="text-sm font-medium leading-tight">
-                  {insight.headline}
-                </div>
-                <div className="mt-2 text-xs text-muted-foreground line-clamp-3">
-                  {insight.detail}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+            <ul className="flex flex-nowrap gap-6 w-max">
+              {liveInsights.map((insight) => (
+                <li key={insight.id} className="w-[320px] shrink-0 border-l-2 border-border pl-4 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="text-sm font-medium leading-tight">
+                    {insight.headline}
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground line-clamp-3">
+                    {insight.detail}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         <section className="panel col-span-3 relative h-[720px] overflow-hidden p-0">
