@@ -6,12 +6,12 @@ type Graph = Record<string, Set<string>>;
 export function buildGraph(relationships: Relationship[]): Graph {
   const graph: Graph = {};
   relationships.forEach(rel => {
-    if (!graph[rel.sourceId]) graph[rel.sourceId] = new Set();
-    if (!graph[rel.targetId]) graph[rel.targetId] = new Set();
+    if (!graph[rel.source]) graph[rel.source] = new Set();
+    if (!graph[rel.target]) graph[rel.target] = new Set();
     
     // Treat as undirected for centrality
-    graph[rel.sourceId].add(rel.targetId);
-    graph[rel.targetId].add(rel.sourceId);
+    graph[rel.source].add(rel.target);
+    graph[rel.target].add(rel.source);
   });
   return graph;
 }
@@ -20,7 +20,7 @@ export function buildGraph(relationships: Relationship[]): Graph {
 export function calculateDegreeCentrality(graph: Graph): Record<string, number> {
   const centrality: Record<string, number> = {};
   for (const node in graph) {
-    centrality[node] = graph[node].size;
+    centrality[node] = (graph[node] || new Set()).size;
   }
   return centrality;
 }
@@ -41,8 +41,8 @@ export function calculateEigenvectorCentrality(graph: Graph, maxIterations = 100
 
     nodes.forEach(node => {
       let sum = 0;
-      graph[node].forEach(neighbor => {
-        sum += centrality[neighbor];
+      (graph[node] || new Set()).forEach(neighbor => {
+        sum += centrality[neighbor] || 0;
       });
       nextCentrality[node] = sum;
       sumSquares += sum * sum;
@@ -52,8 +52,8 @@ export function calculateEigenvectorCentrality(graph: Graph, maxIterations = 100
     let maxDiff = 0;
 
     nodes.forEach(node => {
-      nextCentrality[node] /= norm;
-      maxDiff = Math.max(maxDiff, Math.abs(nextCentrality[node] - centrality[node]));
+      nextCentrality[node] = (nextCentrality[node] || 0) / norm;
+      maxDiff = Math.max(maxDiff, Math.abs((nextCentrality[node] || 0) - (centrality[node] || 0)));
     });
 
     centrality = nextCentrality;

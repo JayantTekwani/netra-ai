@@ -42,7 +42,7 @@ export class Blockchain {
   }
 
   public getLatestBlock(): Block {
-    return this.chain[this.chain.length - 1];
+    return this.chain[this.chain.length - 1]!;
   }
 
   public async addBlock(data: any): Promise<Block> {
@@ -77,8 +77,8 @@ export class Blockchain {
 
   public async isChainValid(): Promise<boolean> {
     for (let i = 1; i < this.chain.length; i++) {
-      const currentBlock = this.chain[i];
-      const previousBlock = this.chain[i - 1];
+      const currentBlock = this.chain[i]!;
+      const previousBlock = this.chain[i - 1]!;
 
       // Recalculate hash to verify data hasn't been tampered with
       const recalculatedHash = await this.calculateHash(

@@ -23,7 +23,7 @@ export function LiveAnalysis({ entities, relationships }: { entities: Entity[], 
         .map(([id, score]) => ({
           id,
           score,
-          label: entities.find(e => e.id === id)?.label || id
+          label: entities.find(e => e.id === id)?.name || id
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 5); // top 5 targets
@@ -65,7 +65,7 @@ export function LiveAnalysis({ entities, relationships }: { entities: Entity[], 
               {results.map((res, i) => (
                 <div key={res.id} className="bg-background rounded-md border border-border p-3">
                   <div className="text-[10px] text-muted-foreground mb-1 uppercase font-mono">Rank {i + 1}</div>
-                  <div className="font-semibold text-sm truncate">{res.label}</div>
+                  <div className="font-semibold text-sm truncate">{res.name}</div>
                   <div className="text-xs text-accent mt-2 font-mono">Score: {res.score.toFixed(4)}</div>
                 </div>
               ))}
