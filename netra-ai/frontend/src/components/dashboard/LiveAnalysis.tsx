@@ -23,7 +23,7 @@ export function LiveAnalysis({ entities, relationships }: { entities: Entity[], 
         .map(([id, score]) => ({
           id,
           score,
-          label: entities.find(e => e.id === id)?.name || id
+          name: entities.find(e => e.id === id)?.name || id
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 5); // top 5 targets
