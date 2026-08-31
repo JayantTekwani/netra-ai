@@ -154,3 +154,74 @@ html[data-theme="dark"] .theme-toggle::after {
   transform: translateX(22px);
   content: "☾";
 }
+
+/* 3D Hologram Graph Nodes */
+.holo-node3d {
+  position: absolute; 
+  top: 0; left: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: opacity 300ms, transform 200ms;
+  will-change: left, top, width, height, opacity;
+}
+.holo-node3d:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  z-index: 9999 !important;
+}
+.holo-node3d.dim {
+  opacity: 0.12 !important;
+}
+.holo-node3d .hl {
+  position: absolute;
+  top: -24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.holo-node3d:hover .hl, .holo-node3d.active .hl {
+  opacity: 1 !important;
+}
+
+/* Slide-out Side Panel */
+.holo-side {
+  position: absolute;
+  top: 0; right: -400px;
+  width: 380px; height: 100%;
+  background: var(--surface-raised);
+  border-left: 1px solid var(--border);
+  transition: right 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  z-index: 50;
+  opacity: 0;
+}
+.holo-side.open {
+  right: 0;
+  opacity: 1;
+}
+.holo-side .close-btn {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: transparent; border: none;
+  color: var(--muted-foreground);
+  cursor: pointer; font-size: 20px;
+}
+.holo-side .close-btn:hover { color: var(--foreground); }
+.holo-row {
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px; font-size: 12px;
+}
+.holo-row span:first-child { color: var(--muted-foreground); font-family: 'JetBrains Mono', monospace; }
+.holo-row span:last-child { font-weight: 500; }
