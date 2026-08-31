@@ -159,6 +159,7 @@ export function HolographicGraph({
     let currentAutoRotate = autoRotate;
 
     function render() {
+      
       const w = scene.clientWidth, h = scene.clientHeight;
       svg.setAttribute('width', w.toString());
       svg.setAttribute('height', h.toString());

@@ -44,6 +44,13 @@
 
 @layer base {
   :root {
+  --entity-person: #3b82f6;
+  --entity-phone: #60a5fa;
+  --entity-account: #93c5fd;
+  --entity-location: #bfdbfe;
+  --entity-org: #2563eb;
+  --edge-color: rgba(59, 130, 246, 0.4);
+  --accent-ring: rgba(59, 130, 246, 0.8);
     --bg: #F7F5F0;
     --surface: #FFFFFF;
     --surface-2: #EFEBE2;
