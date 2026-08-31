@@ -10,8 +10,8 @@ export function buildGraph(relationships: Relationship[]): Graph {
     if (!graph[rel.target]) graph[rel.target] = new Set();
     
     // Treat as undirected for centrality
-    graph[rel.source].add(rel.target);
-    graph[rel.target].add(rel.source);
+    graph[rel.source]!.add(rel.target);
+    graph[rel.target]!.add(rel.source);
   });
   return graph;
 }

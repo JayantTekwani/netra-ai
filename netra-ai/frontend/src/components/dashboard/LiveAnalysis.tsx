@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function LiveAnalysis({ entities, relationships }: { entities: Entity[], relationships: Relationship[] }) {
   const [isCalculating, setIsCalculating] = useState(false);
-  const [results, setResults] = useState<{id: string, label: string, score: number}[] | null>(null);
+  const [results, setResults] = useState<{id: string, name: string, score: number}[] | null>(null);
   const [timeMs, setTimeMs] = useState(0);
 
   const runAnalysis = () => {
