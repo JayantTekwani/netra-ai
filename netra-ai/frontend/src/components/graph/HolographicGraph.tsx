@@ -298,8 +298,8 @@ export function HolographicGraph({
       
       const neighbors = new Set([id]);
       holoEdgeList.forEach(([a, b]) => {
-        if (a === id) neighbors.add(b);
-        if (b === id) neighbors.add(a);
+        if (a === id) neighbors.add(b!);
+        if (b === id) neighbors.add(a!);
       });
       Object.entries(nodeEls).forEach(([nid, el]) => {
         el.classList.toggle('dim', !neighbors.has(nid));

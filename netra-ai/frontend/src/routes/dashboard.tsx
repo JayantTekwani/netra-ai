@@ -14,6 +14,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
+import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
 import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
@@ -102,57 +103,11 @@ function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-5">
-        <section className="panel col-span-2 p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold tracking-tight">Recent Cases</h2>
-            <Link to="/cases" className="text-xs text-primary hover:underline">
-              View all
-            </Link>
-          </div>
-          <table className="mt-4 w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="label-caps pb-2">Case</th>
-                <th className="label-caps pb-2">Status</th>
-                <th className="label-caps pb-2 text-right">Entities</th>
-                <th className="label-caps pb-2 text-right">Links</th>
-                <th className="label-caps pb-2 text-right">Created</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {cases.slice(0, 5).map((c) => (
-                <tr
-                  key={c.id}
-                  className="border-b border-border/60 transition-colors hover:bg-surface-raised/60"
-                >
-                  <td className="py-3">
-                    <div className="font-medium">{c.name}</div>
-                    <div className="font-mono text-[11px] text-muted-foreground">{c.id}</div>
-                  </td>
-                  <td className="py-3">
-                    <StatusBadge status={c.status} />
-                  </td>
-                  <td className="py-3 text-right font-mono text-xs">{c.entityCount}</td>
-                  <td className="py-3 text-right font-mono text-xs">{c.relationshipCount}</td>
-                  <td className="py-3 text-right font-mono text-xs text-muted-foreground">
-                    {c.createdAt}
-                  </td>
-                  <td className="py-3 text-right">
-                    <Link
-                      to="/investigation"
-                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                    >
-                      Open <ArrowRight className="size-3" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <section className="panel col-span-2 relative h-[480px] overflow-hidden p-0">
+          <HolographicGraph entities={entities} relationships={relationships} />
         </section>
 
-        <section className="panel p-5">
+        <section className="panel p-5 overflow-y-auto h-[480px]">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
             <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
