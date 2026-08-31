@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect, useMemo } from "react";
 import {
   FolderSearch,
   Users,
@@ -19,28 +20,79 @@ import { Button } from "@/components/ui/button";
 import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
 import { getSession } from "@/lib/session";
+import type { Entity, Relationship } from "@/data/types";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — NEXUS Investigation Platform" },
-      {
-        name: "description",
-        content:
-          "Overview of active demo cases, entities, relationships and recent investigation activity in the NEXUS prototype.",
-      },
+      { name: "description", content: "Overview of active demo cases." },
       { property: "og:title", content: "Dashboard — NEXUS Investigation Platform" },
-      {
-        property: "og:description",
-        content: "Active cases, entity counts and recent activity across fictional demo data.",
-      },
     ],
   }),
   component: DashboardPage,
 });
 
+const LIVE_INSIGHTS_POOL = [
+  ...insights,
+  { id: "L1", headline: "Anomalous fund transfer detected", detail: "A shell corporation transferred $1.2M through 4 intermediary banks in 12 hours.", type: "financial", confidence: 94 },
+  { id: "L2", headline: "Burner phone activation surge", detail: "14 new prepaid devices activated in Sector 4 within a 30-minute window.", type: "operational", confidence: 89 },
+  { id: "L3", headline: "Encrypted traffic spike", detail: "Unusual volume of TOR traffic originating from previously dormant IP range.", type: "cyber", confidence: 91 },
+  { id: "L4", headline: "Cross-border travel correlation", detail: "Two subjects boarded separate flights arriving at the same destination 2 hours apart.", type: "movement", confidence: 85 },
+  { id: "L5", headline: "Vehicle proximity alert", detail: "Target vehicle spotted idling near key infrastructure asset for 45 minutes.", type: "surveillance", confidence: 97 },
+];
+
 function DashboardPage() {
   const user = getSession();
+  
+  // Live Threat Analysis Ticker
+  const [liveInsights, setLiveInsights] = useState(LIVE_INSIGHTS_POOL.slice(0, 4));
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLiveInsights(current => {
+        const nextPool = LIVE_INSIGHTS_POOL.filter(i => !current.find(c => c.id === i.id));
+        const randomNext = nextPool[Math.floor(Math.random() * nextPool.length)]!;
+        return [randomNext, ...current.slice(0, 3)];
+      });
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Dramatically expand the demo network graph with background noise nodes
+  const { denseEntities, denseRelationships } = useMemo(() => {
+    const generatedEntities: Entity[] = [...entities];
+    const generatedRelationships: Relationship[] = [...relationships];
+    const types: Array<keyof typeof ENTITY_TYPE_META> = ["person", "phone", "account", "location", "organization"];
+    
+    // Add 150 background nodes
+    for (let i = 0; i < 150; i++) {
+      const type = types[Math.floor(Math.random() * types.length)]!;
+      generatedEntities.push({
+        id: `gen-${i}`,
+        type,
+        name: `Unknown ${type} ${i}`,
+        attributes: {},
+        caseIds: ["CASE-2041"]
+      });
+    }
+
+    // Add 250 connections to create a dense web
+    for (let i = 0; i < 250; i++) {
+      const sourceIdx = Math.floor(Math.random() * generatedEntities.length);
+      const targetIdx = Math.floor(Math.random() * generatedEntities.length);
+      if (sourceIdx !== targetIdx) {
+        generatedRelationships.push({
+          id: `gen-rel-${i}`,
+          source: generatedEntities[sourceIdx]!.id,
+          target: generatedEntities[targetIdx]!.id,
+          type: "association",
+          date: new Date().toISOString(), label: "associated", recordIds: [],
+        });
+      }
+    }
+    return { denseEntities: generatedEntities, denseRelationships: generatedRelationships };
+  }, []);
+
   const activeCases = cases.filter((c) => c.status === "active");
   const byType = (Object.keys(ENTITY_TYPE_META) as Array<keyof typeof ENTITY_TYPE_META>).map(
     (t) => ({
@@ -109,8 +161,8 @@ function DashboardPage() {
             <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
           </div>
           <ul className="mt-4 grid grid-cols-4 gap-6">
-            {insights.slice(0, 4).map((insight) => (
-              <li key={insight.id} className="border-l-2 border-border pl-3">
+            {liveInsights.map((insight) => (
+              <li key={insight.id} className="border-l-2 border-border pl-3 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="text-sm font-medium leading-tight">
                   {insight.headline}
                 </div>
@@ -122,8 +174,8 @@ function DashboardPage() {
           </ul>
         </section>
 
-        <section className="panel col-span-3 relative h-[560px] overflow-hidden p-0">
-          <HolographicGraph entities={entities} relationships={relationships} />
+        <section className="panel col-span-3 relative h-[720px] overflow-hidden p-0">
+          <HolographicGraph entities={denseEntities} relationships={denseRelationships} />
         </section>
 
         <section className="panel col-span-2 p-5">
