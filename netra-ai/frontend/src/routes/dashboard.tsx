@@ -103,37 +103,35 @@ function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-5">
-        <section className="panel col-span-2 relative h-[480px] overflow-hidden p-0">
+        <section className="panel col-span-3 relative h-[560px] overflow-hidden p-0">
           <HolographicGraph entities={entities} relationships={relationships} />
         </section>
 
-        <section className="panel p-5 overflow-y-auto h-[480px]">
+        <section className="panel col-span-3 p-5">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
             <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
           </div>
-          <ul className="mt-4 space-y-4">
+          <ul className="mt-4 grid grid-cols-4 gap-6">
             {insights.slice(0, 4).map((insight) => (
               <li key={insight.id} className="border-l-2 border-border pl-3">
                 <div className="text-sm font-medium leading-tight">
                   {insight.headline}
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                <div className="mt-2 text-xs text-muted-foreground line-clamp-3">
                   {insight.detail}
                 </div>
               </li>
             ))}
           </ul>
         </section>
-      </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-5">
         <section className="panel col-span-2 p-5">
           <h2 className="text-sm font-semibold tracking-tight">Network Composition</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Entity distribution in the loaded demo network.
           </p>
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 space-y-4">
             {byType.map(({ type, count }) => (
               <div key={type} className="flex items-center gap-4">
                 <div className="w-32 text-sm text-muted-foreground">
@@ -156,7 +154,7 @@ function DashboardPage() {
 
         <section className="panel p-5">
           <h2 className="text-sm font-semibold tracking-tight">Quick Actions</h2>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-3">
             <Button variant="outline" className="w-full justify-start" asChild>
               <Link to="/investigation">
                 <Share2 className="size-4" /> Open Investigation Workspace
