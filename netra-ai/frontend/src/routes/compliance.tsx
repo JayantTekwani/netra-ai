@@ -34,27 +34,27 @@ function AuditPage() {
         
         {/* COMPLIANCE STATUS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="panel p-5 border-emerald-500/30 bg-emerald-500/5">
+          <div className="panel p-5 border-accent/30 bg-accent/5">
             <div className="flex items-center gap-3">
-              <Shield className="size-5 text-emerald-500" />
+              <Shield className="size-5 text-accent" />
               <div>
                 <div className="font-bold text-sm">DPDP Compliant</div>
                 <div className="text-xs text-muted-foreground mt-1">Auto-purge active for cold cases.</div>
               </div>
             </div>
           </div>
-          <div className="panel p-5 border-emerald-500/30 bg-emerald-500/5">
+          <div className="panel p-5 border-accent/30 bg-accent/5">
             <div className="flex items-center gap-3">
-              <FileKey className="size-5 text-emerald-500" />
+              <FileKey className="size-5 text-accent" />
               <div>
                 <div className="font-bold text-sm">Merkle Tree Ledger</div>
                 <div className="text-xs text-muted-foreground mt-1">Logs cryptographically hashed.</div>
               </div>
             </div>
           </div>
-          <div className="panel p-5 border-amber-500/30 bg-amber-500/5">
+          <div className="panel p-5 border-destructive/30 bg-destructive/5">
             <div className="flex items-center gap-3">
-              <ShieldAlert className="size-5 text-amber-500" />
+              <ShieldAlert className="size-5 text-destructive" />
               <div>
                 <div className="font-bold text-sm">Role: Investigator</div>
                 <div className="text-xs text-muted-foreground mt-1">Restricted from exporting raw PII.</div>
@@ -83,16 +83,16 @@ function AuditPage() {
               {visibleLogs.map((log) => {
                 const isWarning = log.status === "WARNING";
                 return (
-                  <tr key={log.id} className={`border-b border-border/60 hover:bg-surface-raised/60 ${isWarning ? "bg-amber-500/10 relative" : ""}`}>
-                    {isWarning && <td className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 animate-pulse" />}
+                  <tr key={log.id} className={`border-b border-border/60 hover:bg-surface-raised/60 ${isWarning ? "bg-destructive/10 relative" : ""}`}>
+                    {isWarning && <td className="absolute left-0 top-0 bottom-0 w-1 bg-destructive animate-pulse" />}
                     <td className="p-3 font-mono text-xs text-muted-foreground">{log.time}</td>
                     <td className="p-3 font-mono text-xs">{log.user}</td>
                     <td className="p-3">
-                      <span className={`${isWarning ? "bg-amber-500/20 text-amber-500" : "bg-secondary"} px-2 py-1 rounded-sm text-xs font-mono`}>{log.action}</span>
+                      <span className={`${isWarning ? "bg-destructive/20 text-destructive" : "bg-secondary"} px-2 py-1 rounded-sm text-xs font-mono`}>{log.action}</span>
                     </td>
                     <td className="p-3 font-mono text-xs text-muted-foreground">{log.target}</td>
                     <td className="p-3 text-xs">
-                      <div className={isWarning ? "text-amber-500 font-bold" : "text-emerald-500 font-bold"}>{log.status}</div>
+                      <div className={isWarning ? "text-destructive font-bold" : "text-accent font-bold"}>{log.status}</div>
                       <div className="text-muted-foreground mt-0.5">{log.detail}</div>
                     </td>
                   </tr>

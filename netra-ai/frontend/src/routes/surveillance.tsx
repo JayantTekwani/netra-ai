@@ -45,12 +45,12 @@ const interpolatePath = (points: {lat: number, lng: number}[], targetCount: numb
     for (let j = 0; j < pointsPerSegment; j++) {
       const t = j / pointsPerSegment;
       result.push({
-        lat: start.lat + (end.lat - start.lat) * t,
-        lng: start.lng + (end.lng - start.lng) * t
+        lat: start!.lat + (end!.lat - start!.lat) * t,
+        lng: start!.lng + (end!.lng - start!.lng) * t
       });
     }
   }
-  result.push(points[points.length - 1]);
+  result.push(points[points.length - 1]!);
   return result;
 };
 
@@ -59,32 +59,32 @@ const DETAILED_PATH = interpolatePath(MOCK_PATH, 100);
 const CAMERAS = [
   { 
     index: 15, 
-    lat: DETAILED_PATH[15].lat, 
-    lng: DETAILED_PATH[15].lng, 
+    lat: DETAILED_PATH[15]!.lat, 
+    lng: DETAILED_PATH[15]!.lng, 
     id: "CAM-ND-01", 
     desc: "Target vehicle identified in Sector 14. Registration obscured.",
     img: "/mock-cctv-1.png"
   },
   { 
     index: 45, 
-    lat: DETAILED_PATH[45].lat, 
-    lng: DETAILED_PATH[45].lng, 
+    lat: DETAILED_PATH[45]!.lat, 
+    lng: DETAILED_PATH[45]!.lng, 
     id: "CAM-SD-44", 
     desc: "Subject seen interacting with unknown associate near Lodhi road.",
     img: "/mock-cctv-2.png"
   },
   { 
     index: 65, 
-    lat: DETAILED_PATH[65].lat, 
-    lng: DETAILED_PATH[65].lng, 
+    lat: DETAILED_PATH[65]!.lat, 
+    lng: DETAILED_PATH[65]!.lng, 
     id: "CAM-DK-12", 
     desc: "Target vehicle tracked navigating intersection at high speed.",
     img: "/mock-cctv-3.png"
   },
   { 
     index: 85, 
-    lat: DETAILED_PATH[85].lat, 
-    lng: DETAILED_PATH[85].lng, 
+    lat: DETAILED_PATH[85]!.lat, 
+    lng: DETAILED_PATH[85]!.lng, 
     id: "CAM-IG-99", 
     desc: "Vehicle approaching Toll Plaza. Elevated alert status triggered.",
     img: "/mock-cctv-4.png"
@@ -238,7 +238,7 @@ function SurveillancePage() {
           <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg min-h-[50vh] lg:min-h-0">
             <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 font-mono text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Radio className="size-4 text-emerald-500 animate-pulse" />
+                <Radio className="size-4 text-accent animate-pulse" />
                 <span>SIGINT_TRACKER_V2 (SIMULATED)</span>
               </div>
               <span>LOC_LOCK: TEST_MODE</span>
@@ -259,8 +259,8 @@ function SurveillancePage() {
             </div>
 
             {/* Scrubber Control */}
-            <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/80 border border-emerald-500/30 p-4 rounded-lg backdrop-blur-md">
-              <div className="flex items-center gap-4 text-emerald-400 font-mono text-xs mb-2">
+            <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/80 border border-accent/30 p-4 rounded-lg backdrop-blur-md">
+              <div className="flex items-center gap-4 text-accent font-mono text-xs mb-2">
                 <FastForward className="size-4" />
                 <span>TIMELINE_SCRUBBER</span>
                 <span className="ml-auto">T+ {progress}m</span>
@@ -275,7 +275,7 @@ function SurveillancePage() {
               />
             </div>
             
-            <div className="pointer-events-none absolute inset-0 z-10 border-[4px] border-emerald-500/20 mix-blend-overlay"></div>
+            <div className="pointer-events-none absolute inset-0 z-10 border-[4px] border-accent/20 mix-blend-overlay"></div>
           </div>
         </div>
 
@@ -304,7 +304,7 @@ function SurveillancePage() {
               src="/cctv_delhi_processed.mp4"
             />
             
-            <div className="pointer-events-none absolute inset-0 z-30 p-6 flex flex-col justify-between font-mono text-emerald-400 text-sm shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
+            <div className="pointer-events-none absolute inset-0 z-30 p-6 flex flex-col justify-between font-mono text-accent text-sm shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
               <div className="flex justify-between w-full">
                 <div>
                   CAM: SEC-14_N04<br/>

@@ -2,13 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { NetworkGraph } from "@/components/graph/NetworkGraph";
+import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import {
   DEFAULT_FILTERS,
   FiltersPanel,
   type GraphFilters,
 } from "@/components/investigation/FiltersPanel";
-import { EntityDetailsPanel } from "@/components/investigation/EntityDetailsPanel";
 import { InsightsPanel } from "@/components/investigation/InsightsPanel";
 import { SupportingRecordsDialog } from "@/components/investigation/SupportingRecordsDialog";
 import { entities, relationships } from "@/data/mock";
@@ -35,7 +34,6 @@ export const Route = createFileRoute("/investigation")({
 function InvestigationPage() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<GraphFilters>(DEFAULT_FILTERS);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<{ open: boolean; ids: string[]; context?: string }>({
     open: false,
     ids: [],
@@ -61,8 +59,6 @@ function InvestigationPage() {
     });
   }, [visibleEntities, filters]);
 
-  const selected = visibleEntities.find((e) => e.id === selectedId) ?? null;
-
   const openRecords = (ids: string[], context: string) =>
     setDialog({ open: true, ids: Array.from(new Set(ids)), context });
 
@@ -72,34 +68,18 @@ function InvestigationPage() {
       subtitle="Operation Meridian · CASE-2041 · fictional demo network"
       fullBleed
     >
-      <div className="grid h-[calc(100vh-8.5rem)] grid-cols-[280px_minmax(0,1fr)_360px]">
+      <div className="grid h-[calc(100vh-8.5rem)] grid-cols-[280px_minmax(0,1fr)]">
         <FiltersPanel filters={filters} onChange={setFilters} />
 
-        <div className="flex min-w-0 flex-col gap-4 overflow-y-auto p-4">
-          <div className="h-[640px] shrink-0">
-            <NetworkGraph
+        <div className="flex min-w-0 flex-col overflow-y-auto relative p-4 gap-4">
+          <div className="h-[640px] shrink-0 relative">
+            <HolographicGraph
               entities={visibleEntities}
               relationships={visibleRelationships}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
             />
           </div>
           <InsightsPanel onViewRecords={openRecords} />
         </div>
-
-        <EntityDetailsPanel
-          entity={selected}
-          relationships={visibleRelationships}
-          onSelect={setSelectedId}
-          onViewRecords={openRecords}
-          onViewTimeline={() => navigate({ to: "/timeline" })}
-          onExpand={() => {
-            setFilters(DEFAULT_FILTERS);
-            toast.info("Connections expanded", {
-              description: "All filters cleared to reveal the full demo neighbourhood.",
-            });
-          }}
-        />
       </div>
 
       <SupportingRecordsDialog

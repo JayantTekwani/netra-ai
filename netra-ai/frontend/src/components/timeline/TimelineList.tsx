@@ -12,19 +12,19 @@ const ICONS: Record<RelationshipType, typeof Phone> = {
 };
 
 const COLORS: Record<RelationshipType, string> = {
-  call: "border-sky-500 bg-sky-500/5 text-sky-500",
-  transaction: "border-amber-500 bg-amber-500/5 text-amber-500",
-  location: "border-rose-500 bg-rose-500/5 text-rose-500",
-  mention: "border-slate-500 bg-slate-500/5 text-slate-500",
-  association: "border-slate-500 bg-slate-500/5 text-slate-500",
+  call: "border-accent bg-accent/5 text-accent",
+  transaction: "border-accent bg-accent/5 text-accent",
+  location: "border-accent bg-accent/5 text-accent",
+  mention: "border-muted-foreground bg-muted-foreground/5 text-muted-foreground",
+  association: "border-muted-foreground bg-muted-foreground/5 text-muted-foreground",
 };
 
 const DOT_COLORS: Record<RelationshipType, string> = {
-  call: "bg-sky-500",
-  transaction: "bg-amber-500",
-  location: "bg-rose-500",
-  mention: "bg-slate-500",
-  association: "bg-slate-500",
+  call: "bg-accent",
+  transaction: "bg-accent",
+  location: "bg-accent",
+  mention: "bg-muted-foreground",
+  association: "bg-muted-foreground",
 };
 
 export function TimelineList({

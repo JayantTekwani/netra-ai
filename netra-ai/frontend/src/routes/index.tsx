@@ -70,20 +70,20 @@ function LoginPage() {
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center size-8 rounded-full bg-background border border-border z-10">
               <ArrowRight className="size-4 text-muted-foreground" />
             </div>
-            <div className="panel p-4 border-amber-500/20 bg-amber-500/5 relative overflow-hidden">
-              <div className="text-[10px] uppercase font-bold tracking-wider text-amber-500 mb-2">Investigator Today</div>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> 5 disconnected systems</li>
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> Manual cross-referencing</li>
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500/50" /> 3 days per suspect</li>
+            <div className="panel p-4 border-border bg-surface-raised relative overflow-hidden">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-2">Investigator Today</div>
+              <ul className="space-y-1.5 text-xs text-muted-foreground/80 font-mono">
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> 5 disconnected systems</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> Manual cross-referencing</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> 3 days per suspect</li>
               </ul>
             </div>
-            <div className="panel p-4 border-emerald-500/30 bg-emerald-500/10 relative overflow-hidden">
-              <div className="text-[10px] uppercase font-bold tracking-wider text-emerald-500 mb-2">With NEXUS</div>
-              <ul className="space-y-1.5 text-xs font-medium text-foreground">
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> 1 unified search</li>
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Auto-linked evidence</li>
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Answers in minutes</li>
+            <div className="panel p-4 border-border bg-accent/10 relative overflow-hidden">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-accent mb-2">With NEXUS</div>
+              <ul className="space-y-1.5 text-xs font-medium font-mono text-accent/80">
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> 1 unified search</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> Auto-linked evidence</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> Answers in minutes</li>
               </ul>
             </div>
           </div>

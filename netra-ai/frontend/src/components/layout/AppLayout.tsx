@@ -43,16 +43,16 @@ export function AppLayout({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
-        <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-5">
+      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-background">
+        <div className="flex items-center gap-3 border-b border-border px-5 py-5">
           <div className="flex size-9 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
             <ShieldCheck className="size-5 text-primary" />
           </div>
           <div className="leading-tight">
-            <div className="font-mono text-base font-semibold tracking-[0.22em] text-foreground">
+            <div className="font-serif text-lg font-semibold tracking-wide text-foreground">
               NEXUS
             </div>
-            <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-mono mt-0.5">
               Intelligence Platform
             </div>
           </div>
@@ -67,8 +67,8 @@ export function AppLayout({
                 to={to}
                 className={`group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                   active
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_2px_0_0_0_var(--sidebar-primary)]"
-                    : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+                    ? "bg-secondary text-foreground shadow-[inset_2px_0_0_0_var(--color-primary)]"
+                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                 }`}
               >
                 <Icon
@@ -80,14 +80,25 @@ export function AppLayout({
           })}
         </nav>
 
-        <div className="border-t border-sidebar-border p-3">
+        <div className="border-t border-border p-3 space-y-3">
+          <div className="px-3">
+            <button 
+              className="theme-toggle" 
+              onClick={() => {
+                const html = document.documentElement;
+                const isDark = html.getAttribute("data-theme") === "dark";
+                html.setAttribute("data-theme", isDark ? "light" : "dark");
+              }}
+              title="Toggle Theme"
+            />
+          </div>
           <div className="flex items-center gap-3 rounded-md px-2 py-2">
-            <div className="flex size-9 items-center justify-center rounded-full bg-secondary font-mono text-xs text-foreground">
+            <div className="flex size-9 items-center justify-center rounded-full bg-secondary font-mono text-xs text-foreground border border-border">
               {(user?.name ?? "IN").slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1 leading-tight">
               <div className="truncate text-sm font-medium">{user?.name ?? "Investigator"}</div>
-              <div className="truncate text-xs text-muted-foreground">
+              <div className="truncate text-[10px] uppercase tracking-wider text-muted-foreground font-mono mt-0.5">
                 {user?.email ?? "demo@nexus.gov"}
               </div>
             </div>
@@ -106,11 +117,11 @@ export function AppLayout({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background/85 px-8 py-4 backdrop-blur">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background/85 px-8 py-4 backdrop-blur-md">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+            <h1 className="text-xl font-medium tracking-tight font-serif">{title}</h1>
             {subtitle ? (
-              <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
+              <p className="mt-0.5 text-sm text-muted-foreground font-sans">{subtitle}</p>
             ) : null}
           </div>
           <div className="flex items-center gap-3">{actions}</div>
