@@ -43,7 +43,7 @@ export function AppLayout({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-background">
+      <aside className="sticky top-0 hidden h-screen w-64 lg:flex shrink-0 flex-col border-r border-border bg-background">
         <div className="flex items-center gap-3 border-b border-border px-5 py-5">
           <div className="flex size-9 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
             <ShieldCheck className="size-5 text-primary" />
@@ -116,7 +116,28 @@ export function AppLayout({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col max-w-[100vw]">
+        {/* Mobile Header */}
+        <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background px-4 py-3 lg:hidden">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
+              <ShieldCheck className="size-4 text-primary" />
+            </div>
+            <div className="font-serif text-base font-semibold tracking-wide text-foreground">
+              नेत्र-AI
+            </div>
+          </div>
+          <select
+            className="max-w-[140px] truncate bg-secondary border border-border rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50"
+            value={NAV.find(n => pathname === n.to || pathname.startsWith(n.to + "/"))?.to || "/dashboard"}
+            onChange={(e) => navigate({ to: e.target.value as any })}
+          >
+            {NAV.map(({ to, label }) => (
+              <option key={to} value={to}>{label}</option>
+            ))}
+          </select>
+        </div>
+
         <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background/85 px-8 py-4 backdrop-blur-md">
           <div>
             <h1 className="text-xl font-medium tracking-tight font-serif">{title}</h1>

@@ -84,7 +84,7 @@ function LoginPage() {
             financial records and location data — in a single analytical workspace.
           </p>
           
-          <div className="mt-8 grid grid-cols-2 gap-4 max-w-md relative">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md relative">
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center size-8 rounded-full bg-background border border-border z-10">
               <ArrowRight className="size-4 text-muted-foreground" />
             </div>

@@ -126,7 +126,7 @@ function DashboardPage() {
         <strong className="font-semibold">नेत्र-AI Platform</strong> — Turns messy police data (call records, FIRs, bank transfers) into one connected picture.
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Active Cases"
           value={activeCases.length}
@@ -155,8 +155,8 @@ function DashboardPage() {
         />
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-5">
-        <section className="panel col-span-3 p-5">
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <section className="panel col-span-1 lg:col-span-3 p-5">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
             <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
@@ -177,11 +177,11 @@ function DashboardPage() {
           </div>
         </section>
 
-        <section className="panel col-span-3 relative h-[720px] overflow-hidden p-0">
+        <section className="panel col-span-1 lg:col-span-3 relative h-[720px] overflow-hidden p-0">
           <HolographicGraph entities={denseEntities} relationships={denseRelationships} />
         </section>
 
-        <section className="panel col-span-2 p-5">
+        <section className="panel col-span-1 lg:col-span-2 p-5">
           <h2 className="text-sm font-semibold tracking-tight">Network Composition</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Entity distribution in the loaded demo network.
@@ -233,7 +233,7 @@ function DashboardPage() {
           </div>
         </section>
         
-        <div className="col-span-3">
+        <div className="col-span-1 lg:col-span-3">
           <EntityResolutionDemo />
         </div>
       </div>
