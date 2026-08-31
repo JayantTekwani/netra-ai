@@ -33,13 +33,12 @@ export function HolographicGraph({
   // Generate 3D layout once
   const holoNodes = useMemo(() => {
     return entities.map((e) => {
-      const rand = seededRandom(e.id);
       // Spherical distribution
-      const u = rand();
-      const v = rand();
+      const u = Math.random();
+      const v = Math.random();
       const theta = u * 2.0 * Math.PI;
       const phi = Math.acos(2.0 * v - 1.0);
-      const r = 180 * Math.cbrt(rand()); // Radius of sphere
+      const r = 180 * Math.cbrt(Math.random()); // Radius of sphere
       
       const x = r * Math.sin(phi) * Math.cos(theta);
       const y = r * Math.sin(phi) * Math.sin(theta);
@@ -49,7 +48,7 @@ export function HolographicGraph({
         ...e,
         x, y, z,
         color: ENTITY_TYPE_META[e.type].color,
-        flagged: e.type === "person" && rand() > 0.8 // Randomly flag some for demo
+        flagged: e.type === "person" && Math.random() > 0.8 // Randomly flag some for demo
       };
     });
   }, [entities]);

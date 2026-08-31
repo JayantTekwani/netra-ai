@@ -103,10 +103,6 @@ function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-5">
-        <section className="panel col-span-3 relative h-[560px] overflow-hidden p-0">
-          <HolographicGraph entities={entities} relationships={relationships} />
-        </section>
-
         <section className="panel col-span-3 p-5">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
@@ -124,6 +120,10 @@ function DashboardPage() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="panel col-span-3 relative h-[560px] overflow-hidden p-0">
+          <HolographicGraph entities={entities} relationships={relationships} />
         </section>
 
         <section className="panel col-span-2 p-5">
