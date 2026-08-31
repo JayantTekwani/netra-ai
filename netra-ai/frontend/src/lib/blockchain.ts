@@ -44,14 +44,14 @@ export class Blockchain {
     let hashes = await Promise.all(transactions.map(t => this.hashString(t.id + t.offChainPayloadHash)));
     
     while (hashes.length > 1) {
-      if (hashes.length % 2 !== 0) hashes.push(hashes[hashes.length - 1]); // duplicate last if odd
+      if (hashes.length % 2 !== 0) hashes.push(hashes[hashes.length - 1]!); // duplicate last if odd
       const nextLevel: string[] = [];
       for (let i = 0; i < hashes.length; i += 2) {
-        nextLevel.push(await this.hashString(hashes[i] + hashes[i + 1]));
+        nextLevel.push(await this.hashString(hashes[i]! + hashes[i + 1]!));
       }
       hashes = nextLevel;
     }
-    return hashes[0];
+    return hashes[0]!;
   }
 
   private async calculateBlockHash(index: number, previousHash: string, timestamp: string, merkleRoot: string, nonce: number): Promise<string> {
