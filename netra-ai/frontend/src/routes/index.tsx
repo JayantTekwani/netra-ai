@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ShieldCheck, Lock, Mail, ArrowRight, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,35 @@ export const Route = createFileRoute("/")({
 function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [cameraActive, setCameraActive] = useState(false);
 
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraActive(true);
+      }
+    } catch (err) {
+      console.warn("Camera access denied or unavailable", err);
+    }
+  };
+
+  const handleScan = () => {
+    setLoading(true);
+    startCamera();
+    
+    // Simulate a 3.5s scan then navigate
+    setTimeout(() => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+      setSession({ name: "Investigator", email: "biometric@nexus" });
+      navigate({ to: "/dashboard" });
+    }, 3500);
+  };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6">
@@ -88,8 +116,15 @@ function LoginPage() {
             <div className={`absolute inset-0 rounded-full border-2 transition-colors duration-500 ${loading ? 'border-accent' : 'border-border'}`}></div>
             {loading && <div className="absolute inset-0 rounded-full border-2 border-accent animate-ping opacity-20"></div>}
             <div className="absolute inset-2 rounded-full border border-dashed border-muted-foreground/30" style={{ animation: 'spin 12s linear infinite' }}></div>
-            <div className="absolute inset-0 flex items-center justify-center bg-surface-raised rounded-full z-10">
-              <ScanFace className={`size-12 transition-colors duration-500 ${loading ? 'text-accent' : 'text-muted-foreground'}`} />
+            <div className="absolute inset-0 flex items-center justify-center bg-surface-raised rounded-full z-10 overflow-hidden">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                muted 
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${cameraActive ? 'opacity-100' : 'opacity-0'}`} 
+              />
+              <ScanFace className={`size-12 transition-all duration-700 ${loading && cameraActive ? 'opacity-0 scale-150' : 'opacity-100'} ${loading ? 'text-accent' : 'text-muted-foreground'}`} />
             </div>
             {loading && (
               <div className="absolute top-0 left-0 w-full h-0.5 bg-accent/80 z-20 rounded-full shadow-[0_0_10px_var(--color-accent)]" style={{ animation: 'scan 2s ease-in-out infinite alternate' }}></div>
@@ -104,13 +139,7 @@ function LoginPage() {
           </p>
 
           <Button 
-            onClick={() => {
-              setLoading(true);
-              setTimeout(() => {
-                setSession({ name: "Investigator", email: "biometric@nexus" });
-                navigate({ to: "/dashboard" });
-              }, 2500);
-            }} 
+            onClick={handleScan}
             className="mt-6 w-full group relative overflow-hidden" 
             disabled={loading}
           >
