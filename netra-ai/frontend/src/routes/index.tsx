@@ -73,7 +73,7 @@ function LoginPage() {
               <ShieldCheck className="size-7 text-primary" />
             </div>
             <div>
-              <div className="font-mono text-4xl font-semibold tracking-[0.28em]">नेत्र-AI</div>
+              <div className="font-mono text-4xl font-semibold ">नेत्र-AI</div>
               <div className="mt-1 text-sm uppercase tracking-[0.22em] text-muted-foreground">
                 Investigation Intelligence Platform
               </div>
