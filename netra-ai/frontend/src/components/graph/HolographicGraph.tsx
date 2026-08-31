@@ -29,6 +29,8 @@ export function HolographicGraph({
   const [activeFilter, setActiveFilter] = useState("");
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedNode, setSelectedNode] = useState<Entity | null>(null);
+  const [is2D, setIs2D] = useState(false);
+  const is2DRef = useRef(false);
 
   // Generate 3D layout once
   const holoNodes = useMemo(() => {
@@ -101,15 +103,17 @@ export function HolographicGraph({
 
     let rotX = -0.2, rotY = 0.42, zoom = 1;
     let velX = 0, velY = 0;
+    let zMult = 1;
     const FOCAL = 520;
     let focusTarget: { rotY: number, rotX: number } | null = null;
     let focusZoom: number | null = null;
     let lastProjected: Record<string, any> = {};
 
     function project(n: any, w: number, h: number) {
+      const ez = n.z * zMult;
       const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-      let x = n.x * cosY - n.z * sinY;
-      let z = n.x * sinY + n.z * cosY;
+      let x = n.x * cosY - ez * sinY;
+      let z = n.x * sinY + ez * cosY;
       let y = n.y;
       const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
       let y2 = y * cosX - z * sinX;
@@ -210,6 +214,9 @@ export function HolographicGraph({
     }
 
     function loop() {
+      const targetZMult = is2DRef.current ? 0.001 : 1.0;
+      zMult += (targetZMult - zMult) * 0.08;
+
       if (isDragging) {
         // active drag handled in mousemove
       } else if (focusTarget) {
@@ -341,12 +348,20 @@ export function HolographicGraph({
     // Reset View Button exposed via ref/state
     (window as any).__holoReset = () => {
       focusTarget = null; focusZoom = null;
-      rotX = -0.2; rotY = 0.42; zoom = 1; velX = 0; velY = 0;
+      rotX = is2DRef.current ? 0 : -0.2; 
+      rotY = is2DRef.current ? 0 : 0.42; 
+      zoom = 1; velX = 0; velY = 0;
     };
     
     (window as any).__holoToggleAuto = () => {
       currentAutoRotate = !currentAutoRotate;
       setAutoRotate(currentAutoRotate);
+    };
+
+    (window as any).__holoTo2D = () => {
+      focusTarget = { rotY: 0, rotX: 0 };
+      currentAutoRotate = false;
+      setAutoRotate(false);
     };
 
     return () => {
@@ -362,6 +377,7 @@ export function HolographicGraph({
       scene.removeEventListener('dblclick', onSceneDblClick);
       delete (window as any).__holoReset;
       delete (window as any).__holoToggleAuto;
+      delete (window as any).__holoTo2D;
     };
   }, [holoNodes, holoEdgeList, activeFilter]);
   
@@ -503,6 +519,18 @@ export function HolographicGraph({
         </div>
         
         <div className="holo-controls">
+          <div 
+            className={`holo-btn ${is2D ? 'active' : ''}`} 
+            onClick={() => {
+              const next = !is2D;
+              setIs2D(next);
+              is2DRef.current = next;
+              if (next && (window as any).__holoTo2D) {
+                 (window as any).__holoTo2D();
+              }
+            }} 
+            title="Toggle 2D/3D"
+          >2D</div>
           <div 
             className={`holo-btn ${autoRotate ? 'active' : ''}`} 
             onClick={() => (window as any).__holoToggleAuto?.()} 
