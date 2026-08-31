@@ -218,9 +218,10 @@ function SurveillancePage() {
 
   return (
     <AppLayout title="Live Surveillance" subtitle="Geospatial Tracking & Live Intercepts" fullBleed>
-      <div className="grid h-[calc(100vh-8.5rem)] grid-cols-1 lg:grid-cols-2 gap-4 p-4 overflow-y-auto lg:overflow-hidden">
-        {/* LEGAL / COMPLIANCE BANNER */}
-        <div className="col-span-1 lg:col-span-2 rounded-xl border border-warning/50 bg-warning/10 p-4 text-warning flex items-start gap-3">
+      <div className="flex flex-col h-[calc(100vh-8.5rem)] gap-4 p-4 overflow-y-auto lg:overflow-hidden">
+        
+        {/* DISCLAIMER BANNER */}
+        <div className="shrink-0 rounded-xl border border-warning/50 bg-warning/10 p-4 text-warning flex items-start gap-3">
           <div className="mt-0.5 rounded-full bg-warning/20 p-1">
             <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
@@ -232,17 +233,18 @@ function SurveillancePage() {
           </div>
         </div>
 
-        {/* PANEL A: GEOSPATIAL MAP */}
-        <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg min-h-[50vh] lg:min-h-0">
-          <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 font-mono text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Radio className="size-4 text-emerald-500 animate-pulse" />
-              <span>SIGINT_TRACKER_V2 (SIMULATED)</span>
+        <div className="grid flex-1 grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
+          {/* PANEL A: GEOSPATIAL MAP */}
+          <div className="flex flex-col rounded-xl border border-border bg-card overflow-hidden relative shadow-lg min-h-[50vh] lg:min-h-0">
+            <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 font-mono text-xs text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Radio className="size-4 text-emerald-500 animate-pulse" />
+                <span>SIGINT_TRACKER_V2 (SIMULATED)</span>
+              </div>
+              <span>LOC_LOCK: TEST_MODE</span>
             </div>
-            <span>LOC_LOCK: TEST_MODE</span>
-          </div>
-          
-          <div className="relative flex-1 bg-muted/20 flex flex-col">
+            
+            <div className="relative flex-1 bg-muted/20 flex flex-col">
             {/* Map Container */}
             <div ref={mapRef} className="flex-1 z-0 relative"></div>
             
@@ -328,6 +330,7 @@ function SurveillancePage() {
 
           </div>
         </div>
+      </div>
       </div>
     </AppLayout>
   );
