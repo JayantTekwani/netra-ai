@@ -19,6 +19,7 @@ import type {
   SupportingRecord,
   TimelineEvent,
 } from "./types";
+import axios from "axios";
 
 export const ENTITY_TYPE_META: Record<
   EntityType,
@@ -290,9 +291,10 @@ export const api = {
   
   getGraph: async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/graph/timeline?case_id=CASE-2041&date_end=2026-08-30");
-      if (!res.ok) throw new Error("Failed to fetch graph");
-      const data = await res.json();
+      const res = await axios.get("http://localhost:8000/api/graph/timeline", {
+        params: { case_id: "CASE-2041", date_end: "2026-08-30" }
+      });
+      const data = res.data;
       return { entities: data.nodes, relationships: data.edges };
     } catch (e) {
       console.warn("Backend unavailable, falling back to mock graph data:", e);
@@ -308,22 +310,20 @@ export const api = {
     try {
       if (ids.length === 1) {
         // Attempt to fetch audit data for the single record
-        const res = await fetch(`http://localhost:8000/api/evidence/audit/${ids[0]}`);
-        if (res.ok) {
-           const audit = await res.json();
-           return [{
-             id: audit.record_id,
-             kind: "CDR",
-             title: "Sec 63 BSA Audited Record",
-             date: audit.timestamp_ntp,
-             fields: {
-               "Merkle Root": audit.merkle_root,
-               "Leaf Hash": audit.merkle_leaf_hash,
-               "HW Signature": audit.hardware_signature,
-               "DPDP Purged": audit.dpdp_status.purged ? "Yes" : "No"
-             }
-           }];
-        }
+        const res = await axios.get(`http://localhost:8000/api/evidence/audit/${ids[0]}`);
+        const audit = res.data;
+        return [{
+          id: audit.record_id,
+          kind: "CDR",
+          title: "Sec 63 BSA Audited Record",
+          date: audit.timestamp_ntp,
+          fields: {
+            "Merkle Root": audit.merkle_root,
+            "Leaf Hash": audit.merkle_leaf_hash,
+            "HW Signature": audit.hardware_signature,
+            "DPDP Purged": audit.dpdp_status.purged ? "Yes" : "No"
+          }
+        }];
       }
       return supportingRecords.filter((r) => ids.includes(r.id));
     } catch (e) {
