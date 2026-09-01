@@ -563,6 +563,11 @@ export function HolographicGraph({
               }
             }}
           >✕</div>
+          {selectedNode?.image && (
+            <div style={{ marginBottom: '16px', overflow: 'hidden', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', width: '100px', height: '100px' }}>
+              <img src={selectedNode.image} alt={selectedNode.name || 'Entity'} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) contrast(1.2)' }} />
+            </div>
+          )}
           <div className="holo-tag">{selectedNode?.type.toUpperCase() ?? 'ENTITY'}</div>
           <div className="holo-name">{selectedNode?.name ?? '—'}</div>
           <div className="holo-row"><span>TYPE</span><span>{selectedNode?.type ?? '—'}</span></div>
@@ -578,11 +583,17 @@ export function HolographicGraph({
           <div className="holo-row"><span>CONFIDENCE</span><span>{selectedNode ? '98%' : '—'}</span></div>
           
           <div className="mt-8">
-            <button className="w-full bg-primary text-primary-foreground py-2 rounded-md font-medium text-sm transition-opacity hover:opacity-90">
+            <button className="w-full bg-primary text-primary-foreground py-2 rounded-md font-medium text-sm transition-opacity hover:opacity-90"
+              onClick={() => {
+                if (selectedNode) window.alert(`Tracing connections for ${selectedNode.name}... (Simulated)`);
+              }}>
               Trace Connections
             </button>
-            <button className="w-full border border-border bg-transparent text-foreground mt-2 py-2 rounded-md font-medium text-sm transition-colors hover:bg-surface-raised">
-              View Raw Record
+            <button className="w-full border border-border bg-transparent text-foreground mt-2 py-2 rounded-md font-medium text-sm transition-colors hover:bg-surface-raised"
+              onClick={() => {
+                window.open(`http://localhost:8000/api/evidence/audit/${selectedNode?.id || 'REC-CDR-889104'}`, '_blank');
+              }}>
+              View Raw Record (Audit)
             </button>
           </div>
         </div>
