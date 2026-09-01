@@ -213,7 +213,7 @@ async def get_evidence_audit(record_id: str = Path(..., example="REC-CDR-889104"
         # If not in our initial list, append it so we can audit it
         sample_data.append({"record_id": record_id, "type": "DYNAMIC_RECORD", "content": "dynamic_content"})
         target_idx = len(sample_data) - 1
-        
+
     vault = MerkleVault(raw_elements=sample_data)
     
     return AuditResponse(
