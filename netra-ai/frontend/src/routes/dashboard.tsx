@@ -16,6 +16,7 @@ import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
 import { LiveAnalysis } from "@/components/dashboard/LiveAnalysis";
+import { ParallaxCarousel } from "@/components/dashboard/ParallaxCarousel";
 import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
 import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
@@ -42,6 +43,30 @@ const LIVE_INSIGHTS_POOL = [
   { id: "L4", headline: "Cross-border travel correlation", detail: "Two subjects boarded separate flights arriving at the same destination 2 hours apart.", type: "movement", confidence: 85 },
   { id: "L5", headline: "Vehicle proximity alert", detail: "Target vehicle spotted idling near key infrastructure asset for 45 minutes.", type: "surveillance", confidence: 97 },
 ];
+
+function ServerNodesMetrics() {
+  return (
+    <section className="col-span-1 lg:col-span-3 mt-2 mb-4 bg-background/30 border border-border/50 p-6 rounded-2xl shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold tracking-tight">Infrastructure & Compute Nodes</h2>
+        <span className="flex h-2 w-2 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "Edge GPU Nodes", val: "42 Active", state: "text-green-500" },
+          { label: "Graph DB Replicas", val: "3 / 3 Sync", state: "text-green-500" },
+          { label: "API Gateway Load", val: "1.4k Req/s", state: "text-amber-500" },
+          { label: "Merkle Hash Rate", val: "440 H/s", state: "text-green-500" },
+        ].map((n, i) => (
+          <div key={i} className="bg-surface/20 p-4 rounded-xl border border-white/5">
+            <div className="text-sm text-muted-foreground">{n.label}</div>
+            <div className={`text-xl font-mono font-bold mt-1 ${n.state}`}>{n.val}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 function DashboardPage() {
   const user = getSession();
@@ -238,6 +263,10 @@ function DashboardPage() {
         <div className="col-span-1 lg:col-span-3">
           <EntityResolutionDemo />
         </div>
+        
+        <ServerNodesMetrics />
+        {/* New Parallax Carousel Section */}
+        <ParallaxCarousel />
       </div>
     </AppLayout>
   );
