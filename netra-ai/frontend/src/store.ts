@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { useState, useEffect } from 'react';
 import type { InvestigationCase, Entity, Relationship, SupportingRecord, Insight, TimelineEvent, ActivityItem } from './data/types';
 import { cases as initialCases, entities as initialEntities, relationships as initialRelationships, supportingRecords as initialRecords, insights as initialInsights, timelineEvents as initialTimeline, activity as initialActivity } from './data/mock';
