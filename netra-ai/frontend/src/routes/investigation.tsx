@@ -10,7 +10,7 @@ import {
 } from "@/components/investigation/FiltersPanel";
 import { InsightsPanel } from "@/components/investigation/InsightsPanel";
 import { SupportingRecordsDialog } from "@/components/investigation/SupportingRecordsDialog";
-import { entities, relationships } from "@/data/mock";
+import { useStore } from "@/store";
 
 export const Route = createFileRoute("/investigation")({
   head: () => ({
@@ -39,18 +39,24 @@ function InvestigationPage() {
     ids: [],
   });
 
+  const activeCaseId = useStore((s) => s.activeCaseId);
+  const allEntities = useStore((s) => s.entities);
+  const allRelationships = useStore((s) => s.relationships);
+  const activeCase = useStore((s) => s.cases.find(c => c.id === activeCaseId));
+
   const visibleEntities = useMemo(() => {
     const q = filters.query.trim().toLowerCase();
-    return entities.filter(
+    return allEntities.filter(
       (e) =>
+        e.caseIds.includes(activeCaseId || "") &&
         filters.entityTypes.includes(e.type) &&
         (q === "" || e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q)),
     );
-  }, [filters]);
+  }, [filters, allEntities, activeCaseId]);
 
   const visibleRelationships = useMemo(() => {
     const ids = new Set(visibleEntities.map((e) => e.id));
-    return relationships.filter((r) => {
+    return allRelationships.filter((r) => {
       if (!ids.has(r.source) || !ids.has(r.target)) return false;
       if (!filters.relationshipTypes.includes(r.type)) return false;
       if (filters.from && r.date < filters.from) return false;
@@ -65,7 +71,7 @@ function InvestigationPage() {
   return (
     <AppLayout
       title="Investigation Workspace"
-      subtitle="Operation Meridian · CASE-2041 · fictional demo network"
+      subtitle={activeCase ? `${activeCase.name} · ${activeCase.id}` : "No case selected"}
       fullBleed
     >
       <div className="grid h-[calc(100vh-8.5rem)] grid-cols-[280px_minmax(0,1fr)]">

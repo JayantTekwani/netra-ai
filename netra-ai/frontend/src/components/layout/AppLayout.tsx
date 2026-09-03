@@ -41,6 +41,10 @@ export function AppLayout({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const user = getSession();
 
+  const cases = useStore((s) => s.cases);
+  const activeCaseId = useStore((s) => s.activeCaseId);
+  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
+
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-64 lg:flex shrink-0 flex-col border-r border-border bg-background">
@@ -139,11 +143,29 @@ export function AppLayout({
         </div>
 
         <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background/85 px-8 py-4 backdrop-blur-md">
-          <div>
-            <h1 className="text-xl font-medium tracking-tight font-serif">{title}</h1>
-            {subtitle ? (
-              <p className="mt-0.5 text-sm text-muted-foreground font-sans">{subtitle}</p>
-            ) : null}
+          <div className="flex items-center gap-6">
+            <div>
+              <h1 className="text-xl font-medium tracking-tight font-serif">{title}</h1>
+              {subtitle ? (
+                <p className="mt-0.5 text-sm text-muted-foreground font-sans">{subtitle}</p>
+              ) : null}
+            </div>
+
+            {/* Active Case Switcher Dropdown */}
+            <div className="hidden md:flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5">
+              <span className="text-xs font-semibold text-primary uppercase font-mono">Case:</span>
+              <select
+                className="bg-transparent text-xs font-mono font-medium text-foreground focus:outline-none cursor-pointer max-w-[200px] truncate"
+                value={activeCaseId}
+                onChange={(e) => setActiveCaseId(e.target.value)}
+              >
+                {cases.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-background text-foreground">
+                    {c.id} — {c.name} ({c.entityCount || 0} ent)
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex items-center gap-3">{actions}</div>
         </header>

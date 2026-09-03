@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useStore } from "@/store";
+import { extractEntitiesFromText } from "@/utils/entityExtractor";
+import type { CasePriority, CaseStatus } from "@/data/types";
 
 export const Route = createFileRoute("/cases/new")({
   head: () => ({
@@ -22,13 +25,9 @@ export const Route = createFileRoute("/cases/new")({
       {
         name: "description",
         content:
-          "Register a new fictional demo investigation case with priority, status and description in त्रिनेत्र-AI.",
+          "Register a new investigation case with priority, status and initial statements in त्रिनेत्र-AI.",
       },
-      { property: "og:title", content: "Create Case — त्रिनेत्र-AI Investigation Platform" },
-      {
-        property: "og:description",
-        content: "Register a new demo investigation case in the त्रिनेत्र-AI prototype.",
-      },
+      { property: "og:title", content: "Create Case — त्रिनेत्र-AI Platform" },
     ],
   }),
   component: CreateCasePage,
@@ -40,28 +39,65 @@ function CreateCasePage() {
     name: "",
     caseId: `CASE-${Math.floor(2060 + Math.random() * 40)}`,
     description: "",
+    initialText: "",
     date: new Date().toISOString().slice(0, 10),
-    priority: "medium",
-    status: "active",
+    priority: "medium" as CasePriority,
+    status: "active" as CaseStatus,
   });
   const [saving, setSaving] = useState(false);
+  
+  const addCase = useStore((s) => s.addCase);
+  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
+  const addExtractedDataForCase = useStore((s) => s.addExtractedDataForCase);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    if (!form.name.trim()) {
+      toast.error("Please enter a case name.");
+      return;
+    }
+
     setSaving(true);
     setTimeout(() => {
       setSaving(false);
-      toast.success("Case created (mock)", {
-        description: `${form.caseId} — ${form.name || "Untitled case"} was registered in the demo workspace.`,
-      });
-      navigate({ to: "/cases" });
-    }, 700);
+
+      // Create new clean case
+      const newCase = {
+        id: form.caseId,
+        name: form.name.trim(),
+        description: form.description.trim() || "No description provided.",
+        status: form.status,
+        priority: form.priority,
+        createdAt: form.date,
+        entityCount: 0,
+        relationshipCount: 0,
+        lead: "You",
+      };
+
+      addCase(newCase);
+      setActiveCaseId(form.caseId);
+
+      // Extract entities if user provided initial statements
+      if (form.initialText.trim()) {
+        const extracted = extractEntitiesFromText(form.initialText, form.caseId);
+        addExtractedDataForCase(form.caseId, extracted);
+        toast.success(`Case created with ${extracted.entities.length} extracted entities`, {
+          description: `${form.caseId} — ${form.name} is now active.`,
+        });
+      } else {
+        toast.success("New clean case created", {
+          description: `${form.caseId} — ${form.name} created with 0 entities.`,
+        });
+      }
+
+      navigate({ to: "/investigation" });
+    }, 200);
   };
 
   return (
     <AppLayout
       title="Create New Case"
-      subtitle="Register a new demo investigation in the workspace"
+      subtitle="Register a new investigation workspace with isolated data layer"
       actions={
         <Button variant="outline" onClick={() => navigate({ to: "/cases" })}>
           <ArrowLeft className="size-4" /> Back to Cases
@@ -71,17 +107,17 @@ function CreateCasePage() {
       <form onSubmit={submit} className="panel max-w-3xl space-y-5 p-6">
         <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
-            <Label htmlFor="name">Case Name</Label>
+            <Label htmlFor="name">Case Name *</Label>
             <Input
               id="name"
               required
-              placeholder="e.g. Operation Meridian"
+              placeholder="e.g. Case Alpha / Jaipur Operation"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="caseId">Case ID</Label>
+            <Label htmlFor="caseId">Case ID *</Label>
             <Input
               id="caseId"
               required
@@ -93,17 +129,37 @@ function CreateCasePage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="description">Scope / Description</Label>
           <Textarea
             id="description"
-            rows={5}
-            placeholder="Short summary of the fictional investigation scope…"
+            rows={3}
+            placeholder="Short summary of the investigation scope…"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-5">
+        <div className="space-y-2 border-t border-border pt-4">
+          <div className="flex items-center gap-2">
+            <FileText className="size-4 text-primary" />
+            <Label htmlFor="initialText" className="font-semibold">
+              Initial Statement / Intelligence Input (Optional)
+            </Label>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            If provided, entities mentioned in this statement (e.g. <em>"Rahul Sharma transferred ₹50,000 to Amit Verma in Jaipur"</em>) will be extracted immediately for this case. Leave blank to start with a 0-entity clean case.
+          </p>
+          <Textarea
+            id="initialText"
+            rows={3}
+            placeholder="Optional raw text snippet to extract initial entities..."
+            value={form.initialText}
+            onChange={(e) => setForm({ ...form, initialText: e.target.value })}
+            className="font-mono text-xs"
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-5 border-t border-border pt-4">
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Input
@@ -115,7 +171,7 @@ function CreateCasePage() {
           </div>
           <div className="space-y-2">
             <Label>Priority</Label>
-            <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
+            <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as CasePriority })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -129,7 +185,7 @@ function CreateCasePage() {
           </div>
           <div className="space-y-2">
             <Label>Status</Label>
-            <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+            <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as CaseStatus })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -144,10 +200,10 @@ function CreateCasePage() {
 
         <div className="flex items-center justify-between border-t border-border pt-5">
           <p className="text-xs text-muted-foreground">
-            Mock action — no data is persisted in this prototype.
+            Data will be persisted locally to browser storage.
           </p>
           <Button type="submit" disabled={saving}>
-            <Check className="size-4" /> {saving ? "Creating…" : "Create Case"}
+            <Check className="size-4" /> {saving ? "Creating…" : "Create & Open Case"}
           </Button>
         </div>
       </form>

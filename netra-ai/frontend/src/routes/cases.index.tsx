@@ -5,7 +5,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { CaseCard } from "@/components/cases/CaseCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cases } from "@/data/mock";
+import { useStore } from "@/store";
 import type { CaseStatus } from "@/data/types";
 
 const FILTERS: Array<{ value: CaseStatus | "all"; label: string }> = [
@@ -37,6 +37,7 @@ export const Route = createFileRoute("/cases/")({
 function CasesPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<CaseStatus | "all">("all");
+  const cases = useStore((s) => s.cases);
 
   const filtered = useMemo(
     () =>

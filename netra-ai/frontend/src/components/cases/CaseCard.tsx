@@ -3,8 +3,11 @@ import { CalendarDays, Share2, Users, ArrowRight } from "lucide-react";
 import type { InvestigationCase } from "@/data/types";
 import { PriorityBadge, StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/store";
 
 export function CaseCard({ item }: { item: InvestigationCase }) {
+  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
+
   return (
     <article className="panel flex flex-col gap-4 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong">
       <div className="flex items-start justify-between gap-4">
@@ -27,21 +30,20 @@ export function CaseCard({ item }: { item: InvestigationCase }) {
         </div>
         <div className="flex items-center gap-2">
           <Users className="size-4 text-muted-foreground" />
-          <span className="font-mono text-xs">{item.entityCount} entities</span>
+          <span className="font-mono text-xs">{item.entityCount || 0} entities</span>
         </div>
         <div className="flex items-center gap-2">
           <Share2 className="size-4 text-muted-foreground" />
-          <span className="font-mono text-xs">{item.relationshipCount} links</span>
+          <span className="font-mono text-xs">{item.relationshipCount || 0} links</span>
         </div>
       </dl>
 
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">Lead: {item.lead}</span>
-        <Button asChild size="sm">
+        <Button asChild size="sm" onClick={() => setActiveCaseId(item.id)}>
           <Link to="/investigation">
             Open Investigation <ArrowRight className="size-4" />
           </Link>
-
         </Button>
       </div>
     </article>

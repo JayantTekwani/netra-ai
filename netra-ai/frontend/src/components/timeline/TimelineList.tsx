@@ -1,6 +1,6 @@
 import { Phone, Banknote, MapPin, FileText, Link2, FileSearch } from "lucide-react";
 import type { RelationshipType, TimelineEvent } from "@/data/types";
-import { entityById } from "@/data/mock";
+import { useStore } from "@/store";
 import { Button } from "@/components/ui/button";
 
 const ICONS: Record<RelationshipType, typeof Phone> = {
@@ -34,14 +34,23 @@ export function TimelineList({
   events: TimelineEvent[];
   onViewRecord: (recordIds: string[], context: string) => void;
 }) {
+  const allEntities = useStore((s) => s.entities);
   const sorted = [...events].sort((a, b) => a.date.localeCompare(b.date));
+
+  if (events.length === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground italic">
+        No timeline events recorded for this case yet. Upload or extract case data to view event chronology.
+      </p>
+    );
+  }
 
   return (
     <ol className="relative space-y-4 border-l border-border pl-6">
       {sorted.map((e) => {
-        const Icon = ICONS[e.type];
-        const colorCls = COLORS[e.type];
-        const dotCls = DOT_COLORS[e.type];
+        const Icon = ICONS[e.type] || FileText;
+        const colorCls = COLORS[e.type] || COLORS.association;
+        const dotCls = DOT_COLORS[e.type] || DOT_COLORS.association;
         return (
           <li key={e.id} className="relative">
             <span className={`absolute -left-[33px] top-3 flex size-4 items-center justify-center rounded-full border border-background bg-background`}>
@@ -57,14 +66,17 @@ export function TimelineList({
                     <div className="text-sm font-medium">{e.title}</div>
                     <p className="mt-0.5 text-xs text-muted-foreground">{e.description}</p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      {e.entityIds.map((id) => (
-                        <span
-                          key={id}
-                          className="rounded border border-border bg-surface-raised px-2 py-0.5 text-[11px]"
-                        >
-                          {entityById(id)?.name ?? id}
-                        </span>
-                      ))}
+                      {(e.entityIds || []).map((id) => {
+                        const ent = allEntities.find((x) => x.id === id);
+                        return (
+                          <span
+                            key={id}
+                            className="rounded border border-border bg-surface-raised px-2 py-0.5 text-[11px]"
+                          >
+                            {ent?.name ?? id}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -72,14 +84,16 @@ export function TimelineList({
                   <div className="font-mono text-xs text-muted-foreground">
                     {new Date(e.date).toLocaleString()}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`mt-2 px-2 ${colorCls.split(' ')[2]}`}
-                    onClick={() => onViewRecord([e.recordId], e.title)}
-                  >
-                    <FileSearch className="size-4 mr-1" /> {e.recordId}
-                  </Button>
+                  {e.recordId && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`mt-2 px-2 ${colorCls.split(' ')[2]}`}
+                      onClick={() => onViewRecord([e.recordId], e.title)}
+                    >
+                      <FileSearch className="size-4 mr-1" /> {e.recordId}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

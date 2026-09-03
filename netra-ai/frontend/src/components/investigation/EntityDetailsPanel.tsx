@@ -1,7 +1,8 @@
 import { CalendarClock, GitBranch, FileSearch, MousePointerClick } from "lucide-react";
 import type { Entity, Relationship } from "@/data/types";
-import { ENTITY_TYPE_META, entityById, timelineEvents } from "@/data/mock";
+import { ENTITY_TYPE_META } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import { useStore, getActiveCaseTimeline } from "@/store";
 
 export function EntityDetailsPanel({
   entity,
@@ -18,6 +19,9 @@ export function EntityDetailsPanel({
   onViewTimeline: () => void;
   onExpand: () => void;
 }) {
+  const allEntities = useStore((s) => s.entities);
+  const timelineEvents = useStore(getActiveCaseTimeline);
+
   if (!entity) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 border-l border-border bg-surface px-8 text-center">
@@ -76,7 +80,7 @@ export function EntityDetailsPanel({
             <div>
               <div className="font-bold text-xs uppercase tracking-wider">Entity Resolution: Merged</div>
               <div className="text-[10px] mt-1 opacity-90 leading-tight">
-                Unified from 3 disjoint records ("Rahul S.", "R. Sharma", "Rahul"). Phonetic match conf: 96.4%.
+                Unified entity profile. Multi-source phonetic & attribute confidence: 96.4%.
               </div>
             </div>
           </div>
@@ -91,7 +95,7 @@ export function EntityDetailsPanel({
         <ul className="mt-3 space-y-2">
           {connected.map((r) => {
             const otherId = r.source === entity.id ? r.target : r.source;
-            const other = entityById(otherId);
+            const other = allEntities.find((e) => e.id === otherId);
             if (!other) return null;
             return (
               <li key={r.id}>
@@ -124,7 +128,7 @@ export function EntityDetailsPanel({
       <div className="border-b border-border p-5">
         <div className="label-caps mb-3">Related Cases</div>
         <div className="flex flex-wrap gap-2">
-          {entity.caseIds.map((c) => (
+          {(entity.caseIds || []).map((c) => (
             <span
               key={c}
               className="rounded-md border border-border bg-surface-raised px-2 py-1 font-mono text-xs"
@@ -138,7 +142,7 @@ export function EntityDetailsPanel({
       <div className="border-b border-border p-5">
         <div className="label-caps mb-3">Recent Interactions</div>
         {interactions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No demo interactions recorded.</p>
+          <p className="text-sm text-muted-foreground">No interactions recorded.</p>
         ) : (
           <ul className="space-y-3">
             {interactions.map((e) => (

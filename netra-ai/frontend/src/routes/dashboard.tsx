@@ -19,10 +19,11 @@ import { LiveAnalysis } from "@/components/dashboard/LiveAnalysis";
 import { ParallaxCarousel } from "@/components/dashboard/ParallaxCarousel";
 import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
-import { activity, cases, entities, relationships, supportingRecords, insights } from "@/data/mock";
+import { activity, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
 import { getSession } from "@/lib/session";
 import type { Entity, Relationship } from "@/data/types";
+import { useStore } from "@/store";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -68,9 +69,18 @@ function ServerNodesMetrics() {
   );
 }
 
+import { getActiveCaseEntities, getActiveCaseRelationships, getActiveCaseRecords } from "@/store";
+
 function DashboardPage() {
   const user = getSession();
+  const activeCaseId = useStore((s) => s.activeCaseId);
+  const cases = useStore((s) => s.cases);
+  const activeCase = cases.find((c) => c.id === activeCaseId);
   
+  const entities = useStore(getActiveCaseEntities);
+  const relationships = useStore(getActiveCaseRelationships);
+  const supportingRecords = useStore(getActiveCaseRecords);
+
   // Live Threat Analysis Ticker
   const [liveInsights, setLiveInsights] = useState(LIVE_INSIGHTS_POOL.slice(0, 4));
   useEffect(() => {
@@ -85,40 +95,40 @@ function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Dramatically expand the demo network graph with background noise nodes
+  // For the default demo case (CASE-2041), expand graph with background noise; for new cases, use exact extracted graph
   const { denseEntities, denseRelationships } = useMemo(() => {
     const generatedEntities: Entity[] = [...entities];
     const generatedRelationships: Relationship[] = [...relationships];
-    const types: Array<keyof typeof ENTITY_TYPE_META> = ["person", "phone", "account", "location", "organization"];
-    
-    // Add 150 background nodes
-    for (let i = 0; i < 150; i++) {
-      const type = types[Math.floor(Math.random() * types.length)]!;
-      generatedEntities.push({
-        id: `gen-${i}`,
-        type,
-        name: `Unknown ${type} ${i}`,
-        attributes: {},
-        caseIds: ["CASE-2041"]
-      });
-    }
 
-    // Add 250 connections to create a dense web
-    for (let i = 0; i < 250; i++) {
-      const sourceIdx = Math.floor(Math.random() * generatedEntities.length);
-      const targetIdx = Math.floor(Math.random() * generatedEntities.length);
-      if (sourceIdx !== targetIdx) {
-        generatedRelationships.push({
-          id: `gen-rel-${i}`,
-          source: generatedEntities[sourceIdx]!.id,
-          target: generatedEntities[targetIdx]!.id,
-          type: "association",
-          date: new Date().toISOString(), label: "associated", recordIds: [],
+    if (activeCaseId === "CASE-2041" && entities.length > 0) {
+      const types: Array<keyof typeof ENTITY_TYPE_META> = ["person", "phone", "account", "location", "organization"];
+      // Add background nodes for demo effect
+      for (let i = 0; i < 50; i++) {
+        const type = types[Math.floor(Math.random() * types.length)]!;
+        generatedEntities.push({
+          id: `gen-${i}`,
+          type,
+          name: `Unknown ${type} ${i}`,
+          attributes: {},
+          caseIds: ["CASE-2041"]
         });
+      }
+      for (let i = 0; i < 80; i++) {
+        const sourceIdx = Math.floor(Math.random() * generatedEntities.length);
+        const targetIdx = Math.floor(Math.random() * generatedEntities.length);
+        if (sourceIdx !== targetIdx) {
+          generatedRelationships.push({
+            id: `gen-rel-${i}`,
+            source: generatedEntities[sourceIdx]!.id,
+            target: generatedEntities[targetIdx]!.id,
+            type: "association",
+            date: new Date().toISOString(), label: "associated", recordIds: [],
+          });
+        }
       }
     }
     return { denseEntities: generatedEntities, denseRelationships: generatedRelationships };
-  }, []);
+  }, [entities, relationships, activeCaseId]);
 
   const activeCases = cases.filter((c) => c.status === "active");
   const byType = (Object.keys(ENTITY_TYPE_META) as Array<keyof typeof ENTITY_TYPE_META>).map(
@@ -127,7 +137,7 @@ function DashboardPage() {
       count: entities.filter((e) => e.type === t).length,
     }),
   );
-  const max = Math.max(...byType.map((b) => b.count));
+  const max = Math.max(...byType.map((b) => b.count), 1);
 
   return (
     <AppLayout

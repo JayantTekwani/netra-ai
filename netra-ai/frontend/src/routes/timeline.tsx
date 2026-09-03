@@ -3,8 +3,9 @@ import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { TimelineList } from "@/components/timeline/TimelineList";
 import { SupportingRecordsDialog } from "@/components/investigation/SupportingRecordsDialog";
-import { RELATIONSHIP_TYPE_META, timelineEvents } from "@/data/mock";
+import { useStore, getActiveCaseTimeline } from "@/store";
 import type { RelationshipType } from "@/data/types";
+import { RELATIONSHIP_TYPE_META } from "@/data/mock";
 
 export const Route = createFileRoute("/timeline")({
   head: () => ({
@@ -13,13 +14,9 @@ export const Route = createFileRoute("/timeline")({
       {
         name: "description",
         content:
-          "Chronological view of fictional demo investigation events: calls, transfers, location hits and document mentions.",
+          "Chronological view of investigation events for the active case.",
       },
-      { property: "og:title", content: "Timeline — त्रिनेत्र-AI Investigation Platform" },
-      {
-        property: "og:description",
-        content: "Chronological demo events with references to supporting records.",
-      },
+      { property: "og:title", content: "Timeline — त्रिनेत्र-AI Platform" },
     ],
   }),
   component: TimelinePage,
@@ -32,15 +29,19 @@ function TimelinePage() {
     ids: [],
   });
 
+  const activeCaseId = useStore((s) => s.activeCaseId);
+  const activeCase = useStore((s) => s.cases.find((c) => c.id === activeCaseId));
+  const timelineEvents = useStore(getActiveCaseTimeline);
+
   const events = useMemo(
     () => timelineEvents.filter((e) => type === "all" || e.type === type),
-    [type],
+    [type, timelineEvents],
   );
 
   return (
     <AppLayout
       title="Timeline"
-      subtitle="Chronological reconstruction of fictional demo events"
+      subtitle={`Chronological reconstruction of events for ${activeCase ? `${activeCase.name} (${activeCase.id})` : "Active Case"}`}
     >
       <div className="mb-6 flex gap-1 rounded-md border border-border bg-surface p-1">
         {(["all", ...Object.keys(RELATIONSHIP_TYPE_META)] as Array<RelationshipType | "all">).map(

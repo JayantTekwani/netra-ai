@@ -1,5 +1,5 @@
 import { FileText } from "lucide-react";
-import { recordById } from "@/data/mock";
+import { useStore } from "@/store";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,10 @@ export function SupportingRecordsDialog({
   recordIds: string[];
   context?: string | undefined;
 }) {
-  const records = recordIds.map(recordById).filter(Boolean);
+  const allRecords = useStore((s) => s.supportingRecords);
+  const records = recordIds
+    .map((id) => allRecords.find((r) => r.id === id))
+    .filter(Boolean);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -27,12 +30,12 @@ export function SupportingRecordsDialog({
         <DialogHeader>
           <DialogTitle>Supporting Records</DialogTitle>
           <DialogDescription>
-            {context ?? "Fictional demo records that explain why this link exists."}
+            {context ?? "Source records attached to this link."}
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
           {records.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No records attached in the demo dataset.</p>
+            <p className="text-sm text-muted-foreground">No supporting records attached.</p>
           ) : (
             records.map((r) => (
               <div key={r!.id} className="rounded-md border border-border bg-surface p-4">
