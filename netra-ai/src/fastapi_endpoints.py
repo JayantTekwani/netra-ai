@@ -1,5 +1,5 @@
 """
-Trinetra-AI: Core REST API Server (FastAPI)
+त्रिनेत्र-AI: Core REST API Server (FastAPI)
 Implements: Indic-Alias NLP Matching, Dynamic Timeline Scrubbing, and Sec 63 BSA Evidence Audits.
 Modular Architecture Refactor.
 """
@@ -22,7 +22,7 @@ from src.security.merkle_vault import MerkleVault
 # App Initialization & CORS Middleware (Task 4)
 # -----------------------------------------------------------------------------
 app = FastAPI(
-    title="Trinetra-AI Core API", 
+    title="त्रिनेत्र-AI Core API", 
     description="Production API for MHA Intelligence Pipeline (SIH26189)",
     version="2.0.0"
 )
