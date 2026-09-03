@@ -1,3 +1,4 @@
+import { useStore } from './store'; 
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
