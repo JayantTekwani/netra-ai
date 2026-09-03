@@ -10,7 +10,15 @@ class Store<T> {
   private listeners: Set<Listener> = new Set();
   
   constructor(private createState: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) {
-    const saved = localStorage.getItem('netra_store_v3');
+    let saved = null;
+    if (typeof window !== 'undefined') {
+      try {
+        saved = localStorage.getItem('netra_store_v3');
+      } catch (e) {
+        console.warn('Failed to read from localStorage:', e);
+      }
+    }
+    
     const initialState = createState(this.set.bind(this), this.get.bind(this));
     if (saved) {
       try {
@@ -29,10 +37,12 @@ class Store<T> {
   private set = (partial: Partial<T> | ((state: T) => Partial<T>)) => {
     const nextState = typeof partial === 'function' ? (partial as any)(this.state) : partial;
     this.state = { ...this.state, ...nextState };
-    try {
-      localStorage.setItem('netra_store_v3', JSON.stringify(this.state));
-    } catch (err) {
-      console.warn('Failed to save to localStorage:', err);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('netra_store_v3', JSON.stringify(this.state));
+      } catch (err) {
+        console.warn('Failed to save to localStorage:', err);
+      }
     }
     this.listeners.forEach(l => l());
   }
@@ -201,7 +211,11 @@ export const useStore = create<StoreState>((set, get) => ({
   }),
 
   resetToDemoState: () => {
-    localStorage.removeItem('netra_store_v3');
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('netra_store_v3');
+      } catch (err) {}
+    }
     set({
       activeCaseId: "CASE-2041",
       cases: initialCases,
