@@ -63,7 +63,7 @@ export function ParallaxCarousel() {
                 <h3 className="text-2xl font-bold text-white tracking-tight mb-2">{card.title}</h3>
                 <p className="text-white/80 font-medium leading-relaxed">{card.desc}</p>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
