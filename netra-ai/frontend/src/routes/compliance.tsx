@@ -7,7 +7,7 @@ import { ledger, Block } from "@/lib/blockchain";
 
 export const Route = createFileRoute("/compliance")({
   head: () => ({
-    meta: [{ title: "Audit & Access Log — नेत्र-AI" }],
+    meta: [{ title: "Audit & Access Log — त्रिनेत्र-AI" }],
   }),
   component: AuditPage,
 });

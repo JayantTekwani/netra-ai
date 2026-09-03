@@ -27,9 +27,9 @@ import type { Entity, Relationship } from "@/data/types";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — नेत्र-AI Investigation Platform" },
+      { title: "Dashboard — त्रिनेत्र-AI Investigation Platform" },
       { name: "description", content: "Overview of active demo cases." },
-      { property: "og:title", content: "Dashboard — नेत्र-AI Investigation Platform" },
+      { property: "og:title", content: "Dashboard — त्रिनेत्र-AI Investigation Platform" },
     ],
   }),
   component: DashboardPage,
@@ -149,7 +149,7 @@ function DashboardPage() {
       }
     >
       <div className="mb-6 rounded-md border-l-4 border-primary bg-primary/10 px-4 py-3 text-sm text-foreground">
-        <strong className="font-semibold">नेत्र-AI Platform</strong> — Turns messy police data (call records, FIRs, bank transfers) into one connected picture.
+        <strong className="font-semibold">त्रिनेत्र-AI Platform</strong> — Turns messy police data (call records, FIRs, bank transfers) into one connected picture.
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

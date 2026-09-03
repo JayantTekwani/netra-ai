@@ -9,16 +9,16 @@ import { setSession } from "@/lib/session";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "नेत्र-AI — Investigation Intelligence Platform" },
+      { title: "त्रिनेत्र-AI — Investigation Intelligence Platform" },
       {
         name: "description",
         content:
-          "नेत्र-AI prototype sign-in: an investigation intelligence platform for exploring relationships across fictional demo case data.",
+          "त्रिनेत्र-AI prototype sign-in: an investigation intelligence platform for exploring relationships across fictional demo case data.",
       },
-      { property: "og:title", content: "नेत्र-AI — Investigation Intelligence Platform" },
+      { property: "og:title", content: "त्रिनेत्र-AI — Investigation Intelligence Platform" },
       {
         property: "og:description",
-        content: "Prototype sign-in for the नेत्र-AI criminal network analysis demo.",
+        content: "Prototype sign-in for the त्रिनेत्र-AI criminal network analysis demo.",
       },
     ],
   }),
@@ -73,7 +73,7 @@ function LoginPage() {
               <ShieldCheck className="size-7 text-primary" />
             </div>
             <div>
-              <div className="font-mono text-4xl font-semibold ">नेत्र-AI</div>
+              <div className="font-mono text-4xl font-semibold ">त्रिनेत्र-AI</div>
               <div className="mt-1 text-sm uppercase tracking-[0.22em] text-muted-foreground">
                 Investigation Intelligence Platform
               </div>
@@ -97,7 +97,7 @@ function LoginPage() {
               </ul>
             </div>
             <div className="panel p-4 border-border bg-accent/10 relative overflow-hidden">
-              <div className="text-[10px] uppercase font-bold tracking-wider text-accent mb-2">With नेत्र-AI</div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-accent mb-2">With त्रिनेत्र-AI</div>
               <ul className="space-y-1.5 text-xs font-medium font-mono text-accent/80">
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> 1 unified search</li>
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent" /> Auto-linked evidence</li>

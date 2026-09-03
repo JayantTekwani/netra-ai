@@ -15,13 +15,13 @@ import { entities, relationships } from "@/data/mock";
 export const Route = createFileRoute("/investigation")({
   head: () => ({
     meta: [
-      { title: "Investigation Workspace — नेत्र-AI" },
+      { title: "Investigation Workspace — त्रिनेत्र-AI" },
       {
         name: "description",
         content:
           "Interactive relationship network of fictional entities: filter, select nodes and trace every link back to a supporting demo record.",
       },
-      { property: "og:title", content: "Investigation Workspace — नेत्र-AI" },
+      { property: "og:title", content: "Investigation Workspace — त्रिनेत्र-AI" },
       {
         property: "og:description",
         content: "Explore a fictional entity relationship graph with filters and entity details.",

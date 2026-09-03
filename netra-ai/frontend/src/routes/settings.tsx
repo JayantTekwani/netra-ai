@@ -11,16 +11,16 @@ import { getSession } from "@/lib/session";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — नेत्र-AI Investigation Platform" },
+      { title: "Settings — त्रिनेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
-          "Manage demo profile details, workspace preferences and prototype data-source configuration in नेत्र-AI.",
+          "Manage demo profile details, workspace preferences and prototype data-source configuration in त्रिनेत्र-AI.",
       },
-      { property: "og:title", content: "Settings — नेत्र-AI Investigation Platform" },
+      { property: "og:title", content: "Settings — त्रिनेत्र-AI Investigation Platform" },
       {
         property: "og:description",
-        content: "Profile and workspace preferences for the नेत्र-AI prototype.",
+        content: "Profile and workspace preferences for the त्रिनेत्र-AI prototype.",
       },
     ],
   }),
@@ -47,7 +47,7 @@ function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="e">Email</Label>
-              <Input id="e" defaultValue={user?.email ?? "investigator@netra.ai"} />
+              <Input id="e" defaultValue={user?.email ?? "investigator@trinetra.ai"} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="u">Unit</Label>

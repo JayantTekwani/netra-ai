@@ -18,16 +18,16 @@ const FILTERS: Array<{ value: CaseStatus | "all"; label: string }> = [
 export const Route = createFileRoute("/cases/")({
   head: () => ({
     meta: [
-      { title: "Cases — नेत्र-AI Investigation Platform" },
+      { title: "Cases — त्रिनेत्र-AI Investigation Platform" },
       {
         name: "description",
         content:
           "Browse, search and open fictional demo investigation cases with entity and relationship counts.",
       },
-      { property: "og:title", content: "Cases — नेत्र-AI Investigation Platform" },
+      { property: "og:title", content: "Cases — त्रिनेत्र-AI Investigation Platform" },
       {
         property: "og:description",
-        content: "Search and open demo investigation cases in the नेत्र-AI prototype.",
+        content: "Search and open demo investigation cases in the त्रिनेत्र-AI prototype.",
       },
     ],
   }),
