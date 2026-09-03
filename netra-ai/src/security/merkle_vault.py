@@ -109,7 +109,7 @@ def verify_proof(leaf_hash: str, proof: List[Dict[str, str]], expected_root: str
     return current_hash.lower() == expected_root.lower()
 
 if __name__ == "__main__":
-    print("=== Netra-AI Merkle Vault Initialized ===")
+    print("=== Trinetra-AI Merkle Vault Initialized ===")
     sample_data = [
         b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR", # Binary CCTV Frame
         {"camera_id": "CAM_04", "fps": 30},     # Structured Metadata
