@@ -78,20 +78,19 @@ function CreateCasePage() {
       addCase(newCase);
       setActiveCaseId(form.caseId);
 
-      // Extract entities if user provided initial statements
       if (form.initialText.trim()) {
         const extracted = extractEntitiesFromText(form.initialText, form.caseId);
         addExtractedDataForCase(form.caseId, extracted);
         toast.success(`Case created with ${extracted.entities.length} extracted entities`, {
-          description: `${form.caseId} — ${form.name} is now active.`,
+          description: `${form.caseId} — ${form.name} is now active. Open it from Cases to investigate.`,
         });
       } else {
-        toast.success("New clean case created", {
-          description: `${form.caseId} — ${form.name} created with 0 entities.`,
+        toast.success("Case created successfully", {
+          description: `${form.caseId} — ${form.name} is now active. Add data via Upload to populate the graph.`,
         });
       }
 
-      navigate({ to: "/investigation" });
+      navigate({ to: "/cases" });
     }, 200);
   };
 

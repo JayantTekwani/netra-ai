@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Cpu, CheckCircle2, Share2, ArrowRight, FileText } from "lucide-react";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ export const Route = createFileRoute("/upload")({
 type Bucket = "fir" | "cdr" | "txn";
 
 function UploadPage() {
+  const navigate = useNavigate();
   const [files, setFiles] = useState<Record<Bucket, UploadedFile[]>>({
     fir: [],
     cdr: [],
@@ -62,11 +63,16 @@ function UploadPage() {
       return;
     }
 
-    // Combine raw input text with file names / descriptions
+    // Combine raw input text with file names for extraction
     let textToAnalyze = rawInputText.trim();
     if (!textToAnalyze && totalFiles > 0) {
-      const fileNames = [...files.fir, ...files.cdr, ...files.txn].map((f) => f.name).join(", ");
-      textToAnalyze = `Uploaded documents: ${fileNames}. Rahul Sharma met Amit Verma in Jaipur regarding transaction ₹2,50,000.`;
+      // Use the actual file names as the basis for extraction context
+      const fileDescriptions = [
+        ...files.fir.map(f => `Case document: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
+        ...files.cdr.map(f => `Call record: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
+        ...files.txn.map(f => `Transaction record: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
+      ].join('. ');
+      textToAnalyze = fileDescriptions;
     }
 
     if (!textToAnalyze) {
@@ -98,16 +104,20 @@ function UploadPage() {
       setPhase("done");
 
       addExtractedDataForCase(activeCaseId, extracted);
-      setResultCounts({
+      const counts = {
         e: extracted.entities.length,
         r: extracted.relationships.length,
         rec: Math.max(1, totalFiles),
         c: extracted.insights.length,
+      };
+      setResultCounts(counts);
+
+      toast.success("Analysis complete — navigating to investigation", {
+        description: `Added ${counts.e} entities and ${counts.r} relationships to ${activeCase?.name || activeCaseId}.`,
       });
 
-      toast.success("Analysis complete", {
-        description: `Derived ${extracted.entities.length} entity/entities and ${extracted.relationships.length} relationship(s) for ${activeCase?.name || activeCaseId}.`,
-      });
+      // Navigate to investigation so user sees the updated graph
+      setTimeout(() => navigate({ to: "/investigation" }), 1200);
     }, 400);
   };
 
