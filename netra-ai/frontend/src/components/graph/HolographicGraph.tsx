@@ -27,14 +27,20 @@ export function HolographicGraph({
   const tooltipRef = useRef<HTMLDivElement>(null);
   
   const [activeFilter, setActiveFilter] = useState("");
+  const activeFilterRef = useRef("");
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedNode, setSelectedNode] = useState<Entity | null>(null);
   const [is2D, setIs2D] = useState(false);
   const is2DRef = useRef(false);
 
-  // Generate 3D layout once
+  // Sync activeFilter into ref so the render loop can read it without
+  // being a useEffect dependency (avoids full graph teardown on every keystroke)
+  activeFilterRef.current = activeFilter;
+
+  // Generate 3D layout once — cap at 300 nodes to prevent browser freeze
   const holoNodes = useMemo(() => {
-    return entities.map((e) => {
+    const capped = entities.slice(0, 300);
+    return capped.map((e) => {
       // Spherical distribution
       const u = Math.random();
       const v = Math.random();
@@ -55,7 +61,8 @@ export function HolographicGraph({
     });
   }, [entities]);
 
-  const holoEdgeList = useMemo(() => relationships.map(r => [r.source, r.target]), [relationships]);
+  // Cap edges at 600 to prevent DOM explosion
+  const holoEdgeList = useMemo(() => relationships.slice(0, 600).map(r => [r.source, r.target]), [relationships]);
   const nodeMap = useMemo(() => new Map(holoNodes.map(n => [n.id, n])), [holoNodes]);
 
   useEffect(() => {
@@ -177,7 +184,7 @@ export function HolographicGraph({
         const n = nodeMap.get(id)!;
         const el = nodeEls[id];
         if(!el) return;
-        const matchesSearch = activeFilter && !n.name.toLowerCase().includes(activeFilter.toLowerCase());
+        const matchesSearch = activeFilterRef.current && !n.name.toLowerCase().includes(activeFilterRef.current.toLowerCase());
         const baseSize = n.flagged ? 15 : 13;
         const size = Math.max(7, baseSize * p.scale);
         el.style.left = p.sx + 'px';
@@ -379,7 +386,10 @@ export function HolographicGraph({
       delete (window as any).__holoToggleAuto;
       delete (window as any).__holoTo2D;
     };
-  }, [holoNodes, holoEdgeList, activeFilter]);
+  // NOTE: activeFilter is intentionally NOT in deps — it's read via activeFilterRef
+  // to avoid tearing down the entire graph on every keystroke.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holoNodes, holoEdgeList]);
   
   const css = `
     .holo-screen {
