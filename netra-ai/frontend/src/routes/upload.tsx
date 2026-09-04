@@ -41,7 +41,8 @@ function UploadPage() {
 
   const activeCaseId = useStore((s) => s.activeCaseId);
   const activeCase = useStore((s) => s.cases.find((c) => c.id === activeCaseId));
-  const addExtractedDataForCase = useStore((s) => s.addExtractedDataForCase);
+  // Actions: use getState() at call-time — never subscribe to function refs
+  const addExtractedDataForCase = (caseId: string, extracted: any) => useStore.getState().addExtractedDataForCase(caseId, extracted);
   
   const [resultCounts, setResultCounts] = useState({ e: 0, r: 0, rec: 0, c: 0 });
 

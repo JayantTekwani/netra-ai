@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useStore } from "@/store";
 
 export function CaseCard({ item }: { item: InvestigationCase }) {
-  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
+  // Use getState() directly for action functions — subscribing to them via
+  // useStore() causes infinite re-renders because function refs change on every update.
+  const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
 
   return (
     <article className="panel flex flex-col gap-4 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong">

@@ -45,7 +45,8 @@ export function AppLayout({
 
   const cases = useStore((s) => s.cases);
   const activeCaseId = useStore((s) => s.activeCaseId);
-  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
+  // Actions: use getState() directly — don't subscribe to function refs as state
+  const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
 
   return (
     <div className="flex min-h-screen bg-background">

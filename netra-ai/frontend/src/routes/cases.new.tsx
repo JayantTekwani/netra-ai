@@ -46,9 +46,10 @@ function CreateCasePage() {
   });
   const [saving, setSaving] = useState(false);
   
-  const addCase = useStore((s) => s.addCase);
-  const setActiveCaseId = useStore((s) => s.setActiveCaseId);
-  const addExtractedDataForCase = useStore((s) => s.addExtractedDataForCase);
+  // Actions: use getState() at call-time — never subscribe to function refs
+  const addCase = (c: any) => useStore.getState().addCase(c);
+  const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
+  const addExtractedDataForCase = (caseId: string, extracted: any) => useStore.getState().addExtractedDataForCase(caseId, extracted);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();

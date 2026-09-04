@@ -47,7 +47,7 @@ function CasesPage() {
           .includes(query.toLowerCase());
         return matchesQuery && (status === "all" || c.status === status);
       }),
-    [query, status],
+    [cases, query, status],
   );
 
   return (
