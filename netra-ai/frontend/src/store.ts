@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { InvestigationCase, Entity, Relationship, SupportingRecord, Insight, TimelineEvent, ActivityItem } from './data/types';
 import { cases as initialCases, entities as initialEntities, relationships as initialRelationships, supportingRecords as initialRecords, insights as initialInsights, timelineEvents as initialTimeline, activity as initialActivity } from './data/mock';
 import type { ExtractionResult } from './utils/entityExtractor';
@@ -58,12 +58,22 @@ class Store<T> {
 export function create<T>(createState: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) {
   const store = new Store(createState);
   
-  // FIXED: Use useSyncExternalStore to prevent infinite re-renders
   const useStore = function<U>(selector: (state: T) => U = (s) => s as any): U {
-    return useSyncExternalStore(
-      store.subscribe, 
-      () => selector(store.getState())
-    );
+    const selectorRef = useRef(selector);
+    selectorRef.current = selector;
+
+    const [state, setState] = useState(() => selector(store.getState()));
+
+    useEffect(() => {
+      // Re-run selector on every store change using the latest ref value.
+      // Empty dep array → subscription is set up only once (no infinite loop).
+      const handleStateChange = () => {
+        setState(selectorRef.current(store.getState()));
+      };
+      return store.subscribe(handleStateChange);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    return state;
   };
   useStore.getState = store.getState.bind(store);
   return useStore;
