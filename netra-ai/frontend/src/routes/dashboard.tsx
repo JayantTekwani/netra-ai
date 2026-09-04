@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import {
   FolderSearch,
   Users,
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { activity, insights } from "@/data/mock";
 import { ENTITY_TYPE_META } from "@/data/mock";
 import { getSession } from "@/lib/session";
-import type { Entity, Relationship } from "@/data/types";
+
 import { useStore } from "@/store";
 
 export const Route = createFileRoute("/dashboard")({
@@ -95,40 +95,9 @@ function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // For the default demo case (CASE-2041), expand graph with background noise; for new cases, use exact extracted graph
-  const { denseEntities, denseRelationships } = useMemo(() => {
-    const generatedEntities: Entity[] = [...entities];
-    const generatedRelationships: Relationship[] = [...relationships];
-
-    if (activeCaseId === "CASE-2041" && entities.length > 0) {
-      const types: Array<keyof typeof ENTITY_TYPE_META> = ["person", "phone", "account", "location", "organization"];
-      // Add background nodes for demo effect
-      for (let i = 0; i < 50; i++) {
-        const type = types[Math.floor(Math.random() * types.length)]!;
-        generatedEntities.push({
-          id: `gen-${i}`,
-          type,
-          name: `Unknown ${type} ${i}`,
-          attributes: {},
-          caseIds: ["CASE-2041"]
-        });
-      }
-      for (let i = 0; i < 80; i++) {
-        const sourceIdx = Math.floor(Math.random() * generatedEntities.length);
-        const targetIdx = Math.floor(Math.random() * generatedEntities.length);
-        if (sourceIdx !== targetIdx) {
-          generatedRelationships.push({
-            id: `gen-rel-${i}`,
-            source: generatedEntities[sourceIdx]!.id,
-            target: generatedEntities[targetIdx]!.id,
-            type: "association",
-            date: new Date().toISOString(), label: "associated", recordIds: [],
-          });
-        }
-      }
-    }
-    return { denseEntities: generatedEntities, denseRelationships: generatedRelationships };
-  }, [entities, relationships, activeCaseId]);
+  // Use real entities/relationships directly — the canvas graph handles them efficiently
+  const denseEntities = entities;
+  const denseRelationships = relationships;
 
   const activeCases = cases.filter((c) => c.status === "active");
   const byType = (Object.keys(ENTITY_TYPE_META) as Array<keyof typeof ENTITY_TYPE_META>).map(
