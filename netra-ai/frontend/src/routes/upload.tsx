@@ -57,68 +57,101 @@ function UploadPage() {
   const remove = (b: Bucket) => (name: string) =>
     setFiles((f) => ({ ...f, [b]: f[b].filter((x) => x.name !== name) }));
 
+  // Read a File as text using FileReader
+  const readFileAsText = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target?.result as string ?? "");
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+
   const analyze = async () => {
     if (!activeCaseId) {
       toast.error("No active case selected. Please select or create a case first.");
       return;
     }
 
-    // Combine raw input text with file names for extraction
-    let textToAnalyze = rawInputText.trim();
-    if (!textToAnalyze && totalFiles > 0) {
-      // Use the actual file names as the basis for extraction context
-      const fileDescriptions = [
-        ...files.fir.map(f => `Case document: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
-        ...files.cdr.map(f => `Call record: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
-        ...files.txn.map(f => `Transaction record: ${f.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}`),
-      ].join('. ');
-      textToAnalyze = fileDescriptions;
-    }
+    const allFiles = [...files.fir, ...files.cdr, ...files.txn];
 
-    if (!textToAnalyze) {
+    if (!rawInputText.trim() && allFiles.length === 0) {
       toast.error("Please enter raw text or upload files to perform analysis.");
       return;
     }
 
     setPhase("processing");
-    setProgress(15);
+    setProgress(10);
 
-    // Attempt FastAPI backend call first if endpoint available
+    // Attempt FastAPI backend call
     try {
       await axios.post("http://localhost:8000/api/ingest/fir", {
         case_id: activeCaseId,
-        raw_text: textToAnalyze,
+        raw_text: rawInputText.trim() || `Uploaded: ${allFiles.map(f => f.name).join(", ")}`,
         source_document: "web_upload"
       }, { timeout: 1500 });
     } catch (e) {
-      console.log("Backend offline or fast local fallback mode used.");
+      console.log("Backend offline — using local extractor.");
     }
 
-    setProgress(50);
+    setProgress(30);
 
-    // Deterministic Extraction based ON ACTUAL INPUT
-    const extracted = extractEntitiesFromText(textToAnalyze, activeCaseId);
+    // Read all uploaded file contents
+    const fileContents: Array<{ name: string; content: string }> = [];
+    for (const uf of allFiles) {
+      try {
+        const text = await readFileAsText(uf.file);
+        fileContents.push({ name: uf.name, content: text });
+      } catch {
+        console.warn(`Could not read file: ${uf.name}`);
+      }
+    }
 
-    setTimeout(() => {
-      setProgress(100);
-      setPhase("done");
+    setProgress(55);
 
+    // Run extraction: one pass per file + one pass for raw text input
+    let totalEntities = 0, totalRelationships = 0, totalInsights = 0;
+
+    // Process each file separately so the extractor knows the filename for type detection
+    for (const fc of fileContents) {
+      const extracted = extractEntitiesFromText(fc.content, activeCaseId, fc.name);
       addExtractedDataForCase(activeCaseId, extracted);
-      const counts = {
-        e: extracted.entities.length,
-        r: extracted.relationships.length,
-        rec: Math.max(1, totalFiles),
-        c: extracted.insights.length,
-      };
-      setResultCounts(counts);
+      totalEntities += extracted.entities.length;
+      totalRelationships += extracted.relationships.length;
+      totalInsights += extracted.insights.length;
+    }
 
-      toast.success("Analysis complete — navigating to investigation", {
-        description: `Added ${counts.e} entities and ${counts.r} relationships to ${activeCase?.name || activeCaseId}.`,
-      });
+    // Also process the raw text box if filled
+    if (rawInputText.trim()) {
+      const extracted = extractEntitiesFromText(rawInputText.trim(), activeCaseId, "raw_input.txt");
+      addExtractedDataForCase(activeCaseId, extracted);
+      totalEntities += extracted.entities.length;
+      totalRelationships += extracted.relationships.length;
+      totalInsights += extracted.insights.length;
+    }
 
-      // Navigate to investigation so user sees the updated graph
-      setTimeout(() => navigate({ to: "/investigation" }), 1200);
-    }, 400);
+    // If no files AND no raw text resulted in anything — shouldn't happen now
+    if (totalEntities === 0 && fileContents.length === 0 && !rawInputText.trim()) {
+      toast.error("No data to analyze.");
+      setPhase("idle");
+      return;
+    }
+
+    setProgress(100);
+    setPhase("done");
+
+    const counts = {
+      e: totalEntities,
+      r: totalRelationships,
+      rec: Math.max(1, allFiles.length),
+      c: totalInsights,
+    };
+    setResultCounts(counts);
+
+    toast.success("Analysis complete — navigating to investigation", {
+      description: `Added ${counts.e} entities and ${counts.r} relationships to ${activeCase?.name || activeCaseId}.`,
+    });
+
+    setTimeout(() => navigate({ to: "/investigation" }), 1200);
   };
 
   const STAGES = [

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 export interface UploadedFile {
   name: string;
   size: number;
+  file: File; // The real File object so we can read its content
 }
 
 export function UploadZone({
@@ -27,7 +28,8 @@ export function UploadZone({
 
   const handle = (list: FileList | null) => {
     if (!list) return;
-    onAdd(Array.from(list).map((f) => ({ name: f.name, size: f.size })));
+    // Store the actual File object so the upload page can read content
+    onAdd(Array.from(list).map((f) => ({ name: f.name, size: f.size, file: f })));
   };
 
   return (
@@ -38,16 +40,9 @@ export function UploadZone({
       </div>
 
       <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setOver(true);
-        }}
+        onDragOver={(e) => { e.preventDefault(); setOver(true); }}
         onDragLeave={() => setOver(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setOver(false);
-          handle(e.dataTransfer.files);
-        }}
+        onDrop={(e) => { e.preventDefault(); setOver(false); handle(e.dataTransfer.files); }}
         className={`mt-4 flex flex-1 flex-col items-center justify-center gap-3 rounded-md border border-dashed px-4 py-10 text-center transition-colors duration-200 ${
           over ? "border-primary bg-primary/5" : "border-border-strong bg-surface-raised/50"
         }`}
@@ -63,6 +58,7 @@ export function UploadZone({
           type="file"
           multiple
           className="hidden"
+          accept={accept}
           onChange={(e) => handle(e.target.files)}
         />
       </div>

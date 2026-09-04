@@ -79,7 +79,7 @@ function CreateCasePage() {
       setActiveCaseId(form.caseId);
 
       if (form.initialText.trim()) {
-        const extracted = extractEntitiesFromText(form.initialText, form.caseId);
+        const extracted = extractEntitiesFromText(form.initialText, form.caseId, "initial_statement.txt");
         addExtractedDataForCase(form.caseId, extracted);
         toast.success(`Case created with ${extracted.entities.length} extracted entities`, {
           description: `${form.caseId} — ${form.name} is now active. Open it from Cases to investigate.`,
