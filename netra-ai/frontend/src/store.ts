@@ -1,5 +1,4 @@
-import { useStore } from 'zustand';
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { InvestigationCase, Entity, Relationship, SupportingRecord, Insight, TimelineEvent, ActivityItem } from './data/types';
 import { cases as initialCases, entities as initialEntities, relationships as initialRelationships, supportingRecords as initialRecords, insights as initialInsights, timelineEvents as initialTimeline, activity as initialActivity } from './data/mock';
 import type { ExtractionResult } from './utils/entityExtractor';
@@ -59,17 +58,12 @@ class Store<T> {
 export function create<T>(createState: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) {
   const store = new Store(createState);
   
+  // FIXED: Use useSyncExternalStore to prevent infinite re-renders
   const useStore = function<U>(selector: (state: T) => U = (s) => s as any): U {
-    const [state, setState] = useState(() => selector(store.getState()));
-    
-    useEffect(() => {
-      const handleStateChange = () => {
-        setState(selector(store.getState()));
-      };
-      return store.subscribe(handleStateChange);
-    }, [selector]); 
-    
-    return state;
+    return useSyncExternalStore(
+      store.subscribe, 
+      () => selector(store.getState())
+    );
   };
   useStore.getState = store.getState.bind(store);
   return useStore;
