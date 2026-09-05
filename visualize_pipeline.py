@@ -5,14 +5,16 @@ import webbrowser
 import threading
 import http.server
 import socketserver
-import numpy as np
 import time
 import random
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None  # type: ignore
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'netra-ai')))
 
-from src.pipeline.hasher import hash_evidence
+from src.pipeline.hasher import hash_evidence  # type: ignore
 
 PORT = 8080
 
@@ -25,17 +27,25 @@ def get_graph_data():
     with open(os.path.join(base, "merkle_tree.json"), "r") as f:
         merkle = json.load(f)
         
+    # Icon/shape mapping per entity type
+    ICON_MAP = {
+        "PERSON":       {"face": "FontAwesome", "code": "\uf007", "size": 50, "color": "#FF4444"},     # fa-user
+        "ORGANIZATION": {"face": "FontAwesome", "code": "\uf1ad", "size": 50, "color": "#4444FF"},     # fa-building
+        "PHONE":        {"face": "FontAwesome", "code": "\uf095", "size": 50, "color": "#44FF44"},     # fa-phone
+        "LOCATION":     {"face": "FontAwesome", "code": "\uf3c5", "size": 50, "color": "#44FF44"},     # fa-map-marker-alt
+        "ACCOUNT":      {"face": "FontAwesome", "code": "\uf09d", "size": 50, "color": "#44FF44"},     # fa-credit-card
+    }
+    DEFAULT_ICON = {"face": "FontAwesome", "code": "\uf111", "size": 50, "color": "#CCCCCC"}             # fa-circle
+
     vis_nodes = []
     for ent in entities:
-        color = "#CCCCCC"
-        if ent["entity_type"] == "PERSON": color = "#FF4444"
-        elif ent["entity_type"] == "ORGANIZATION": color = "#4444FF"
-        elif ent["entity_type"] in ["ACCOUNT", "PHONE", "LOCATION"]: color = "#44FF44"
+        icon_data = ICON_MAP.get(ent["entity_type"], DEFAULT_ICON)
 
         vis_nodes.append({
             "id": ent["entity_id"],
             "label": f"{ent['canonical_name']}\\n({ent['entity_type']})",
-            "color": color,
+            "shape": "icon",
+            "icon": icon_data,
             "title": f"ID: {ent['entity_id']}<br>Type: {ent['entity_type']}<br>Confidence: {ent.get('confidence', 1.0)}<br>Info: {ent.get('description', '')}",
             "data": ent
         })
@@ -55,7 +65,8 @@ def get_graph_data():
 
 def get_suspect_pool_json():
     try:
-        df = pd.read_excel('sih26189_synthetic_criminal_intelligence_dataset.xlsx')
+        dataset_file = 'sih26189_synthetic_criminal_intelligence_dataset_v2.xlsx' if os.path.exists('sih26189_synthetic_criminal_intelligence_dataset_v2.xlsx') else 'sih26189_synthetic_criminal_intelligence_dataset.xlsx'
+        df = pd.read_excel(dataset_file)
         suspects = []
         for _, row in df.iterrows():
             classification = str(row.get('Classification', ''))
@@ -86,6 +97,7 @@ def generate_html():
         <title>त्रिनेत्र-AI Target Explorer & Test Bench</title>
         <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <style>
             body {{ font-family: 'Inter', sans-serif; margin: 0; padding: 0; background-color: #0b0c10; color: #c5c6c7; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }}
             #header {{ background-color: #1f2833; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #45a29e; }}
@@ -243,13 +255,6 @@ def generate_html():
                         <button class="btn" onclick="toggleWebcam()">[ TOGGLE WEBCAM ]</button>
                         <button class="btn" id="btn-capture" onclick="captureAndSync()">[ CAPTURE & SYNC TO GRAPH ]</button>
                     </div>
-                    
-                    <div id="enrollment-panel">
-                        <span style="color: #66fcf1; font-weight: bold; font-family: monospace; font-size: 12px;">ENROLL TARGET:</span>
-                        <input type="file" id="enroll-image" class="input-file" accept="image/*">
-                        <input type="text" id="enroll-name" class="input-box" placeholder="Name (e.g. PER-011)">
-                        <button class="btn" onclick="enrollTarget()" style="padding: 8px 15px; font-size: 11px;">[ COMPUTE DESCRIPTOR ]</button>
-                    </div>
                 </div>
                 
                 <div id="telemetry-log">
@@ -294,7 +299,7 @@ def generate_html():
             const container = document.getElementById('graph-container');
             const data = {{ nodes: nodes, edges: edges }};
             const options = {{
-                nodes: {{ shape: 'dot', size: 25, font: {{ color: '#c5c6c7', size: 12, face: 'monospace' }}, borderWidth: 2, borderColor: '#45a29e', shadow: true }},
+                nodes: {{ font: {{ color: '#c5c6c7', size: 12, face: 'monospace' }}, borderWidth: 2, borderColor: '#45a29e', shadow: true }},
                 edges: {{ width: 1.5, color: {{ color: '#45a29e', highlight: '#66fcf1' }}, font: {{ color: '#888', size: 10, align: 'middle', face: 'monospace' }}, arrows: 'to', smooth: {{ type: 'continuous' }} }},
                 physics: {{ solver: 'forceAtlas2Based', forceAtlas2Based: {{ gravitationalConstant: -100, centralGravity: 0.01, springLength: 150 }} }},
                 interaction: {{ hover: true }}
@@ -303,10 +308,82 @@ def generate_html():
             const network = new vis.Network(container, data, options);
             const inspectorContent = document.getElementById('inspector-content');
 
+            // --- ICON MAPPING for dynamic node creation ---
+            const ICON_MAP = {{
+                'PERSON':       {{ face: 'FontAwesome', code: '\uf007', size: 50, color: '#FF4444' }},
+                'ORGANIZATION': {{ face: 'FontAwesome', code: '\uf1ad', size: 50, color: '#4444FF' }},
+                'PHONE':        {{ face: 'FontAwesome', code: '\uf095', size: 50, color: '#44FF44' }},
+                'LOCATION':     {{ face: 'FontAwesome', code: '\uf3c5', size: 50, color: '#44FF44' }},
+                'ACCOUNT':      {{ face: 'FontAwesome', code: '\uf09d', size: 50, color: '#44FF44' }}
+            }};
+            const DEFAULT_ICON = {{ face: 'FontAwesome', code: '\uf111', size: 50, color: '#CCCCCC' }};
+            function getIconFor(entityType) {{ return ICON_MAP[entityType] || DEFAULT_ICON; }}
+
+            // --- Store original appearance for highlight/restore ---
+            const originalNodeColors = {{}};
+            nodes.get().forEach(n => {{ originalNodeColors[n.id] = n.icon ? {{ ...n.icon }} : null; }});
+            const originalEdgeColors = {{}};
+            edges.get().forEach(e => {{ originalEdgeColors[e.id] = e.color ? (typeof e.color === 'object' ? {{ ...e.color }} : e.color) : null; }});
+
+            // --- Highlight neighbors on node select ---
+            function highlightNeighbors(selectedNodeId) {{
+                const connectedEdges = network.getConnectedEdges(selectedNodeId);
+                const connectedNodes = network.getConnectedNodes(selectedNodeId);
+                const neighborSet = new Set(connectedNodes);
+                neighborSet.add(selectedNodeId);
+
+                // Dim all nodes not in neighborhood
+                const allNodes = nodes.get();
+                const nodeUpdates = allNodes.map(n => {{
+                    if (neighborSet.has(n.id)) {{
+                        // Restore original icon color for neighbors
+                        const orig = originalNodeColors[n.id];
+                        return {{ id: n.id, icon: orig || getIconFor(n.data?.entity_type), font: {{ color: '#c5c6c7' }} }};
+                    }} else {{
+                        // Dim non-neighbors
+                        const dimIcon = {{ ...(n.icon || getIconFor(n.data?.entity_type)), color: 'rgba(100,100,100,0.25)' }};
+                        return {{ id: n.id, icon: dimIcon, font: {{ color: 'rgba(100,100,100,0.25)' }} }};
+                    }}
+                }});
+                nodes.update(nodeUpdates);
+
+                // Highlight connected edges, dim the rest
+                const connectedEdgeSet = new Set(connectedEdges);
+                const allEdges = edges.get();
+                const edgeUpdates = allEdges.map(e => {{
+                    if (connectedEdgeSet.has(e.id)) {{
+                        return {{ id: e.id, color: {{ color: '#66fcf1', highlight: '#66fcf1' }}, width: 3, shadow: {{ enabled: true, color: 'rgba(102,252,241,0.6)', size: 10 }} }};
+                    }} else {{
+                        return {{ id: e.id, color: {{ color: 'rgba(100,100,100,0.15)', highlight: 'rgba(100,100,100,0.15)' }}, width: 0.5, shadow: {{ enabled: false }} }};
+                    }}
+                }});
+                edges.update(edgeUpdates);
+            }}
+
+            function restoreAllAppearance() {{
+                const allNodes = nodes.get();
+                const nodeUpdates = allNodes.map(n => {{
+                    const orig = originalNodeColors[n.id];
+                    return {{ id: n.id, icon: orig || getIconFor(n.data?.entity_type), font: {{ color: '#c5c6c7' }} }};
+                }});
+                nodes.update(nodeUpdates);
+
+                const allEdges = edges.get();
+                const edgeUpdates = allEdges.map(e => {{
+                    const orig = originalEdgeColors[e.id];
+                    return {{ id: e.id, color: orig || {{ color: '#45a29e', highlight: '#66fcf1' }}, width: 1.5, shadow: {{ enabled: false }} }};
+                }});
+                edges.update(edgeUpdates);
+            }}
+
             network.on("selectNode", function (params) {{
                 if(params.nodes.length > 0) {{
                     const nodeId = params.nodes[0];
                     const nodeData = nodes.get(nodeId).data;
+                    
+                    // Highlight connected edges and neighbors
+                    highlightNeighbors(nodeId);
+                    
                     if(!nodeData) return;
                     
                     let html = `<span class="badge badge-${{nodeData.entity_type}}">${{nodeData.entity_type}}</span>`;
@@ -315,6 +392,18 @@ def generate_html():
                     
                     if(nodeData.description) {{
                         html += `<div class="prop-row"><span class="prop-label">Profile / Intel:</span><div class="prop-value" style="white-space: pre-wrap;">${{nodeData.description}}</div></div>`;
+                    }}
+                    
+                    // Show connected entities
+                    const connectedNodes = network.getConnectedNodes(nodeId);
+                    if(connectedNodes.length > 0) {{
+                        html += `<div class="prop-row" style="margin-top: 15px;"><span class="prop-label" style="color:#66fcf1;">Connected Entities (${{connectedNodes.length}}):</span></div>`;
+                        connectedNodes.forEach(cid => {{
+                            const cn = nodes.get(cid);
+                            if(cn && cn.data) {{
+                                html += `<div class="prop-row" style="margin-left: 10px; padding: 4px 0; border-left: 2px solid #45a29e; padding-left: 8px;"><span style="color:#66fcf1;">${{cn.data.canonical_name}}</span> <span style="color:#888;">(${{cn.data.entity_type}})</span></div>`;
+                            }}
+                        }});
                     }}
                     
                     inspectorContent.innerHTML = html;
@@ -339,7 +428,10 @@ def generate_html():
             }});
 
             network.on("deselectNode", function (params) {{
-                if(params.edges.length === 0) inspectorContent.innerHTML = '<p style="color: #666; font-size: 12px; font-style: italic;">Select a node or edge to view cryptographic details.</p>';
+                restoreAllAppearance();
+                if(params.previousSelection.nodes.length > 0 && params.nodes.length === 0) {{
+                    inspectorContent.innerHTML = '<p style="color: #666; font-size: 12px; font-style: italic;">Select a node or edge to view cryptographic details.</p>';
+                }}
             }});
             network.on("deselectEdge", function (params) {{
                 if(params.nodes.length === 0) inspectorContent.innerHTML = '<p style="color: #666; font-size: 12px; font-style: italic;">Select a node or edge to view cryptographic details.</p>';
@@ -392,9 +484,9 @@ def generate_html():
                         
                         data.nodes.forEach(n => {{
                             if(!nodes.get(n.entity_id)) {{
-                                let color = "#44FF44";
-                                if (n.entity_type === "PERSON") color = "#FF4444";
-                                nodes.add({{ id: n.entity_id, label: `${{n.canonical_name}}\\n(${{n.entity_type}})`, color: color, data: n }});
+                                const icon = getIconFor(n.entity_type);
+                                nodes.add({{ id: n.entity_id, label: `${{n.canonical_name}}\\n(${{n.entity_type}})`, shape: 'icon', icon: icon, data: n }});
+                                originalNodeColors[n.entity_id] = {{ ...icon }};
                             }}
                         }});
                         const newEdgeIds = [];
@@ -742,17 +834,16 @@ def generate_html():
                         
                         resData.nodes.forEach(n => {{
                             if(!nodes.get(n.entity_id)) {{
-                                let color = "#CCCCCC";
-                                if (n.entity_type === "PERSON") color = "#FF4444";
-                                else if (n.entity_type === "LOCATION") color = "#44FF44";
-                                
+                                const icon = getIconFor(n.entity_type);
                                 nodes.add({{
                                     id: n.entity_id,
                                     label: `${{n.canonical_name}}\\n(${{n.entity_type}})`,
-                                    color: color,
+                                    shape: 'icon',
+                                    icon: icon,
                                     title: `ID: ${{n.entity_id}}<br>Type: ${{n.entity_type}}`,
                                     data: n
                                 }});
+                                originalNodeColors[n.entity_id] = {{ ...icon }};
                             }}
                         }});
                         
@@ -787,7 +878,7 @@ def generate_html():
     </html>
     """
     
-    with open("graph_preview.html", "w") as f:
+    with open("graph_preview.html", "w", encoding="utf-8") as f:
         f.write(html_content)
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -882,7 +973,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode())
             
         elif self.path == '/api/wiretap':
-            content_length = int(self.headers['Content-Length'])
+            content_length = int(self.headers.get('Content-Length', 0))
             base = os.path.abspath("netra-ai/outputs/CASE-2041")
             with open(os.path.join(base, "entities.json"), "r") as f: entities = json.load(f)
             with open(os.path.join(base, "relationships.json"), "r") as f: relationships = json.load(f)
@@ -895,7 +986,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             
             suspects = []
             try:
-                df = pd.read_excel('sih26189_synthetic_criminal_intelligence_dataset.xlsx')
+                dataset_file = 'sih26189_synthetic_criminal_intelligence_dataset_v2.xlsx' if os.path.exists('sih26189_synthetic_criminal_intelligence_dataset_v2.xlsx') else 'sih26189_synthetic_criminal_intelligence_dataset.xlsx'
+                df = pd.read_excel(dataset_file)
                 for _, row in df.iterrows():
                     if str(row.get('Classification')) in ['Suspect', 'Criminal', 'Associate']:
                         suspects.append({"id": row['Person_ID'], "name": row['Name']})
@@ -941,7 +1033,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode())
             
         elif self.path == '/api/predict_links':
-            content_length = int(self.headers['Content-Length'])
+            content_length = int(self.headers.get('Content-Length', 0))
             base = os.path.abspath("netra-ai/outputs/CASE-2041")
             with open(os.path.join(base, "entities.json"), "r") as f: entities = json.load(f)
             
