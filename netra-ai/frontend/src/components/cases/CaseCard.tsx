@@ -1,9 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Share2, Users, ArrowRight } from "lucide-react";
+import { CalendarDays, Share2, Users, ArrowRight, Trash2 } from "lucide-react";
 import type { InvestigationCase } from "@/data/types";
 import { PriorityBadge, StatusBadge } from "@/components/common/StatusBadge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useStore } from "@/store";
+import { toast } from "sonner";
 
 export function CaseCard({ item }: { item: InvestigationCase }) {
   // Use getState() directly for action functions — subscribing to them via
@@ -40,13 +52,48 @@ export function CaseCard({ item }: { item: InvestigationCase }) {
         </div>
       </dl>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-border pt-4">
         <span className="text-xs text-muted-foreground">Lead: {item.lead}</span>
-        <Button asChild size="sm" onClick={() => setActiveCaseId(item.id)}>
-          <Link to="/investigation">
-            Open Investigation <ArrowRight className="size-4" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                title="Delete Case"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Investigation Case</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete <span className="font-semibold text-foreground">"{item.name}"</span> ({item.id})? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => {
+                    useStore.getState().deleteCase(item.id);
+                    toast.success(`Case ${item.id} deleted successfully`);
+                  }}
+                >
+                  Delete Case
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <Button asChild size="sm" onClick={() => setActiveCaseId(item.id)}>
+            <Link to="/investigation">
+              Open Investigation <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </article>
   );

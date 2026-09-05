@@ -91,6 +91,7 @@ export interface StoreState {
   
   setActiveCaseId: (id: string) => void;
   addCase: (c: InvestigationCase) => void;
+  deleteCase: (id: string) => void;
   addEntities: (ents: Entity[]) => void;
   addRelationships: (rels: Relationship[]) => void;
   addRecords: (recs: SupportingRecord[]) => void;
@@ -118,6 +119,26 @@ export const useStore = create<StoreState>((set, get) => ({
       ...state.activity,
     ]
   })),
+
+  deleteCase: (id) => set((state) => {
+    const remainingCases = state.cases.filter((c) => c.id !== id);
+    const targetCase = state.cases.find((c) => c.id === id);
+    const newActiveId = state.activeCaseId === id ? (remainingCases[0]?.id || "") : state.activeCaseId;
+    return {
+      cases: remainingCases,
+      activeCaseId: newActiveId,
+      activity: [
+        {
+          id: `AC-${Date.now()}`,
+          actor: "You",
+          action: "deleted case",
+          target: targetCase ? targetCase.name : id,
+          at: "Just now",
+        },
+        ...state.activity,
+      ],
+    };
+  }),
 
   addEntities: (ents) => set((state) => ({
     entities: [...state.entities, ...ents.filter(newE => !state.entities.some(e => e.id === newE.id))]
