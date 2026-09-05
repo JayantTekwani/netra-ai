@@ -25,7 +25,7 @@
   --color-popover: var(--surface);
   --color-popover-foreground: var(--text);
   --color-primary: var(--accent);
-  --color-primary-foreground: #FFFFFF;
+  --color-primary-foreground: var(--bg, #FFFFFF);
   --color-secondary: var(--secondary-color, var(--surface-2));
   --color-secondary-foreground: var(--secondary-fg, var(--text));
   --color-muted: var(--surface-2);
@@ -79,47 +79,52 @@
 
   html[data-theme="dark"],
   .dark {
-    /* Base HSL Color Scheme */
-    --background: 160 30% 8%;      /* Very dark pine green */
-    --foreground: 60 10% 95%;
-    --primary: 160 70% 35%;        /* Deep Emerald Green */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 45 100% 55%;      /* Warm Gold for highlights */
-    --secondary-foreground: 160 30% 8%;
-    --muted: 160 20% 15%;
-    --border: 160 25% 20%;
-    --card: 160 25% 12%;
+    /* ── Base HSL: Olive-Drab / Brass / Sand ─────────────────────── */
+    --background-h: 80;
+    --background-s: 20%;
+    --background-l: 10%;
+    --foreground-h: 40;
+    --foreground-s: 15%;
+    --foreground-l: 90%;
 
-    /* CSS Variable Mappings */
-    --bg: hsl(var(--background));
-    --surface: hsl(var(--card));
-    --surface-2: hsl(var(--muted));
-    --text: hsl(var(--foreground));
-    --text-dim: hsl(160 15% 65%);
-    --border-color: hsl(var(--border));
-    --border: hsl(var(--border));
-    
-    --secondary-color: hsl(var(--secondary));
-    --secondary-fg: hsl(var(--secondary-foreground));
-    
-    /* Emerald & Gold Theme Accent */
-    --accent: hsl(var(--primary));
-    --accent-soft: hsl(160 70% 35% / 0.12);
-    --sage: hsl(160 65% 45%);
-    --accent-ring: hsl(160 70% 35% / 0.45);
-    
-    --shadow: rgba(0, 0, 0, 0.45);
-    --nav-bg: hsl(160 30% 8% / 0.85);
-    --glass-bg: hsl(160 25% 12% / 0.65);
-    --glass-border: hsl(60 10% 95% / 0.12);
-    --glass-hi: rgba(255, 255, 255, 0.08);
-    --glass-hi-strong: rgba(255, 255, 255, 0.14);
-    --glass-sheen: rgba(255, 255, 255, 0.06);
-    --topbar-border: hsl(60 10% 95% / 0.10);
-    --edge-color: hsl(60 10% 95% / 0.22);
-    
-    --grid-line: hsl(60 10% 95% / 0.04);
+    /* Primary: Brass / Aged Gold */
+    --accent: hsl(45 70% 55%);
+    --accent-soft: hsl(45 70% 55% / 0.12);
+    --accent-ring: hsl(45 70% 55% / 0.45);
+    --sage: hsl(45 60% 65%);          /* lighter brass for success */
+
+    /* Base surfaces */
+    --bg: hsl(80 20% 10%);            /* deep olive drab */
+    --surface: hsl(80 15% 14%);       /* olive card surface */
+    --surface-2: hsl(80 10% 16%);     /* muted olive */
+    --text: hsl(40 15% 90%);          /* warm sand/khaki */
+    --text-dim: hsl(40 10% 60%);      /* dimmed sand */
+    --border: hsl(45 30% 30%);        /* gold-tinted borders */
+
+    /* Secondary: Muted olive cards */
+    --secondary-color: hsl(80 15% 20%);
+    --secondary-fg: hsl(40 10% 90%);
+
+    /* Glass / overlay system */
+    --shadow: rgba(0, 0, 0, 0.55);
+    --nav-bg: hsl(80 20% 10% / 0.88);
+    --glass-bg: hsl(80 15% 14% / 0.70);
+    --glass-border: hsl(45 30% 30% / 0.35);
+    --glass-hi: rgba(255, 255, 255, 0.06);
+    --glass-hi-strong: rgba(255, 255, 255, 0.11);
+    --glass-sheen: rgba(255, 255, 255, 0.04);
+    --topbar-border: hsl(45 30% 30% / 0.30);
+    --edge-color: hsl(40 15% 90% / 0.20);
+    --grid-line: hsl(40 15% 90% / 0.04);
+
+    /* Entity graph node colours — keep blue-toned for legibility on olive bg */
+    --entity-person: #60a5fa;
+    --entity-phone: #93c5fd;
+    --entity-account: #bfdbfe;
+    --entity-location: hsl(45 70% 70%);  /* gold for locations */
+    --entity-org: #3b82f6;
   }
+
 
   * {
     border-color: var(--color-border);

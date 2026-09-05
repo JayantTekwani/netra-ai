@@ -8,242 +8,326 @@ import {
   UploadCloud,
   PlusCircle,
   Activity,
-  ArrowRight,
-  Sparkles,
+  AlertTriangle,
+  Clock,
+  ChevronRight,
+  ShieldAlert,
+  Radio,
+  CalendarClock,
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { StatCard } from "@/components/common/StatCard";
-import { StatusBadge } from "@/components/common/StatusBadge";
-import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
-import { LiveAnalysis } from "@/components/dashboard/LiveAnalysis";
 import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
-import { activity, insights } from "@/data/mock";
-import { ENTITY_TYPE_META } from "@/data/mock";
+import { insights } from "@/data/mock";
 import { getSession } from "@/lib/session";
-
-import { useStore } from "@/store";
+import { useStore, getActiveCaseEntities, getActiveCaseRelationships, getActiveCaseRecords } from "@/store";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — त्रिनेत्र-AI Investigation Platform" },
-      { name: "description", content: "Overview of active demo cases." },
+      { name: "description", content: "MHA Intelligence Operations — active case overview." },
       { property: "og:title", content: "Dashboard — त्रिनेत्र-AI Investigation Platform" },
     ],
   }),
   component: DashboardPage,
 });
 
-const LIVE_INSIGHTS_POOL = [
-  ...insights,
-  { id: "L1", headline: "Anomalous fund transfer detected", detail: "A shell corporation transferred $1.2M through 4 intermediary banks in 12 hours.", type: "financial", confidence: 94 },
-  { id: "L2", headline: "Burner phone activation surge", detail: "14 new prepaid devices activated in Sector 4 within a 30-minute window.", type: "operational", confidence: 89 },
-  { id: "L3", headline: "Encrypted traffic spike", detail: "Unusual volume of TOR traffic originating from previously dormant IP range.", type: "cyber", confidence: 91 },
-  { id: "L4", headline: "Cross-border travel correlation", detail: "Two subjects boarded separate flights arriving at the same destination 2 hours apart.", type: "movement", confidence: 85 },
-  { id: "L5", headline: "Vehicle proximity alert", detail: "Target vehicle spotted idling near key infrastructure asset for 45 minutes.", type: "surveillance", confidence: 97 },
+/* ── Live Threat Pool ──────────────────────────────────────────── */
+const THREAT_POOL = [
+  ...insights.map(i => ({ id: i.id, headline: i.headline, detail: i.detail, level: "medium" as const })),
+  { id: "L1", headline: "Anomalous fund transfer detected", detail: "A shell corporation transferred ₹8.4Cr through 4 intermediary banks in 12 hours.", level: "high" as const },
+  { id: "L2", headline: "Burner phone activation surge", detail: "14 new prepaid devices activated in Sector 4 within a 30-minute window.", level: "high" as const },
+  { id: "L3", headline: "Encrypted traffic spike", detail: "Unusual volume of TOR traffic originating from previously dormant IP range.", level: "medium" as const },
+  { id: "L4", headline: "Cross-border travel correlation", detail: "Two subjects boarded separate flights arriving at the same destination 2 hours apart.", level: "medium" as const },
+  { id: "L5", headline: "Vehicle proximity alert", detail: "Target vehicle spotted idling near key infrastructure asset for 45 minutes.", level: "critical" as const },
 ];
 
-function ServerNodesMetrics() {
+const LEVEL_META = {
+  critical: { label: "CRITICAL", dot: "bg-red-500", border: "border-red-500/40", text: "text-red-400" },
+  high:     { label: "HIGH",     dot: "bg-amber-500", border: "border-amber-500/30", text: "text-amber-400" },
+  medium:   { label: "MEDIUM",  dot: "bg-primary/80", border: "border-primary/20", text: "text-primary" },
+};
+
+/* ── Live Clock ────────────────────────────────────────────────── */
+function LiveClock() {
+  const [time, setTime] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const pad = (n: number) => String(n).padStart(2, "0");
   return (
-    <section className="col-span-1 lg:col-span-3 mt-2 mb-4 bg-background/30 border border-border/50 p-6 rounded-2xl shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold tracking-tight">Infrastructure & Compute Nodes</h2>
-        <span className="flex h-2 w-2 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Edge GPU Nodes", val: "42 Active", state: "text-green-500" },
-          { label: "Graph DB Replicas", val: "3 / 3 Sync", state: "text-green-500" },
-          { label: "API Gateway Load", val: "1.4k Req/s", state: "text-amber-500" },
-          { label: "Merkle Hash Rate", val: "440 H/s", state: "text-green-500" },
-        ].map((n, i) => (
-          <div key={i} className="bg-surface/20 p-4 rounded-xl border border-white/5">
-            <div className="text-sm text-muted-foreground">{n.label}</div>
-            <div className={`text-xl font-mono font-bold mt-1 ${n.state}`}>{n.val}</div>
-          </div>
-        ))}
-      </div>
-    </section>
+    <span className="font-mono text-sm text-muted-foreground tabular-nums">
+      {pad(time.getHours())}:{pad(time.getMinutes())}:{pad(time.getSeconds())} IST
+    </span>
   );
 }
 
-import { getActiveCaseEntities, getActiveCaseRelationships, getActiveCaseRecords } from "@/store";
+/* ── Threat Level Badge ────────────────────────────────────────── */
+function ThreatBadge({ threats }: { threats: typeof THREAT_POOL }) {
+  const critCount = threats.filter(t => t.level === "critical").length;
+  const highCount = threats.filter(t => t.level === "high").length;
+  const overall = critCount > 0 ? "critical" : highCount > 1 ? "high" : "medium";
+  const meta = LEVEL_META[overall];
+  return (
+    <div className={`flex items-center gap-3 rounded-lg border px-4 py-2 ${meta.border} bg-card`}>
+      <span className="relative flex size-2.5">
+        <span className={`animate-ping absolute inline-flex size-full rounded-full opacity-60 ${meta.dot}`} />
+        <span className={`relative inline-flex rounded-full size-2.5 ${meta.dot}`} />
+      </span>
+      <div className="leading-none">
+        <div className={`text-[10px] font-mono uppercase tracking-widest ${meta.text}`}>Threat Level</div>
+        <div className={`text-base font-bold tracking-wider font-mono ${meta.text}`}>{meta.label}</div>
+      </div>
+      <ShieldAlert className={`size-5 ml-1 ${meta.text}`} />
+    </div>
+  );
+}
 
+/* ── Stat Overlay Badge ────────────────────────────────────────── */
+function StatOverlay({ label, value, icon: Icon, pos }: {
+  label: string; value: number | string; icon: React.ElementType; pos: string;
+}) {
+  return (
+    <div className={`absolute ${pos} flex items-center gap-1.5 rounded-md border border-primary/30 bg-card/90 px-2.5 py-1.5 backdrop-blur-sm shadow-lg z-10`}>
+      <Icon className="size-3 text-primary shrink-0" />
+      <span className="font-mono text-xs font-bold text-foreground">{value}</span>
+      <span className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</span>
+    </div>
+  );
+}
+
+/* ── Mini Table ────────────────────────────────────────────────── */
+function MiniTable({ title, icon: Icon, rows, cols }: {
+  title: string;
+  icon: React.ElementType;
+  rows: Record<string, string>[];
+  cols: { key: string; label: string }[];
+}) {
+  return (
+    <div className="panel flex flex-col h-full p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Icon className="size-3.5 text-primary shrink-0" />
+        <span className="text-xs font-semibold tracking-tight uppercase font-mono text-muted-foreground">{title}</span>
+      </div>
+      <div className="overflow-auto flex-1">
+        <table className="w-full text-[11px]">
+          <thead>
+            <tr className="border-b border-border/60">
+              {cols.map(c => (
+                <th key={c.key} className="text-left font-mono text-[10px] uppercase tracking-wider text-muted-foreground pb-1.5 pr-2">{c.label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, 6).map((row, i) => (
+              <tr key={i} className="border-b border-border/30 hover:bg-primary/5 transition-colors">
+                {cols.map(c => (
+                  <td key={c.key} className="py-1.5 pr-2 font-mono text-[11px] text-foreground/80 truncate max-w-[120px]">{row[c.key] ?? "—"}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {rows.length === 0 && (
+          <p className="py-4 text-center text-xs text-muted-foreground italic">No records for this case.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Dashboard ─────────────────────────────────────────────────── */
 function DashboardPage() {
   const user = getSession();
-  const activeCaseId = useStore((s) => s.activeCaseId);
-  const cases = useStore((s) => s.cases);
-  const activeCase = cases.find((c) => c.id === activeCaseId);
-  
+  const activeCaseId = useStore(s => s.activeCaseId);
+  const cases = useStore(s => s.cases);
+  const activeCase = cases.find(c => c.id === activeCaseId);
+
   const entities = useStore(getActiveCaseEntities);
   const relationships = useStore(getActiveCaseRelationships);
   const supportingRecords = useStore(getActiveCaseRecords);
 
-  // Live Threat Analysis Ticker
-  const [liveInsights, setLiveInsights] = useState(LIVE_INSIGHTS_POOL.slice(0, 4));
+  const activeCases = cases.filter(c => c.status === "active");
+
+  // Live alert ticker
+  const [alerts, setAlerts] = useState(THREAT_POOL.slice(0, 6));
   useEffect(() => {
-    const timer = setInterval(() => {
-      setLiveInsights(current => {
-        const nextPool = LIVE_INSIGHTS_POOL.filter(i => !current.find(c => c.id === i.id));
-        if (nextPool.length === 0) return current; // avoid crash if pool empty
-        const randomNext = nextPool[Math.floor(Math.random() * nextPool.length)]!;
-        return [randomNext, ...current].slice(0, 50);
+    const t = setInterval(() => {
+      setAlerts(prev => {
+        const rest = THREAT_POOL.filter(i => !prev.find(p => p.id === i.id));
+        if (!rest.length) return prev;
+        const next = rest[Math.floor(Math.random() * rest.length)]!;
+        return [next, ...prev].slice(0, 50);
       });
     }, 4500);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, []);
 
-  // Use real entities/relationships directly — the canvas graph handles them efficiently
-  const denseEntities = entities;
-  const denseRelationships = relationships;
+  // CDR records (type: call)
+  const cdrRecords = supportingRecords
+    .filter(r => r.type === "CDR" || (r.fields?.Type ?? "").toLowerCase().includes("call"))
+    .slice(0, 6)
+    .map(r => ({
+      id: r.id,
+      from: r.fields?.From ?? r.id,
+      to: r.fields?.To ?? "—",
+      date: r.date ?? "—",
+    }));
 
-  const activeCases = cases.filter((c) => c.status === "active");
-  const byType = (Object.keys(ENTITY_TYPE_META) as Array<keyof typeof ENTITY_TYPE_META>).map(
-    (t) => ({
-      type: t,
-      count: entities.filter((e) => e.type === t).length,
-    }),
-  );
-  const max = Math.max(...byType.map((b) => b.count), 1);
+  // FIR records
+  const firRecords = supportingRecords
+    .filter(r => r.type === "FIR" || r.id.startsWith("FIR") || (r.fields?.Type ?? "").toLowerCase().includes("fir"))
+    .slice(0, 6)
+    .map(r => ({
+      id: r.id,
+      title: r.title ?? r.id,
+      date: r.date ?? "—",
+      status: r.fields?.Status ?? "—",
+    }));
 
   return (
     <AppLayout
-      title={`Welcome back, ${user?.name ?? "Investigator"}`}
-      subtitle="Operational overview across all assigned demo investigations"
+      title={`Welcome, ${user?.name ?? "Investigator"}`}
+      subtitle="MHA Intelligence Operations Dashboard"
+      fullBleed={true}
       actions={
         <>
-          <Button variant="outline" asChild>
-            <Link to="/upload">
-              <UploadCloud className="mr-2 size-4" /> Upload New Data
-            </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/upload"><UploadCloud className="mr-1.5 size-3.5" /> Upload</Link>
           </Button>
-          <Button asChild>
-            <Link to="/cases/new">
-              <PlusCircle className="mr-2 size-4" /> New Case
-            </Link>
+          <Button size="sm" asChild>
+            <Link to="/cases/new"><PlusCircle className="mr-1.5 size-3.5" /> New Case</Link>
           </Button>
         </>
       }
     >
-      <div className="mb-6 rounded-md border-l-4 border-primary bg-primary/10 px-4 py-3 text-sm text-foreground">
-        <strong className="font-semibold">त्रिनेत्र-AI Platform</strong> — Turns messy police data (call records, FIRs, bank transfers) into one connected picture.
-      </div>
+      <div className="flex flex-col h-full px-6 py-4 gap-4">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          label="Active Cases"
-          value={activeCases.length}
-          hint={`${cases.length} total in workspace`}
-          icon={FolderSearch}
-        />
-        <StatCard
-          label="Total Entities"
-          value={entities.length}
-          hint="Across the demo network"
-          icon={Users}
-          tone="success"
-        />
-        <StatCard
-          label="Relationships"
-          value={relationships.length}
-          hint="Extracted links"
-          icon={Share2}
-          tone="accent"
-        />
-        <StatCard
-          label="Supporting Records"
-          value={supportingRecords.length}
-          hint="CDR, TXN, FIR, GEO"
-          icon={FileStack}
-        />
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <section className="panel col-span-1 lg:col-span-3 p-5">
-          <div className="flex items-center gap-2">
-            <Activity className="size-4 text-primary" />
-            <h2 className="text-sm font-semibold tracking-tight">Automated Threat Analysis</h2>
+        {/* ── Top Command Bar ────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <Radio className="size-3.5 text-primary animate-pulse" />
+              <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                Ministry of Home Affairs — त्रिनेत्र-AI
+              </span>
+            </div>
+            <div className="flex items-center gap-3 mt-0.5">
+              <span className="text-sm text-muted-foreground font-mono">
+                Case: <span className="text-primary font-bold">{activeCaseId}</span>
+                {activeCase && <span className="text-foreground"> — {activeCase.name}</span>}
+              </span>
+              <LiveClock />
+            </div>
           </div>
-          <div className="mt-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-            <ul className="flex flex-nowrap gap-6 w-max">
-              {liveInsights.map((insight) => (
-                <li key={insight.id} className="w-[320px] shrink-0 border-l-2 border-border pl-4 animate-in fade-in slide-in-from-right-4 duration-500">
-                  <div className="text-sm font-medium leading-tight">
-                    {insight.headline}
-                  </div>
-                  <div className="mt-2 text-xs text-muted-foreground line-clamp-3">
-                    {insight.detail}
-                  </div>
-                </li>
-              ))}
+          <ThreatBadge threats={alerts} />
+        </div>
+
+        {/* ── Main Bento Grid ────────────────────────────────── */}
+        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0">
+
+          {/* ── LEFT: Graph (col 1-7) ──────────────────────── */}
+          <div className="col-span-12 lg:col-span-7 panel relative overflow-hidden min-h-[520px] lg:min-h-0 p-0">
+            {/* Floating stat badges */}
+            <StatOverlay label="Entities"  value={entities.length}       icon={Users}      pos="top-3 left-3" />
+            <StatOverlay label="Links"     value={relationships.length}  icon={Share2}     pos="top-3 left-32" />
+            <StatOverlay label="Cases"     value={activeCases.length}    icon={FolderSearch} pos="bottom-3 left-3" />
+            <StatOverlay label="Records"   value={supportingRecords.length} icon={FileStack}  pos="bottom-3 left-28" />
+
+            <HolographicGraph entities={entities} relationships={relationships} />
+          </div>
+
+          {/* ── RIGHT: Alert Feed (col 8-12) ──────────────── */}
+          <div className="col-span-12 lg:col-span-5 panel flex flex-col p-4 overflow-hidden">
+            <div className="flex items-center gap-2 mb-3 shrink-0">
+              <AlertTriangle className="size-3.5 text-amber-400 shrink-0" />
+              <span className="text-xs font-semibold uppercase tracking-wider font-mono text-muted-foreground">Live Alert Feed</span>
+              <span className="ml-auto flex size-2 relative">
+                <span className="animate-ping absolute inline-flex size-full rounded-full bg-amber-500 opacity-60" />
+                <span className="relative inline-flex rounded-full size-2 bg-amber-500" />
+              </span>
+            </div>
+            <ul className="space-y-2 overflow-y-auto flex-1 pr-1 scrollbar-thin">
+              {alerts.map(alert => {
+                const meta = LEVEL_META[alert.level];
+                return (
+                  <li
+                    key={alert.id}
+                    className={`rounded-md border px-3 py-2.5 animate-in fade-in slide-in-from-right-3 duration-400 ${meta.border} bg-card/60`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className={`mt-0.5 inline-flex size-1.5 shrink-0 rounded-full ${meta.dot} relative top-[3px]`} />
+                      <div className="min-w-0">
+                        <div className={`text-xs font-semibold leading-snug ${meta.text}`}>{alert.headline}</div>
+                        <p className="mt-0.5 text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{alert.detail}</p>
+                      </div>
+                      <span className={`ml-auto shrink-0 text-[9px] font-mono uppercase tracking-widest ${meta.text} opacity-70`}>{meta.label}</span>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
-        </section>
 
-        <section className="panel col-span-1 lg:col-span-3 relative h-[720px] overflow-hidden p-0">
-          <HolographicGraph entities={denseEntities} relationships={denseRelationships} />
-        </section>
-
-        <section className="panel col-span-1 lg:col-span-2 p-5">
-          <h2 className="text-sm font-semibold tracking-tight">Network Composition</h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Entity distribution in the loaded demo network.
-          </p>
-          <div className="mt-5 space-y-4">
-            {byType.map(({ type, count }) => (
-              <div key={type} className="flex items-center gap-4">
-                <div className="w-32 text-sm text-muted-foreground">
-                  {ENTITY_TYPE_META[type].label}
-                </div>
-                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-secondary">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${(count / max) * 100}%`,
-                      backgroundColor: ENTITY_TYPE_META[type].color,
-                    }}
-                  />
-                </div>
-                <div className="w-8 text-right font-mono text-sm">{count}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="panel p-5">
-          <h2 className="text-sm font-semibold tracking-tight">Quick Actions</h2>
-          <div className="mt-4 space-y-3">
-            <Button variant="outline" className="w-full justify-start" asChild>
-              <Link to="/investigation">
-                <Share2 className="size-4" /> Open Investigation Workspace
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-start" asChild>
-              <Link to="/timeline">
-                <Activity className="size-4" /> Review Event Timeline
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-start" asChild>
-              <Link to="/upload">
-                <UploadCloud className="size-4" /> Upload New Data
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-start" asChild>
-              <Link to="/cases">
-                <FolderSearch className="size-4" /> Browse All Cases
-              </Link>
-            </Button>
-          </div>
-        </section>
-        
-        <LiveAnalysis entities={denseEntities} relationships={denseRelationships} />
-        <div className="col-span-1 lg:col-span-3">
-          <EntityResolutionDemo />
         </div>
-        
-        <ServerNodesMetrics />
+
+        {/* ── Bottom Row ─────────────────────────────────────── */}
+        <div className="grid grid-cols-12 gap-4" style={{ minHeight: "200px" }}>
+
+          {/* CDR Table — 4 cols */}
+          <div className="col-span-12 md:col-span-6 lg:col-span-4">
+            <MiniTable
+              title="Recent CDR"
+              icon={Activity}
+              rows={cdrRecords}
+              cols={[
+                { key: "id",   label: "ID" },
+                { key: "from", label: "From" },
+                { key: "to",   label: "To" },
+                { key: "date", label: "Date" },
+              ]}
+            />
+          </div>
+
+          {/* FIR Table — 4 cols */}
+          <div className="col-span-12 md:col-span-6 lg:col-span-4">
+            <MiniTable
+              title="Recent FIR Records"
+              icon={FileStack}
+              rows={firRecords}
+              cols={[
+                { key: "id",     label: "FIR #" },
+                { key: "title",  label: "Subject" },
+                { key: "date",   label: "Date" },
+                { key: "status", label: "Status" },
+              ]}
+            />
+          </div>
+
+          {/* Quick Actions — 4 cols */}
+          <div className="col-span-12 md:col-span-12 lg:col-span-4 panel p-4 flex flex-col gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Quick Actions</span>
+            <Button variant="outline" className="w-full justify-start text-xs h-9" asChild>
+              <Link to="/upload"><UploadCloud className="size-3.5 mr-2" />Upload New Data</Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start text-xs h-9" asChild>
+              <Link to="/timeline"><CalendarClock className="size-3.5 mr-2" />Review Timeline</Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start text-xs h-9" asChild>
+              <Link to="/investigation"><Share2 className="size-3.5 mr-2" />Investigation Workspace</Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start text-xs h-9" asChild>
+              <Link to="/cases"><FolderSearch className="size-3.5 mr-2" />All Cases<ChevronRight className="ml-auto size-3.5 opacity-50" /></Link>
+            </Button>
+          </div>
+
+        </div>
       </div>
     </AppLayout>
   );
 }
+
+
+
