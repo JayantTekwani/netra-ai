@@ -34,7 +34,7 @@ export function AppLayout({
   fullBleed = false,
 }: {
   children: ReactNode;
-  title: string;
+  title?: string;
   subtitle?: string;
   actions?: ReactNode;
   fullBleed?: boolean;
@@ -48,49 +48,76 @@ export function AppLayout({
   // Actions: use getState() directly — don't subscribe to function refs as state
   const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
 
+  const istTimeStr = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
-    <div className="flex min-h-screen bg-background">
-      <aside className="sticky top-0 hidden h-screen w-64 lg:flex shrink-0 flex-col border-r border-border bg-background">
-        <div className="flex items-center gap-3 border-b border-border px-5 py-5">
-          <div className="flex size-9 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
-            <ShieldCheck className="size-5 text-primary" />
-          </div>
-          <div className="leading-tight">
-            <div className="font-serif text-lg font-semibold tracking-wide text-foreground">
-              त्रिनेत्र-AI
+    <div className="min-h-screen bg-background text-foreground flex flex-col w-full max-w-full">
+      {/* ============================================ */}
+      {/* TOP HEADER + HORIZONTAL COMMAND RIBBON       */}
+      {/* ============================================ */}
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur-md px-6 py-3 transition-colors">
+        {/* Row 1: Agency Branding, Threat Level, Case Switcher, User */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+          {/* Left: Branding */}
+          <div className="flex items-center gap-3.5">
+            <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-xs font-bold text-primary shadow-sm">
+              MHA
             </div>
-            <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-mono mt-0.5">
-              Intelligence Platform
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base sm:text-lg font-bold tracking-tight">
+                  Command Briefing: <span className="text-primary font-semibold">त्रिनेत्र-AI</span>
+                </span>
+                <span className="hidden sm:inline-block text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                  SIH26189
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground font-mono">
+                {istTimeStr} IST
+              </p>
             </div>
           </div>
-        </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {NAV.map(({ to, label, icon: Icon }) => {
-            const active = pathname === to || pathname.startsWith(to + "/");
-            return (
-              <Link
-                key={to}
-                to={to}
-                className={`group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                  active
-                    ? "bg-secondary text-foreground shadow-[inset_2px_0_0_0_var(--color-primary)]"
-                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
-                }`}
+          {/* Right: Case Switcher, Threat Index, Theme Toggle, User Profile */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Active Case Switcher */}
+            <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-1 text-xs">
+              <span className="font-semibold text-primary uppercase font-mono text-[11px]">Case:</span>
+              <select
+                className="bg-transparent text-xs font-mono font-medium text-foreground focus:outline-none cursor-pointer max-w-[170px] sm:max-w-[210px] truncate"
+                value={activeCaseId}
+                onChange={(e) => setActiveCaseId(e.target.value)}
               >
-                <Icon
-                  className={`size-4 transition-colors ${active ? "text-primary" : "group-hover:text-primary"}`}
-                />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+                {cases.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-background text-foreground">
+                    {c.id} — {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="border-t border-border p-3 space-y-3">
-          <div className="px-3">
-            <button 
-              className="theme-toggle" 
+            {/* Threat Index */}
+            <div className="hidden sm:flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">Threat Index</span>
+              <span className="px-3 py-1 bg-red-600/20 text-red-400 border border-red-500/30 rounded-full text-xs font-bold animate-pulse">
+                ● MODERATE
+              </span>
+            </div>
+
+            {/* Actions if provided by child page */}
+            {actions && <div className="flex items-center gap-2">{actions}</div>}
+
+            {/* Theme Toggle */}
+            <button
+              className="theme-toggle"
               onClick={() => {
                 const html = document.documentElement;
                 const isDark = html.getAttribute("data-theme") === "dark";
@@ -98,85 +125,68 @@ export function AppLayout({
               }}
               title="Toggle Theme"
             />
-          </div>
-          <div className="flex items-center gap-3 rounded-md px-2 py-2">
-            <div className="flex size-9 items-center justify-center rounded-full bg-secondary font-mono text-xs text-foreground border border-border">
-              {(user?.name ?? "IN").slice(0, 2).toUpperCase()}
-            </div>
-            <div className="min-w-0 flex-1 leading-tight">
-              <div className="truncate text-sm font-medium">{user?.name ?? "Investigator"}</div>
-              <div className="truncate text-[10px] uppercase tracking-wider text-muted-foreground font-mono mt-0.5">
-                {user?.email ?? "demo@trinetra.ai"}
+
+            {/* User Profile & Sign Out */}
+            <div className="flex items-center gap-2 pl-2 border-l border-border/60">
+              <div className="flex size-8 items-center justify-center rounded-full bg-secondary font-mono text-xs text-foreground border border-border" title={user?.email || "Investigator"}>
+                {(user?.name ?? "IN").slice(0, 2).toUpperCase()}
               </div>
-            </div>
-            <button
-              aria-label="Sign out"
-              onClick={() => {
-                clearSession();
-                navigate({ to: "/" });
-              }}
-              className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              <LogOut className="size-4" />
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col max-w-[100vw]">
-        {/* Mobile Header */}
-        <div className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background px-4 py-3 lg:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 ring-1 ring-primary/40">
-              <ShieldCheck className="size-4 text-primary" />
-            </div>
-            <div className="font-serif text-base font-semibold tracking-wide text-foreground">
-              त्रिनेत्र-AI
-            </div>
-          </div>
-          <select
-            className="max-w-[140px] truncate bg-secondary border border-border rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50"
-            value={NAV.find(n => pathname === n.to || pathname.startsWith(n.to + "/"))?.to || "/dashboard"}
-            onChange={(e) => navigate({ to: e.target.value as any })}
-          >
-            {NAV.map(({ to, label }) => (
-              <option key={to} value={to}>{label}</option>
-            ))}
-          </select>
-        </div>
-
-        <header className="sticky top-0 z-20 flex items-center justify-between gap-6 border-b border-border bg-background/85 px-8 py-4 backdrop-blur-md">
-          <div className="flex items-center gap-6">
-            <div>
-              <h1 className="text-xl font-medium tracking-tight font-serif">{title}</h1>
-              {subtitle ? (
-                <p className="mt-0.5 text-sm text-muted-foreground font-sans">{subtitle}</p>
-              ) : null}
-            </div>
-
-            {/* Active Case Switcher Dropdown */}
-            <div className="hidden md:flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-1.5">
-              <span className="text-xs font-semibold text-primary uppercase font-mono">Case:</span>
-              <select
-                className="bg-transparent text-xs font-mono font-medium text-foreground focus:outline-none cursor-pointer max-w-[200px] truncate"
-                value={activeCaseId}
-                onChange={(e) => setActiveCaseId(e.target.value)}
+              <button
+                aria-label="Sign out"
+                onClick={() => {
+                  clearSession();
+                  navigate({ to: "/" });
+                }}
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                title="Sign out"
               >
-                {cases.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-background text-foreground">
-                    {c.id} — {c.name} ({c.entityCount || 0} ent)
-                  </option>
-                ))}
-              </select>
+                <LogOut className="size-4" />
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-3">{actions}</div>
-        </header>
-        <main className={fullBleed ? "min-h-0 flex-1" : "flex-1 px-8 py-6"}>{children}</main>
-        <footer className="border-t border-border px-8 py-3 text-xs text-muted-foreground">
-          Prototype build — all cases, entities and records shown are fictional demo data.
-        </footer>
-      </div>
+        </div>
+
+        {/* Row 2: Horizontal Command Ribbon Navigation */}
+        <nav className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          {NAV.map(({ to, label, icon: Icon }) => {
+            const active = pathname === to || (to !== "/dashboard" && pathname.startsWith(to));
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 whitespace-nowrap transition-all ${
+                  active
+                    ? "bg-primary/20 text-primary border border-primary/30 shadow-sm font-semibold"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground border border-transparent"
+                }`}
+              >
+                <Icon className={`size-3.5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+      </header>
+
+      {/* ============================================ */}
+      {/* MAIN CONTENT: 100% FULL WIDTH (NO SIDEBAR)   */}
+      {/* ============================================ */}
+      <main className={fullBleed ? "min-h-0 flex-1 w-full max-w-full" : "flex-1 w-full max-w-full px-6 py-6"}>
+        {title && title !== "Dashboard" && pathname !== "/dashboard" && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">{title}</h1>
+              {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+            </div>
+          </div>
+        )}
+        {children}
+      </main>
+
+      <footer className="border-t border-border/40 px-6 py-3 text-xs text-muted-foreground flex flex-wrap justify-between items-center gap-4">
+        <span>त्रिनेत्र-AI (MHA Intelligence Platform) &bull; Prototype Build</span>
+        <span className="font-mono text-[11px]">All cases, entities & records shown are synthetic demo data.</span>
+      </footer>
     </div>
   );
 }
