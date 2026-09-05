@@ -26,8 +26,8 @@
   --color-popover-foreground: var(--text);
   --color-primary: var(--accent);
   --color-primary-foreground: #FFFFFF;
-  --color-secondary: var(--surface-2);
-  --color-secondary-foreground: var(--text);
+  --color-secondary: var(--secondary-color, var(--surface-2));
+  --color-secondary-foreground: var(--secondary-fg, var(--text));
   --color-muted: var(--surface-2);
   --color-muted-foreground: var(--text-dim);
   --color-accent: var(--accent);
@@ -77,31 +77,48 @@
     --grid-line: rgba(23,22,15,0.05);
   }
 
-  html[data-theme="dark"] {
-    --bg: #0F0E0B;
-    --surface: #17160F;
-    --surface-2: #1D1B15;
-    --text: #F2EFE6;
-    --text-dim: #8C8878;
-    --border: #2A281F;
+  html[data-theme="dark"],
+  .dark {
+    /* Base HSL Color Scheme */
+    --background: 160 30% 8%;      /* Very dark pine green */
+    --foreground: 60 10% 95%;
+    --primary: 160 70% 35%;        /* Deep Emerald Green */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 100% 55%;      /* Warm Gold for highlights */
+    --secondary-foreground: 160 30% 8%;
+    --muted: 160 20% 15%;
+    --border: 160 25% 20%;
+    --card: 160 25% 12%;
+
+    /* CSS Variable Mappings */
+    --bg: hsl(var(--background));
+    --surface: hsl(var(--card));
+    --surface-2: hsl(var(--muted));
+    --text: hsl(var(--foreground));
+    --text-dim: hsl(160 15% 65%);
+    --border-color: hsl(var(--border));
+    --border: hsl(var(--border));
     
-    /* Strict White, Black, Blue palette - no orange */
-    --accent: #3B82F6;
-    --accent-soft: rgba(59, 130, 246, 0.08);
-    --sage: #60A5FA; /* Replaced green with lighter blue */
-    --accent-ring: rgba(59, 130, 246, 0.45);
+    --secondary-color: hsl(var(--secondary));
+    --secondary-fg: hsl(var(--secondary-foreground));
     
-    --shadow: rgba(0,0,0,0.35);
-    --nav-bg: rgba(15,14,11,0.85);
-    --glass-bg: rgba(23,22,15,0.45);
-    --glass-border: rgba(242,239,230,0.12);
-    --glass-hi: rgba(255,255,255,0.10);
-    --glass-hi-strong: rgba(255,255,255,0.16);
-    --glass-sheen: rgba(255,255,255,0.08);
-    --topbar-border: rgba(242,239,230,0.10);
-    --edge-color: rgba(242,239,230,0.22);
+    /* Emerald & Gold Theme Accent */
+    --accent: hsl(var(--primary));
+    --accent-soft: hsl(160 70% 35% / 0.12);
+    --sage: hsl(160 65% 45%);
+    --accent-ring: hsl(160 70% 35% / 0.45);
     
-    --grid-line: rgba(242,239,230,0.04);
+    --shadow: rgba(0, 0, 0, 0.45);
+    --nav-bg: hsl(160 30% 8% / 0.85);
+    --glass-bg: hsl(160 25% 12% / 0.65);
+    --glass-border: hsl(60 10% 95% / 0.12);
+    --glass-hi: rgba(255, 255, 255, 0.08);
+    --glass-hi-strong: rgba(255, 255, 255, 0.14);
+    --glass-sheen: rgba(255, 255, 255, 0.06);
+    --topbar-border: hsl(60 10% 95% / 0.10);
+    --edge-color: hsl(60 10% 95% / 0.22);
+    
+    --grid-line: hsl(60 10% 95% / 0.04);
   }
 
   * {

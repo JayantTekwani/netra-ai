@@ -29,6 +29,7 @@ export interface Relationship {
   /** ISO date of the interaction. */
   date: string;
   recordIds: string[];
+  caseId?: string;
   is_ghost?: boolean;
   status?: string;
   conformal_confidence?: number;
@@ -40,6 +41,7 @@ export interface SupportingRecord {
   title: string;
   date: string;
   fields: Record<string, string>;
+  caseId?: string;
 }
 
 export type CaseStatus = "active" | "under-review" | "closed";
@@ -65,6 +67,7 @@ export interface TimelineEvent {
   description: string;
   entityIds: string[];
   recordId: string;
+  caseId?: string;
 }
 
 export interface ActivityItem {
@@ -81,4 +84,5 @@ export interface Insight {
   detail: string;
   confidence: "observation" | "pattern" | "cluster";
   recordIds: string[];
+  caseId?: string;
 }
