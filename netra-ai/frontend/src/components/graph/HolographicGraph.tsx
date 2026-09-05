@@ -27,6 +27,14 @@ const MAX_NODES = 200;
 const MAX_EDGES = 400;
 const FOCAL = 520;
 
+export const ENTITY_ICONS: Record<string, string> = {
+  person: "👤",
+  phone: "📞",
+  account: "💳",
+  location: "📍",
+  organization: "🏢",
+};
+
 export function HolographicGraph({
   entities,
   relationships,
@@ -40,6 +48,8 @@ export function HolographicGraph({
   const [autoRotate, setAutoRotate] = useState(true);
   const [is2D, setIs2D] = useState(false);
   const [selectedNode, setSelectedNode] = useState<HoloNode | null>(null);
+  const selectedNodeRef = useRef<HoloNode | null>(null);
+  selectedNodeRef.current = selectedNode;
   const [nodeCount, setNodeCount] = useState(0);
   const [edgeCount, setEdgeCount] = useState(0);
   activeFilterRef.current = activeFilter;
@@ -70,6 +80,20 @@ export function HolographicGraph({
     const map = new Map(nodes.map(n => [n.id, n]));
     return { holoNodes: nodes, holoEdges: edges, nodeMap: map };
   }, [entities, relationships]);
+
+  // Adjacency map for fast neighbor lookups
+  const neighborMap = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    for (const edge of holoEdges) {
+      if (!map.has(edge.a)) map.set(edge.a, new Set());
+      if (!map.has(edge.b)) map.set(edge.b, new Set());
+      map.get(edge.a)!.add(edge.b);
+      map.get(edge.b)!.add(edge.a);
+    }
+    return map;
+  }, [holoEdges]);
+  const neighborMapRef = useRef(neighborMap);
+  neighborMapRef.current = neighborMap;
 
   // Update stat counters (after memo)
   useEffect(() => {
@@ -166,6 +190,9 @@ export function HolographicGraph({
       const mutedColor = getMutedColor();
       const edgeColor = isDark ? "rgba(100,120,160,0.35)" : "rgba(80,100,140,0.3)";
 
+      const selNode = selectedNodeRef.current;
+      const neighbors = selNode ? (neighborMapRef.current.get(selNode.id) ?? new Set<string>()) : null;
+
       // Draw edges
       for (const edge of edges) {
         const ai = holoNodes.findIndex(n => n.id === edge.a);
@@ -173,25 +200,49 @@ export function HolographicGraph({
         if (ai < 0 || bi < 0) continue;
         const pa = projected[ai]!;
         const pb = projected[bi]!;
+
+        const isConnectedToSelected = selNode ? (edge.a === selNode.id || edge.b === selNode.id) : false;
+
         ctx.beginPath();
         ctx.moveTo(pa.sx, pa.sy);
         ctx.lineTo(pb.sx, pb.sy);
-        ctx.strokeStyle = edgeColor;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
+
+        if (selNode) {
+          if (isConnectedToSelected) {
+            // Highlighted connection to selected person/entity
+            ctx.strokeStyle = "#66fcf1";
+            ctx.lineWidth = 2.4;
+            ctx.shadowColor = "rgba(102, 252, 241, 0.85)";
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+          } else {
+            // Dim unconnected edges
+            ctx.strokeStyle = isDark ? "rgba(100,120,160,0.06)" : "rgba(80,100,140,0.06)";
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        } else {
+          ctx.strokeStyle = edgeColor;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
 
         // Flowing dot
-        edge.t += edge.speed * edge.dir;
+        edge.t += edge.speed * edge.dir * (isConnectedToSelected ? 1.6 : 1);
         if (edge.t > 1) edge.t = 0;
         if (edge.t < 0) edge.t = 1;
         const dx = pa.sx + (pb.sx - pa.sx) * edge.t;
         const dy = pa.sy + (pb.sy - pa.sy) * edge.t;
-        ctx.beginPath();
-        ctx.arc(dx, dy, 1.4, 0, Math.PI * 2);
-        ctx.fillStyle = accentColor;
-        ctx.globalAlpha = 0.8;
-        ctx.fill();
-        ctx.globalAlpha = 1;
+
+        if (!selNode || isConnectedToSelected) {
+          ctx.beginPath();
+          ctx.arc(dx, dy, isConnectedToSelected ? 2.5 : 1.4, 0, Math.PI * 2);
+          ctx.fillStyle = isConnectedToSelected ? "#66fcf1" : accentColor;
+          ctx.globalAlpha = isConnectedToSelected ? 1 : 0.8;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
       }
 
       // Sort nodes back-to-front
@@ -202,45 +253,63 @@ export function HolographicGraph({
         const n = holoNodes[idx]!;
         const p = projected[idx]!;
         const color = resolvedColors.get(n.color) ?? "#888";
-        const baseR = (n.flagged ? 8 : 7) * Math.max(0.4, Math.min(1.4, p.scale));
+        const isSelected = selNode?.id === n.id;
+        const isNeighbor = selNode ? (neighbors?.has(n.id) ?? false) : false;
+        const isFocused = isSelected || isNeighbor;
+
+        const baseR = (n.flagged ? 11 : 9.5) * Math.max(0.45, Math.min(1.4, p.scale));
         const matched = !filter || n.name.toLowerCase().includes(filter);
-        const alpha = matched ? 1 : 0.08;
+
+        let alpha = matched ? 1 : 0.08;
+        if (selNode && !isFocused) {
+          alpha = alpha * 0.15; // Dim unconnected entities when an entity is selected
+        }
 
         ctx.globalAlpha = alpha;
 
-        // Glow for flagged nodes
-        if (n.flagged && matched) {
-          ctx.shadowColor = accentColor;
-          ctx.shadowBlur = 12;
+        // Glow for selected or flagged
+        if ((isSelected || (n.flagged && matched)) && alpha > 0.3) {
+          ctx.shadowColor = isSelected ? "#66fcf1" : accentColor;
+          ctx.shadowBlur = isSelected ? 18 : 12;
         }
 
-        // Node circle
-        const grad = ctx.createRadialGradient(p.sx - baseR * 0.3, p.sy - baseR * 0.3, 0, p.sx, p.sy, baseR);
-        grad.addColorStop(0, "#ffffff");
-        grad.addColorStop(0.25, color);
-        grad.addColorStop(0.7, color);
-        grad.addColorStop(1, "rgba(0,0,0,0.5)");
+        // Node disc badge (replaces plain blue 3D ball)
         ctx.beginPath();
         ctx.arc(p.sx, p.sy, baseR, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
+        ctx.fillStyle = isDark ? "rgba(16, 20, 28, 0.9)" : "rgba(255, 255, 255, 0.94)";
         ctx.fill();
+
+        ctx.strokeStyle = isSelected ? "#66fcf1" : (isNeighbor ? "rgba(102, 252, 241, 0.85)" : color);
+        ctx.lineWidth = isSelected ? 2.8 : (isNeighbor ? 2.0 : 1.4);
+        ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // Selected ring
-        if (selectedNode?.id === n.id) {
-          ctx.strokeStyle = accentColor;
+        // Entity Symbol / Icon
+        const icon = ENTITY_ICONS[n.type] ?? "●";
+        const iconSize = Math.max(9, Math.round(baseR * 1.15));
+        ctx.font = `${iconSize}px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(icon, p.sx, p.sy);
+
+        // Highlight ring around selected node
+        if (isSelected) {
+          ctx.strokeStyle = "#66fcf1";
           ctx.lineWidth = 2;
+          ctx.setLineDash([4, 3]);
           ctx.beginPath();
-          ctx.arc(p.sx, p.sy, baseR + 4, 0, Math.PI * 2);
+          ctx.arc(p.sx, p.sy, baseR + 5, 0, Math.PI * 2);
           ctx.stroke();
+          ctx.setLineDash([]);
         }
 
         // Label
-        ctx.globalAlpha = alpha * Math.max(0.3, Math.min(1, p.scale));
-        ctx.fillStyle = isDark ? "#9CA3AF" : "#6B6858";
-        ctx.font = `9px 'JetBrains Mono', monospace`;
+        ctx.globalAlpha = alpha * Math.max(0.4, Math.min(1, p.scale));
+        ctx.fillStyle = isSelected ? "#66fcf1" : (isNeighbor ? "#ffffff" : (isDark ? "#9CA3AF" : "#6B6858"));
+        ctx.font = isSelected ? "bold 10px 'JetBrains Mono', monospace" : "9px 'JetBrains Mono', monospace";
         ctx.textAlign = "center";
-        ctx.fillText(n.name.length > 18 ? n.name.slice(0, 17) + "…" : n.name, p.sx, p.sy + baseR + 13);
+        ctx.textBaseline = "top";
+        ctx.fillText(n.name.length > 18 ? n.name.slice(0, 17) + "…" : n.name, p.sx, p.sy + baseR + 6);
 
         ctx.globalAlpha = 1;
       }
@@ -295,13 +364,15 @@ export function HolographicGraph({
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
       let closest: HoloNode | null = null;
-      let closestDist = 22;
+      let closestDist = 24;
       holoNodes.forEach((n, i) => {
         const p = projected[i]!;
         const d = Math.hypot(p.sx - mx, p.sy - my);
         if (d < closestDist) { closest = n; closestDist = d; }
       });
-      setSelectedNode(prev => prev?.id === closest?.id ? null : closest);
+      const next = closest ? (selectedNodeRef.current?.id === closest.id ? null : closest) : null;
+      setSelectedNode(next);
+      selectedNodeRef.current = next;
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -385,16 +456,47 @@ export function HolographicGraph({
 
       {/* Selected node side panel */}
       {selectedNode && (
-        <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 240, background: "rgba(16,17,20,0.82)", backdropFilter: "blur(18px)", borderLeft: "1px solid rgba(255,255,255,0.08)", padding: "56px 18px 18px", zIndex: 20, overflowY: "auto" }}>
-          <button onClick={() => setSelectedNode(null)} style={{ position: "absolute", top: 16, right: 16, width: 24, height: 24, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "var(--muted-foreground)", cursor: "pointer", fontSize: 11 }}>✕</button>
-          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "var(--accent)", letterSpacing: "0.04em", marginBottom: 6 }}>{selectedNode.type.toUpperCase()}{selectedNode.flagged ? " · FLAGGED" : ""}</div>
+        <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 250, background: "rgba(16,17,20,0.85)", backdropFilter: "blur(18px)", borderLeft: "1px solid rgba(255,255,255,0.08)", padding: "52px 18px 18px", zIndex: 20, overflowY: "auto" }}>
+          <button onClick={() => { setSelectedNode(null); selectedNodeRef.current = null; }} style={{ position: "absolute", top: 16, right: 16, width: 24, height: 24, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "var(--muted-foreground)", cursor: "pointer", fontSize: 11 }}>✕</button>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 16 }}>{ENTITY_ICONS[selectedNode.type] || "●"}</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#66fcf1", letterSpacing: "0.04em" }}>{selectedNode.type.toUpperCase()}{selectedNode.flagged ? " · FLAGGED" : ""}</span>
+          </div>
           <div style={{ fontSize: 17, fontWeight: 600, color: "var(--foreground)", marginBottom: 16 }}>{selectedNode.name}</div>
-          {[["TYPE", selectedNode.type], ["CONNECTIONS", relationships.filter(r => r.source === selectedNode.id || r.target === selectedNode.id).length + " links"], ["CONFIDENCE", "98%"]].map(([label, val]) => (
-            <div key={label as string} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.07)", fontSize: 12, color: "var(--foreground)" }}>
+          {[["ID", selectedNode.id], ["TYPE", selectedNode.type], ["CONNECTIONS", relationships.filter(r => r.source === selectedNode.id || r.target === selectedNode.id).length + " links"], ["CONFIDENCE", "98%"]].map(([label, val]) => (
+            <div key={label as string} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.07)", fontSize: 12, color: "var(--foreground)" }}>
               <span style={{ color: "var(--muted-foreground)", fontFamily: "'JetBrains Mono',monospace", fontSize: 10.5 }}>{label}</span>
               <span>{val}</span>
             </div>
           ))}
+
+          {/* Connected Entities List */}
+          <div style={{ marginTop: 16 }}>
+            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#66fcf1", letterSpacing: "0.05em", marginBottom: 8, textTransform: "uppercase" }}>
+              Direct Connections ({relationships.filter(r => r.source === selectedNode.id || r.target === selectedNode.id).length})
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 190, overflowY: "auto" }}>
+              {relationships
+                .filter(r => r.source === selectedNode.id || r.target === selectedNode.id)
+                .slice(0, 20)
+                .map(r => {
+                  const otherId = r.source === selectedNode.id ? r.target : r.source;
+                  const other = nodeMap.get(otherId);
+                  if (!other) return null;
+                  return (
+                    <div
+                      key={r.id}
+                      onClick={() => { setSelectedNode(other); selectedNodeRef.current = other; }}
+                      style={{ padding: "6px 8px", background: "rgba(255,255,255,0.04)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}
+                    >
+                      <span>{ENTITY_ICONS[other.type] || "●"}</span>
+                      <span style={{ color: "var(--foreground)", fontWeight: 500, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{other.name}</span>
+                      <span style={{ color: "var(--muted-foreground)", fontSize: 9, textTransform: "uppercase", fontFamily: "'JetBrains Mono',monospace" }}>{r.type || other.type}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
         </div>
       )}
 

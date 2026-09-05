@@ -16,7 +16,6 @@ import { StatCard } from "@/components/common/StatCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EntityResolutionDemo } from "@/components/dashboard/EntityResolutionDemo";
 import { LiveAnalysis } from "@/components/dashboard/LiveAnalysis";
-import { ParallaxCarousel } from "@/components/dashboard/ParallaxCarousel";
 import { HolographicGraph } from "@/components/graph/HolographicGraph";
 import { Button } from "@/components/ui/button";
 import { activity, insights } from "@/data/mock";
@@ -244,8 +243,6 @@ function DashboardPage() {
         </div>
         
         <ServerNodesMetrics />
-        {/* New Parallax Carousel Section */}
-        <ParallaxCarousel />
       </div>
     </AppLayout>
   );

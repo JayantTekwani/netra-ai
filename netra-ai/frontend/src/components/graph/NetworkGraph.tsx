@@ -10,6 +10,7 @@ import {
 import { Minus, Plus, Crosshair } from "lucide-react";
 import type { Entity, Relationship } from "@/data/types";
 import { ENTITY_TYPE_META } from "@/data/mock";
+import { ENTITY_ICONS } from "./HolographicGraph";
 
 interface Node extends SimulationNodeDatum {
   id: string;
@@ -229,12 +230,11 @@ export function NetworkGraph({
                 />
                 <text
                   textAnchor="middle"
-                  y={4}
-                  fontSize={10}
-                  className="pointer-events-none font-mono"
-                  fill={meta.color}
+                  y={5}
+                  fontSize={13}
+                  className="pointer-events-none select-none"
                 >
-                  {meta.short}
+                  {ENTITY_ICONS[e.type] || meta.short}
                 </text>
                 <text
                   textAnchor="middle"
