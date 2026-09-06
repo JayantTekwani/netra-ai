@@ -328,13 +328,6 @@ function SurveillancePage() {
               </div>
             </div>
 
-            {/* CCTV Face-match bounding box (top-right quadrant) */}
-            <div
-              className="absolute border-2 border-red-500 animate-pulse z-40 pointer-events-none"
-              style={{ top: "12%", right: "10%", width: "22%", height: "32%" }}
-            >
-              <span className="absolute -top-4 left-0 text-[9px] font-mono text-red-400 bg-black/70 px-1 whitespace-nowrap">FACE MATCH 98.4%</span>
-            </div>
 
           </div>
         </div>
