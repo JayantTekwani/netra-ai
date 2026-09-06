@@ -129,9 +129,9 @@ function DashboardPage() {
 
           {/* Mini Legend */}
           <div className="absolute bottom-6 left-6 flex gap-3 text-[9px] text-muted-foreground bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 pointer-events-none z-10">
-            <span><span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span> Person</span>
-            <span><span className="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1"></span> Device</span>
-            <span><span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span> Account</span>
+            <span>👤 Person</span>
+            <span>📞 Device</span>
+            <span>💳 Account</span>
           </div>
         </div>
 

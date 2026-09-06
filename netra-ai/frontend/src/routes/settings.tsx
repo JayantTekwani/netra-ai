@@ -36,7 +36,7 @@ function SettingsPage() {
   });
 
   return (
-    <AppLayout title="Settings" subtitle="Prototype preferences — nothing here is persisted">
+    <AppLayout title="Settings" subtitle="Workspace configuration — preferences saved locally for this session">
       <div className="grid max-w-5xl grid-cols-2 gap-5">
         <section className="panel p-6">
           <h2 className="text-sm font-semibold tracking-tight">Investigator Profile</h2>

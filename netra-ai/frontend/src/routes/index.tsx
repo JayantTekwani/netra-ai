@@ -30,6 +30,7 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState(false);
 
   const startCamera = async () => {
     try {
@@ -40,6 +41,8 @@ function LoginPage() {
       }
     } catch (err) {
       console.warn("Camera access denied or unavailable", err);
+      setCameraActive(false);
+      setCameraError(true);
     }
   };
 
@@ -93,7 +96,7 @@ function LoginPage() {
               <ul className="space-y-1.5 text-xs text-muted-foreground/80 font-mono">
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> 5 disconnected systems</li>
                 <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> Manual cross-referencing</li>
-                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> 3 days per suspect</li>
+                <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" /> 10–14 days per case</li>
               </ul>
             </div>
             <div className="panel p-4 border-border bg-accent/10 relative overflow-hidden">
@@ -149,6 +152,16 @@ function LoginPage() {
               <span className="flex items-center gap-2">Initiate Scan <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" /></span>
             )}
           </Button>
+          
+          {cameraError && !loading && (
+            <button
+              type="button"
+              onClick={handleScan}
+              className="mt-3 w-full text-center text-[11px] font-mono text-amber-400/80 hover:text-amber-400 transition-colors py-1.5 border border-dashed border-amber-500/30 rounded-md hover:bg-amber-500/5"
+            >
+              Camera unavailable — click to bypass (demo mode)
+            </button>
+          )}
           
           <div className="mt-6 flex justify-between w-full text-[10px] font-mono text-muted-foreground uppercase tracking-widest border-t border-border pt-4">
             <span>Terminal: NX-94</span>

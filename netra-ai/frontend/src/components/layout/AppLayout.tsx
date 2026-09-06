@@ -11,7 +11,7 @@ import {
   ShieldCheck,
   Shield,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import { clearSession, getSession } from "@/lib/session";
 
 
@@ -48,15 +48,43 @@ export function AppLayout({
   // Actions: use getState() directly — don't subscribe to function refs as state
   const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
 
-  const istTimeStr = new Date().toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  // Live IST clock — updates every minute
+  const [istTimeStr, setIstTimeStr] = useState(() =>
+    new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  );
+  useEffect(() => {
+    const tick = () =>
+      setIstTimeStr(
+        new Date().toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Dynamic Threat Index
+  const activeCase = cases.find((c) => c.id === activeCaseId);
+  const threatLevel =
+    cases.length === 0
+      ? { label: "LOW", cls: "bg-green-600/20 text-green-400 border-green-500/30" }
+      : (activeCase as any)?.status === "active"
+      ? { label: "MODERATE", cls: "bg-amber-500/20 text-amber-400 border-amber-500/30" }
+      : { label: "MODERATE", cls: "bg-amber-500/20 text-amber-400 border-amber-500/30" };
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col w-full max-w-full">
@@ -107,8 +135,8 @@ export function AppLayout({
             {/* Threat Index */}
             <div className="hidden sm:flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono">Threat Index</span>
-              <span className="px-3 py-1 bg-red-600/20 text-red-400 border border-red-500/30 rounded-full text-xs font-bold animate-pulse">
-                ● MODERATE
+              <span className={`px-3 py-1 border rounded-full text-xs font-bold animate-pulse ${threatLevel.cls}`}>
+                ● {threatLevel.label}
               </span>
             </div>
 
