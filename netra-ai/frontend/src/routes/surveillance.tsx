@@ -386,8 +386,9 @@ export function SurveillancePage() {
 
   return (
     <AppLayout title="Live Surveillance & Azimuth Coverage" subtitle="Spatial Tower Azimuth Wedges & CCTV Intercepts" fullBleed>
-      <div className="flex flex-col h-[calc(100vh-8.5rem)] gap-4 p-4 overflow-y-auto lg:overflow-hidden">
-        {/* DISCLAIMER BANNER WITH AZIMUTH ADVANTAGE */}
+      <div className="flex flex-col gap-4 p-4">
+
+        {/* DISCLAIMER BANNER */}
         <div className="shrink-0 rounded-xl border border-primary/40 bg-primary/10 p-3.5 text-xs flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 rounded-full bg-primary/20 p-1 text-primary">
