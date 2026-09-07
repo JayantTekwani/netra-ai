@@ -1,3 +1,8 @@
+// ⚠️ DEPRECATED SCAFFOLD — DO NOT USE OR SCREENSHOT
+// This is an old Next.js App Router skeleton left over from early scaffolding.
+// The real, full-featured dashboard is at: src/routes/dashboard.tsx (TanStack Router)
+// This file is intentionally never imported by the app router — it is dead code.
+
 // app/dashboard/page.tsx (No Sidebar - Full Width Bento)
 export default function DashboardPage() {
   return (

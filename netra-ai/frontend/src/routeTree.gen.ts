@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComplianceRouteImport } from './routes/compliance'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ImeiRouteImport } from './routes/imei'
 import { Route as InvestigationRouteImport } from './routes/investigation'
+import { Route as PatternsRouteImport } from './routes/patterns'
+import { Route as RequisitionRouteImport } from './routes/requisition'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SurveillanceRouteImport } from './routes/surveillance'
 import { Route as TimelineRouteImport } from './routes/timeline'
@@ -35,9 +38,24 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImeiRoute = ImeiRouteImport.update({
+  id: '/imei',
+  path: '/imei',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvestigationRoute = InvestigationRouteImport.update({
   id: '/investigation',
   path: '/investigation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatternsRoute = PatternsRouteImport.update({
+  id: '/patterns',
+  path: '/patterns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequisitionRoute = RequisitionRouteImport.update({
+  id: '/requisition',
+  path: '/requisition',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -75,7 +93,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
+  '/imei': typeof ImeiRoute
   '/investigation': typeof InvestigationRoute
+  '/patterns': typeof PatternsRoute
+  '/requisition': typeof RequisitionRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
@@ -87,7 +108,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
+  '/imei': typeof ImeiRoute
   '/investigation': typeof InvestigationRoute
+  '/patterns': typeof PatternsRoute
+  '/requisition': typeof RequisitionRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
@@ -100,7 +124,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/compliance': typeof ComplianceRoute
   '/dashboard': typeof DashboardRoute
+  '/imei': typeof ImeiRoute
   '/investigation': typeof InvestigationRoute
+  '/patterns': typeof PatternsRoute
+  '/requisition': typeof RequisitionRoute
   '/settings': typeof SettingsRoute
   '/surveillance': typeof SurveillanceRoute
   '/timeline': typeof TimelineRoute
@@ -114,7 +141,10 @@ export interface FileRouteTypes {
     | '/'
     | '/compliance'
     | '/dashboard'
+    | '/imei'
     | '/investigation'
+    | '/patterns'
+    | '/requisition'
     | '/settings'
     | '/surveillance'
     | '/timeline'
@@ -126,7 +156,10 @@ export interface FileRouteTypes {
     | '/'
     | '/compliance'
     | '/dashboard'
+    | '/imei'
     | '/investigation'
+    | '/patterns'
+    | '/requisition'
     | '/settings'
     | '/surveillance'
     | '/timeline'
@@ -138,7 +171,10 @@ export interface FileRouteTypes {
     | '/'
     | '/compliance'
     | '/dashboard'
+    | '/imei'
     | '/investigation'
+    | '/patterns'
+    | '/requisition'
     | '/settings'
     | '/surveillance'
     | '/timeline'
@@ -151,7 +187,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComplianceRoute: typeof ComplianceRoute
   DashboardRoute: typeof DashboardRoute
+  ImeiRoute: typeof ImeiRoute
   InvestigationRoute: typeof InvestigationRoute
+  PatternsRoute: typeof PatternsRoute
+  RequisitionRoute: typeof RequisitionRoute
   SettingsRoute: typeof SettingsRoute
   SurveillanceRoute: typeof SurveillanceRoute
   TimelineRoute: typeof TimelineRoute
@@ -183,11 +222,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/imei': {
+      id: '/imei'
+      path: '/imei'
+      fullPath: '/imei'
+      preLoaderRoute: typeof ImeiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/investigation': {
       id: '/investigation'
       path: '/investigation'
       fullPath: '/investigation'
       preLoaderRoute: typeof InvestigationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patterns': {
+      id: '/patterns'
+      path: '/patterns'
+      fullPath: '/patterns'
+      preLoaderRoute: typeof PatternsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requisition': {
+      id: '/requisition'
+      path: '/requisition'
+      fullPath: '/requisition'
+      preLoaderRoute: typeof RequisitionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -239,7 +299,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComplianceRoute: ComplianceRoute,
   DashboardRoute: DashboardRoute,
+  ImeiRoute: ImeiRoute,
   InvestigationRoute: InvestigationRoute,
+  PatternsRoute: PatternsRoute,
+  RequisitionRoute: RequisitionRoute,
   SettingsRoute: SettingsRoute,
   SurveillanceRoute: SurveillanceRoute,
   TimelineRoute: TimelineRoute,

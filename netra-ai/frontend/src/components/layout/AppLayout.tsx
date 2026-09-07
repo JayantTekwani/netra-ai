@@ -10,6 +10,9 @@ import {
   LogOut,
   ShieldCheck,
   Shield,
+  Smartphone,
+  Network,
+  SendHorizontal,
 } from "lucide-react";
 import { type ReactNode, useState, useEffect } from "react";
 import { clearSession, getSession } from "@/lib/session";
@@ -18,10 +21,13 @@ import { clearSession, getSession } from "@/lib/session";
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cases", label: "Cases", icon: FolderSearch },
-  { to: "/surveillance", label: "Surveillance", icon: ShieldCheck },
-  { to: "/compliance", label: "Audit & Custody", icon: Shield },
-  { to: "/upload", label: "Upload Data", icon: UploadCloud },
   { to: "/investigation", label: "Investigation", icon: Share2 },
+  { to: "/surveillance", label: "Surveillance & Azimuth", icon: ShieldCheck },
+  { to: "/imei", label: "IMEI & SIM Intel", icon: Smartphone },
+  { to: "/patterns", label: "Crime Patterns", icon: Network },
+  { to: "/requisition", label: "ADRIP Requisition", icon: SendHorizontal },
+  { to: "/compliance", label: "Audit & BSA Sec 63", icon: Shield },
+  { to: "/upload", label: "Upload & Normalizer", icon: UploadCloud },
   { to: "/timeline", label: "Timeline", icon: CalendarClock },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;

@@ -147,6 +147,9 @@ export function HolographicGraph({
     // Local mutable copies (edges need t updated each frame)
     const edges = holoEdges.map(e => ({ ...e }));
 
+    // Pre-build O(1) index lookup — avoids findIndex inside the 60fps render loop
+    const nodeIndexMap = new Map(holoNodes.map((n, i) => [n.id, i]));
+
     // Resolve entity colours once (CSS vars need document)
     const resolvedColors = new Map<string, string>();
     holoNodes.forEach(n => {
@@ -209,8 +212,8 @@ export function HolographicGraph({
 
       // Draw edges
       for (const edge of edges) {
-        const ai = holoNodes.findIndex(n => n.id === edge.a);
-        const bi = holoNodes.findIndex(n => n.id === edge.b);
+        const ai = nodeIndexMap.get(edge.a) ?? -1;
+        const bi = nodeIndexMap.get(edge.b) ?? -1;
         if (ai < 0 || bi < 0) continue;
         const pa = projected[ai]!;
         const pb = projected[bi]!;
@@ -262,8 +265,8 @@ export function HolographicGraph({
       // ── Ghost edge pass: predicted relationships (conformal prediction) ──
       ghostTRef.current = (ghostTRef.current + 0.008) % 1;
       for (const ge of ghostEdgeRef.current) {
-        const ai = holoNodes.findIndex(n => n.id === ge.a);
-        const bi = holoNodes.findIndex(n => n.id === ge.b);
+        const ai = nodeIndexMap.get(ge.a) ?? -1;
+        const bi = nodeIndexMap.get(ge.b) ?? -1;
         if (ai < 0 || bi < 0) continue;
         const pa = projected[ai]!;
         const pb = projected[bi]!;
@@ -368,11 +371,11 @@ export function HolographicGraph({
         ctx.globalAlpha = 1;
       }
 
-      // HUD
+      // HUD — read directly from live arrays (not stale React state) so count updates during temporal replay
       ctx.fillStyle = isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.35)";
       ctx.font = "10px 'JetBrains Mono', monospace";
       ctx.textAlign = "left";
-      ctx.fillText(`${nodeCount} entities · ${edgeCount} links`, 16, h - 16);
+      ctx.fillText(`${holoNodes.length} entities · ${edges.filter(e => nodeIndexMap.has(e.a) && nodeIndexMap.has(e.b)).length} links`, 16, h - 16);
       ctx.textAlign = "right";
       ctx.fillText("✥ drag · scroll to zoom · click node", w - 16, h - 16);
     }
