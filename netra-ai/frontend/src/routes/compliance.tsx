@@ -23,6 +23,8 @@ import { ledger, Block } from "@/lib/blockchain";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useStore } from "@/store";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export const Route = createFileRoute("/compliance")({
   head: () => ({
@@ -102,13 +104,243 @@ export function AuditPage() {
 
   const handleDownloadPdf = () => {
     setIsDownloadingPdf(true);
-    setTimeout(() => {
+
+    try {
+      const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const caseId = activeCase?.id || "CASE-2026-DL-001234";
+      const caseName = activeCase?.name || "FIR-2026-DL-001234";
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 14;
+      let y = margin;
+
+      // ── Helpers ──────────────────────────────────────────────────────────
+      const centerText = (text: string, yPos: number, size = 10) => {
+        doc.setFontSize(size);
+        doc.text(text, pageW / 2, yPos, { align: "center" });
+      };
+      const kv = (label: string, value: string, yPos: number) => {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.5);
+        doc.setTextColor(100);
+        doc.text(label + ":", margin, yPos);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(20);
+        doc.text(value, margin + 52, yPos);
+      };
+
+      // ── HEADER BAR ───────────────────────────────────────────────────────
+      doc.setFillColor(10, 10, 30);
+      doc.rect(0, 0, pageW, 22, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.setTextColor(255, 255, 255);
+      centerText("\u092F\u094D\u0930\u093F\u0928\u0947\u0924\u094D\u0930-AI  \u2014  TriNetra-AI Intelligence Platform", 9, 12);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      centerText("MINISTRY OF HOME AFFAIRS  |  CERT-In Staging Audit Build", 15.5, 8);
+      y = 30;
+
+      // ── COURT TITLE ──────────────────────────────────────────────────────
+      doc.setDrawColor(30, 30, 80);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, pageW - margin * 2, 26, "S");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(10, 10, 60);
+      centerText("IN THE COURT OF THE PRINCIPAL DISTRICT & SESSIONS JUDGE", y + 6, 10);
+      centerText("PATIALA HOUSE COURTS  \u2022  NEW DELHI", y + 13, 9.5);
+      doc.setTextColor(0, 80, 150);
+      centerText("CERTIFICATE UNDER SECTION 63 OF THE BHARTIYA SAKSHYA ADHINIYAM, 2023 (BSA)", y + 19.5, 8.5);
+      y += 32;
+
+      // ── CASE METADATA TABLE ───────────────────────────────────────────────
+      doc.setTextColor(20, 20, 20);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.text("A. CASE & SYSTEM IDENTIFICATION", margin, y);
+      y += 5;
+      autoTable(doc, {
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2.5, font: "helvetica" },
+        headStyles: { fillColor: [10, 10, 60], textColor: 255, fontStyle: "bold" },
+        alternateRowStyles: { fillColor: [240, 243, 255] },
+        head: [["Field", "Value"]],
+        body: [
+          ["Case / FIR No.", caseName],
+          ["Police Station", "Special Cell, Lodhi Colony, New Delhi"],
+          ["Investigating Officer", "SI Ramesh Kumar  |  Badge No: DL-4521"],
+          ["CDR Ingestion Timestamp", "2026-01-15T09:30:22.418 IST"],
+          ["Software Version", "TriNetra-AI v2.0.1 (CERT-In Staging Audit)"],
+          ["Server Hardware ID", "MHA-NODE-DEL-04  |  SHA-256: e3b0c442..."],
+          ["Operating System", "Ubuntu 24.04 LTS (Kernel 6.8 FIPS)"],
+          ["Report Generation Timestamp", new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " IST"],
+        ],
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+
+      // ── STATUTORY DECLARATION ─────────────────────────────────────────────
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(20, 20, 20);
+      doc.text("B. STATUTORY DECLARATION (Section 63 BSA 2023)", margin, y);
+      y += 5;
+      doc.setFillColor(245, 248, 255);
+      doc.rect(margin, y, pageW - margin * 2, 20, "F");
+      doc.setDrawColor(180, 200, 240);
+      doc.rect(margin, y, pageW - margin * 2, 20, "S");
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(40);
+      const declaration = `I, SI Ramesh Kumar (Badge DL-4521), Investigating Officer, do hereby solemnly affirm and certify that the electronic records detailed below were produced by the computer systems of TriNetra-AI during the lawful investigation of the captioned matter (${caseName}), without any human tampering, alteration or unauthorized modification, in compliance with Section 63 of the Bhartiya Sakshya Adhiniyam, 2023.`;
+      const splitDecl = doc.splitTextToSize(declaration, pageW - margin * 2 - 6);
+      doc.text(splitDecl, margin + 3, y + 5);
+      y += 26;
+
+      // ── EVIDENCE HASH LEDGER ──────────────────────────────────────────────
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(20, 20, 20);
+      doc.text("C. EVIDENCE CRYPTOGRAPHIC HASH LEDGER (SHA-256)", margin, y);
+      y += 5;
+      autoTable(doc, {
+        startY: y,
+        margin: { left: margin, right: margin },
+        theme: "striped",
+        styles: { fontSize: 7.5, cellPadding: 2.5, font: "helvetica", overflow: "linebreak" },
+        headStyles: { fillColor: [0, 100, 60], textColor: 255, fontStyle: "bold" },
+        columnStyles: {
+          0: { cellWidth: 8, halign: "center" },
+          1: { cellWidth: 50 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 90, fontSize: 6.5, font: "courier" },
+        },
+        head: [["#", "Evidence File", "Type", "SHA-256 Hash (Immutable)"]],
+        body: DEMO_EVIDENCE_FILES.map((ef, i) => [
+          String(i + 1),
+          ef.name,
+          ef.type,
+          ef.hash,
+        ]),
+      });
+      y = (doc as any).lastAutoTable.finalY + 8;
+
+      // ── BLOCKCHAIN LEDGER ─────────────────────────────────────────────────
+      if (chain.length > 0) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(20, 20, 20);
+        doc.text("D. HYPERLEDGER FABRIC BLOCKCHAIN AUDIT TRAIL", margin, y);
+        y += 5;
+        autoTable(doc, {
+          startY: y,
+          margin: { left: margin, right: margin },
+          theme: "grid",
+          styles: { fontSize: 7, cellPadding: 2, font: "helvetica", overflow: "linebreak" },
+          headStyles: { fillColor: [40, 10, 80], textColor: 255, fontStyle: "bold" },
+          columnStyles: {
+            0: { cellWidth: 16, halign: "center" },
+            1: { cellWidth: 35 },
+            2: { cellWidth: 70, fontSize: 6, font: "courier" },
+            3: { cellWidth: 55, fontSize: 6, font: "courier" },
+          },
+          head: [["Block", "Timestamp", "Merkle Root (SHA-256)", "Block Hash (SHA-256)"]],
+          body: chain.map((block) => [
+            `#${block.index}`,
+            new Date(block.timestamp).toLocaleString("en-IN"),
+            block.merkleRoot.substring(0, 32) + "...",
+            block.hash.substring(0, 28) + "...",
+          ]),
+        });
+        y = (doc as any).lastAutoTable.finalY + 8;
+      }
+
+      // ── MERKLE ROOT & HYPERLEDGER TX ──────────────────────────────────────
+      // New page if running out of space
+      if (y > pageH - 60) { doc.addPage(); y = margin; }
+
+      doc.setFillColor(5, 10, 25);
+      doc.rect(margin, y, pageW - margin * 2, 18, "F");
+      doc.setFont("courier", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(100, 220, 100);
+      doc.text("MASTER MERKLE ROOT:", margin + 3, y + 5);
+      doc.text("0x9f8c12b7a4e61d89c02b89f31a2d5e771c9b0a887f6e5d4c3b2a109876543210", margin + 3, y + 10);
+      doc.setTextColor(150, 200, 255);
+      doc.text("HYPERLEDGER FABRIC TX:", margin + 3, y + 15);
+      doc.text("0x88f1a23c09b78e1245df67890123456789abcdef0123456789abcdef01234567", margin + 110, y + 15);
+      y += 24;
+
+      // ── SIGNATURE BLOCK ───────────────────────────────────────────────────
+      doc.setDrawColor(100);
+      doc.setLineWidth(0.3);
+      const halfW = (pageW - margin * 2) / 2 - 4;
+
+      // Left sig box
+      doc.rect(margin, y, halfW, 36, "S");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(20);
+      doc.text("Investigating Officer (IO)", margin + 4, y + 7);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text("Name:   SI Ramesh Kumar", margin + 4, y + 14);
+      doc.text("Badge:  DL-4521", margin + 4, y + 20);
+      doc.text("Unit:   Special Cell, Delhi Police", margin + 4, y + 26);
+      doc.setTextColor(0, 140, 70);
+      doc.setFont("helvetica", "bold");
+      doc.text("[DIGITALLY SIGNED  \u2022  MHA PKI]", margin + 4, y + 33);
+
+      // Right sig box
+      const rx = margin + halfW + 8;
+      doc.rect(rx, y, halfW, 36, "S");
+      doc.setTextColor(20);
+      doc.setFont("helvetica", "bold");
+      doc.text("Cyber Forensic Technical Officer", rx + 4, y + 7);
+      doc.setFont("helvetica", "normal");
+      doc.text("Name:   Dr. S. K. Nair", rx + 4, y + 14);
+      doc.text("Role:   CERT-In Forensic Auditor", rx + 4, y + 20);
+      doc.text("Auth:   Section 63 BSA 2023", rx + 4, y + 26);
+      doc.setTextColor(0, 140, 70);
+      doc.setFont("helvetica", "bold");
+      doc.text("[VERIFIED  \u2022  SECTION 63 BSA]", rx + 4, y + 33);
+      y += 44;
+
+      // ── FOOTER ────────────────────────────────────────────────────────────
+      const totalPages = (doc.internal as any).getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7);
+        doc.setTextColor(130);
+        doc.text(
+          `TriNetra-AI v2.0.1  |  BSA Sec 63 Affidavit  |  Case: ${caseId}  |  Generated: ${new Date().toISOString()}  |  Page ${i}/${totalPages}`,
+          pageW / 2,
+          pageH - 6,
+          { align: "center" }
+        );
+        doc.setDrawColor(200);
+        doc.setLineWidth(0.3);
+        doc.line(margin, pageH - 9, pageW - margin, pageH - 9);
+      }
+
+      // ── SAVE ──────────────────────────────────────────────────────────────
+      const filename = `Affidavit_BSA63_${caseId}_${new Date().toISOString().slice(0, 10)}.pdf`;
+      doc.save(filename);
+
       setIsDownloadingPdf(false);
       setDownloadSuccess(true);
-      toast.success("Court Affidavit Generated", {
-        description: `Downloaded: Affidavit_BSA63_${activeCase?.id || "CASE_001"}_20260115.pdf`,
+      toast.success("Court Affidavit Downloaded", {
+        description: `${filename} saved to your Downloads folder.`,
       });
-    }, 1800);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      setIsDownloadingPdf(false);
+      toast.error("PDF Generation Failed", {
+        description: "Check console for details.",
+      });
+    }
   };
 
   const handleTransmitCourt = () => {
