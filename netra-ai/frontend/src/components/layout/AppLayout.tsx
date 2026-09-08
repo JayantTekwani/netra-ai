@@ -13,9 +13,11 @@ import {
   Smartphone,
   Network,
   SendHorizontal,
+  Bot,
 } from "lucide-react";
 import { type ReactNode, useState, useEffect } from "react";
 import { clearSession, getSession } from "@/lib/session";
+import { InvestigatorCopilot, CopilotFloatingButton } from "@/components/copilot/InvestigatorCopilot";
 
 
 const NAV = [
@@ -50,6 +52,7 @@ export function AppLayout({
   const user = getSession();
 
   const cases = useStore((s) => s.cases);
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const activeCaseId = useStore((s) => s.activeCaseId);
   // Actions: use getState() directly — don't subscribe to function refs as state
   const setActiveCaseId = (id: string) => useStore.getState().setActiveCaseId(id);
@@ -149,6 +152,16 @@ export function AppLayout({
             {/* Actions if provided by child page */}
             {actions && <div className="flex items-center gap-2">{actions}</div>}
 
+            {/* AI Copilot Trigger */}
+            <button
+              onClick={() => setIsCopilotOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-primary/40 bg-primary/10 text-primary text-xs font-mono font-semibold hover:bg-primary/20 transition-all cursor-pointer shadow-xs"
+              title="Open Investigator Copilot"
+            >
+              <Bot className="size-3.5" />
+              <span>AI Copilot</span>
+            </button>
+
             {/* Theme Toggle */}
             <button
               className="theme-toggle"
@@ -221,6 +234,13 @@ export function AppLayout({
         <span>त्रिनेत्र-AI (MHA Intelligence Platform) &bull; Prototype Build</span>
         <span className="font-mono text-[11px]">All cases, entities & records shown are synthetic demo data.</span>
       </footer>
+
+      {/* Global Investigator Copilot & Floating Trigger */}
+      <CopilotFloatingButton onClick={() => setIsCopilotOpen(true)} />
+      <InvestigatorCopilot
+        isOpen={isCopilotOpen}
+        onClose={() => setIsCopilotOpen(false)}
+      />
     </div>
   );
 }
